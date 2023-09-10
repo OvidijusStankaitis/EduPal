@@ -62,5 +62,5 @@ d-----         9/11/2023   1:40 AM                my-app
 -a----         9/11/2023   2:32 AM              0 example.txt                                                                                                                                                                      
 -a----         9/11/2023   2:32 AM           1556 README.md   
 ```
-* Name the file `name_surname.txt` and inside it input text `hello from <your_name>`.
+* Name the file `<name_surname>.txt` and inside it input text `hello from <your_name>`.
 * Create a pull request.
