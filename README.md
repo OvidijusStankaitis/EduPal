@@ -49,6 +49,7 @@ git commit -m "Descriptive commit message"
 git push origin feature-name
 ```
 * Create a Pull Request: On GitHub, go to the "Pull Requests" tab and click "New Pull Request." Select your branch as the source and the main branch as the target. Provide a clear title and description for your pull request.
+* After master gets updated, in RIDER, go to the top menu and under `Git` submenu select `Pull...`.
 
 ## Initial Task:
 
