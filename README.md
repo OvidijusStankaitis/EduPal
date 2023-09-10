@@ -3,7 +3,7 @@
 ## IDE and Environment setup:
 
 * [Download](https://www.jetbrains.com/rider/download/download-thanks.html?platform=windows) and install RIDER (JetBrains).
-* ![Installation_Wizzard]("C:\Users\Ovidijus\Pictures\Screenshot 2023-09-11 022340.png")
+* ![Installation_Wizzard](https://github.com/OvidijusStankaitis/PSI_Project/assets/82393494/084d6aec-1fd7-4c6b-b2fd-62d7c0113f56)
 * After installing add everything that RIDER is offering.
 
 ## Getting Started (Front-end):
