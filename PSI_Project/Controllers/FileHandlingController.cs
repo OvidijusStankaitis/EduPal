@@ -38,16 +38,26 @@ public class FileHandlingController : ControllerBase
     [HttpGet("list")]
     public IActionResult ListUploadedFiles()
     {
-        string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Files");
-        return Ok(Directory.GetFiles(filePath));
+        string filesPath = Path.Combine(Directory.GetCurrentDirectory(), "Files");
+        string[] directoryFiles = Directory.GetFiles(filesPath);
+
+        List<ConspectusFile> filesList = new List<ConspectusFile>();
+        foreach (var filePath in directoryFiles)
+        {
+            filesList.Add(new ConspectusFile
+            {
+                Path = filePath
+            });
+        }
+
+        return Ok(filesList);
     }
 
     [HttpDelete("delete/{filename}")]
     public void DeleteFile(string filename)
     {
-        
         string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Files", filename);
-        Console.WriteLine(filePath);
+
         try
         {
             if (System.IO.File.Exists(filePath))
