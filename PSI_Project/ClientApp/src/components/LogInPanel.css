@@ -1,0 +1,143 @@
+﻿@font-face {
+    font-family: 'Jetbrains Mono';
+    src: url('../assets/JetBrainsMono-ExtraBold.ttf') format('truetype');
+    font-weight: 800; /* Extra Bold */
+    font-style: normal;
+}
+
+*, button, input, h1, .dialog-header {
+    font-family: 'Jetbrains Mono', monospace;
+}
+
+.edu{
+    margin-bottom: 2rem;
+    font-size: 8rem;
+    margin-top: 35rem;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+}
+
+.buttons {
+    margin-top: 0vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    transition: filter 0.5s;
+    padding: 0 5vw; /* Adjusted from pixels */
+}
+
+.buttons button {
+    height: 10vh;
+    width: 20vw;
+    padding: 2vh 4vw;
+    font-size: 1.8vh;
+    border: none;
+    cursor: pointer;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 0.5vw;
+    transition: background-color 0.3s;
+}
+
+.buttons button:hover, .form-section button:hover, .dialog-footer button:hover {
+    background-color: #0056b3;
+}
+
+.container.blurred .buttons {
+    filter: blur(0.5vw); /* Adjusted from pixels */
+    pointer-events: none;
+}
+
+.dialog {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 50vh;
+    width: 50vw;
+    background: #fff;
+    padding: 2vh;
+    border-radius: 1vw;
+    z-index: 100;
+    animation: slideCenter 0.5s forwards;
+}
+
+.dialog-header {
+    text-align: center;
+    padding-bottom: 2vh;
+    font-weight: bold;
+    font-size: 2.5vh;
+}
+
+.dialog-content {
+    display: flex;
+    justify-content: space-between; /* Distribute space between form sections */
+}
+
+.form-section {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+    padding: 2vh 2vw;
+}
+
+.form-section input, .form-section button {
+    width: 100%;
+    margin: 0 auto 2vh;
+}
+
+.form-section:first-child {
+    border-right: 1px solid #ccc;
+}
+
+.form-section button {
+    padding: 2vh 4vw;
+    font-size: 1.8vh;
+    border: none;
+    cursor: pointer;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 0.5vw;
+    transition: background-color 0.3s;
+}
+
+.dialog-footer button {
+    padding: 1vh 2vw;
+    font-size: 1.5vh;
+    border: none;
+    cursor: pointer;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 0.5vw;
+    transition: background-color 0.3s;
+    width: 20vw;
+    height: 5vh;
+    margin-bottom: -2vh;
+}
+
+.dialog-footer {
+    display: flex;
+    justify-content: center;
+    padding-top: 2vh;
+}
+
+@keyframes slideCenter {
+    0% {
+        transform: translate(-50%, 100vh); /* Adjusted from pixels */
+    }
+    100% {
+        transform: translate(-50%, -50%);
+    }
+}
