@@ -26,39 +26,47 @@ public class ConspectusController : ControllerBase
             FileStream fileStream = new FileStream(filePath, FileMode.Create);
             formFile.CopyTo(fileStream);
             
-            // saving file to db (conspectus.txt file)
-            Conspectus conspectus = new Conspectus(filePath);
-            _conspectusHandler.UploadConspectus(conspectus);
+            // saving file to conspectus.txt (temp db)
+            _conspectusHandler.UploadConspectus(new Conspectus(filePath));
         }
         
         return Ok(_conspectusHandler.ConspectusList);
     }
 
-    [HttpGet("download/{filename}")]
-    public IActionResult DownloadFile(string filename)
+    [HttpGet("download/{conspectusId}")]
+    public IActionResult DownloadFile(string conspectusId)
     {
-        string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Files", filename);
-
+        // checking if there is conspectus with such id
+        Conspectus? conspectus = _conspectusHandler.GetConspectusById(conspectusId);
+        if (conspectus == null)
+            return NotFound();
+        
+        // checking if the file with such path exists
+        string filePath = conspectus.Path;
         if (System.IO.File.Exists(filePath))
-        {
             return PhysicalFile(filePath, "application/octet-stream");
-        }
-
+        
+        // if there is no file, return not found error
         return NotFound();
     }
 
-    [HttpDelete("delete/{filename}")]
-    public void DeleteFile(string filename)
+    [HttpDelete("delete/{conspectusId}")]
+    public void DeleteFile(string conspectusId)
     {
-        string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Files", filename);
-
+        Conspectus? conspectus = _conspectusHandler.GetConspectusById(conspectusId);
+        if (conspectus == null)
+            return;
+                
+        string filePath = conspectus.Path;
         try
         {
             if (System.IO.File.Exists(filePath))
             {
+                // deleting conspectus from filesystem
                 System.IO.File.Delete(filePath);
-                Conspectus conspectus = new Conspectus(filePath);
-                _conspectusHandler.RemoveConspectus(conspectus);
+                
+                // deleting conspectus from conspectus.txt (temp db)
+                _conspectusHandler.RemoveConspectus(conspectusId);
             }
         }
         catch (IOException ex)

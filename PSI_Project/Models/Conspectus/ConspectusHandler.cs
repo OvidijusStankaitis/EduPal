@@ -4,6 +4,7 @@ public class ConspectusHandler
 {
     public List<Conspectus> ConspectusList = new();
     private const string DatabaseFilePath = "DB/conspectus.txt";    // TODO: delete when database is added
+    private const string TempDatabaseFilePath = "DB/temp_conspectus.txt"; 
     
     public ConspectusHandler()
     {
@@ -39,6 +40,17 @@ public class ConspectusHandler
         }
     }
 
+    public Conspectus? GetConspectusById(string id)
+    {
+        foreach(Conspectus conspectus in ConspectusList)
+        {
+            if (conspectus.Id == id)
+                return conspectus;
+        }
+
+        return null;
+    }
+
     public void UploadConspectus(Conspectus conspectus)
     {
         try
@@ -56,30 +68,35 @@ public class ConspectusHandler
         }
     }
 
-    public List<Conspectus> RemoveConspectus(Conspectus conspectus)
+    public List<Conspectus> RemoveConspectus(string conspectusId)
     {
-        // TODO: finish
         try
         {
-            StreamReader sr = File.OpenText(DatabaseFilePath);
+            // renaming conspectus.txt to temp_conspectus.txt, opening stream reader
+            FileInfo tempFile = new FileInfo(DatabaseFilePath);
+            tempFile.MoveTo(TempDatabaseFilePath);
+            StreamReader sr = File.OpenText(TempDatabaseFilePath);
             
-            while(!sr.EndOfStream)
+            // creating stream reader to save altered database
+            StreamWriter sw = File.CreateText(DatabaseFilePath);
+            
+            // deleting conspectus from databas
+            string? line;
+            while((line = sr.ReadLine()) != null)
             {
-                string? line = sr.ReadLine();
-                
-                if (line == null)
+                string dbConspectusId = line.Split(" ")[0];
+                if (dbConspectusId == conspectusId)
                     continue;
-
-                string conspectusId = line.Split(" ")[0];
-                if (conspectusId == conspectus.Id)
-                {
-                    // delete line
-                }
-
-                Console.WriteLine(conspectusId);
+                
+                sw.WriteLine(line);
             }
             
+            // closing filestreams
+            sw.Close();
             sr.Close();
+            
+            // deleting temp file
+            tempFile.Delete();
         }
         catch (Exception ex)
         {
