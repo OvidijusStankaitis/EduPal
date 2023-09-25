@@ -36,6 +36,20 @@ h1 {
     padding-left: 0; /* remove default padding from ul */
 }
 
+.empty{
+    color: #888;
+}
+
+.files-list li.empty:hover {
+    color: #888;
+    background-color: initial;
+    cursor: default; 
+}
+
+.files-list li.empty:active {
+    transform: scale(1);
+}
+
 .files-list li {
     padding: 0.8rem 1.2rem;
     border: 1px solid #ccc;
@@ -62,11 +76,6 @@ h1 {
     background-color: #007BFF;
     color: white;
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-
-.empty {
-    color: #888;
-    text-align: center;
 }
 
 .pdf-viewer {

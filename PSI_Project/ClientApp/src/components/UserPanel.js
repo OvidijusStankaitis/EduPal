@@ -57,7 +57,7 @@ export const UserPanel = () => {
                         )}
                     </ul>
                 </div>
-
+                
                 {/* PDF Viewer */}
                 <div className="pdf-viewer">
                     {selectedFile && <iframe src={URL.createObjectURL(selectedFile)} type="application/pdf" />}
