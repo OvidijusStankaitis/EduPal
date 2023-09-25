@@ -39,7 +39,7 @@ export const UserPanel = () => {
                 {/* Upload & Files list */}
                 <div className="file-section">
                     <button onClick={() => document.getElementById('fileInput').click()}>Upload</button>
-                    <input type="file" id="fileInput" accept=".pdf" style={{display: 'none'}} onChange={handleFileChange} />
+                    <input type="file" id="fileInput" accept=".pdf" style={{display: 'none'}} onChange={handleFileChange} multiple />
 
                     <ul className="files-list">
                         {files.length > 0 ? (
