@@ -27,6 +27,7 @@
 
 
     <ItemGroup>
+      <Folder Include="DB\" />
       <Folder Include="Files\" />
       <Folder Include="wwwroot\" />
     </ItemGroup>

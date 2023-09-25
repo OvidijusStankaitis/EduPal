@@ -4,8 +4,16 @@ namespace PSI_Project.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class FileHandlingController : ControllerBase
+public class ConspectusController : ControllerBase
 {
+    private ConspectusHandler _conspectusHandler = new ConspectusHandler();
+    
+    [HttpGet("list")]
+    public IActionResult ListUploadedFiles()
+    {   
+        return Ok(_conspectusHandler.ConspectusList);
+    }
+    
     [HttpPost("upload")]
     public IActionResult UploadFiles(List<IFormFile> files)
     {
@@ -14,11 +22,16 @@ public class FileHandlingController : ControllerBase
             string fileName = formFile.FileName;
             string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Files", fileName);
 
+            // copying file to files folder
             FileStream fileStream = new FileStream(filePath, FileMode.Create);
             formFile.CopyTo(fileStream);
+            
+            // saving file to db (conspectus.txt file)
+            Conspectus conspectus = new Conspectus(filePath);
+            _conspectusHandler.UploadConspectus(conspectus);
         }
         
-        return Ok("Files has been successfully uploaded");
+        return Ok(_conspectusHandler.ConspectusList);
     }
 
     [HttpGet("download/{filename}")]
@@ -32,25 +45,6 @@ public class FileHandlingController : ControllerBase
         }
 
         return NotFound();
-
-    }
-    
-    [HttpGet("list")]
-    public IActionResult ListUploadedFiles()
-    {
-        string filesPath = Path.Combine(Directory.GetCurrentDirectory(), "Files");
-        string[] directoryFiles = Directory.GetFiles(filesPath);
-
-        List<ConspectusFile> filesList = new List<ConspectusFile>();
-        foreach (var filePath in directoryFiles)
-        {
-            filesList.Add(new ConspectusFile
-            {
-                Path = filePath
-            });
-        }
-
-        return Ok(filesList);
     }
 
     [HttpDelete("delete/{filename}")]
@@ -63,6 +57,8 @@ public class FileHandlingController : ControllerBase
             if (System.IO.File.Exists(filePath))
             {
                 System.IO.File.Delete(filePath);
+                Conspectus conspectus = new Conspectus(filePath);
+                _conspectusHandler.RemoveConspectus(conspectus);
             }
         }
         catch (IOException ex)
