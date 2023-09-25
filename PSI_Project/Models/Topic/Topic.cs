@@ -2,14 +2,14 @@
 
 public class Topic
 {
-    public Topic(string topicName, string topicDescription, Subject subject)
+    public Topic(string topicName, string topicDescription, string subjectName)
     {
         Name = topicName;
         Description = topicDescription;
-        Subject = subject;
+        SubjectName = subjectName;
     }
     public string Name {get; set;}
     public string Description {get; set;}
-    public Subject Subject { get; set; } //the subject to which the topic is assigned
+    public string SubjectName { get; set; } //the subject to which the topic is assigned
     
 }

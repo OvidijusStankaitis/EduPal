@@ -6,12 +6,11 @@ namespace PSI_Project.Controllers;
 [Route("[controller]")]
 public class TopicController : ControllerBase
 {
-    [HttpGet("subject/{filename}")]
-    public IActionResult ListTopics(Topic filename)
+    [HttpGet]
+    public IActionResult ListTopics()
     {
         //TESTS
         
-
         return Ok(TopicHandler.TopicList);
     }
 }
