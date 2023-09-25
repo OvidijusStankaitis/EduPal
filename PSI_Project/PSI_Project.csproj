@@ -24,8 +24,6 @@
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**"/>
     </ItemGroup>
 
-
-
     <ItemGroup>
       <Folder Include="DB\" />
       <Folder Include="Files\" />
