@@ -15,15 +15,18 @@ public class ConspectusController : ControllerBase
         try
         {
             Conspectus? conspectus = _conspectusHandler.GetConspectusById(conspectusId);
-            
+        
             if (conspectus == null)
-                throw new Exception("file not found");
-            
+                return NotFound(new { error = "File not found in database." });
+        
             string dirPath = Path.GetDirectoryName(conspectus.Path);
             string filename = Path.GetFileName(conspectus.Path);
-            
+        
             IFileProvider provider = new PhysicalFileProvider(dirPath);
             IFileInfo fileInfo = provider.GetFileInfo(filename);
+            if (!fileInfo.Exists)
+                return NotFound(new { error = "File not found on server." });
+
             var readStream = fileInfo.CreateReadStream();
 
             return File(readStream, "application/pdf", filename);
@@ -31,7 +34,7 @@ public class ConspectusController : ControllerBase
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            return NotFound();
+            return NotFound(new { error = ex.Message });
         }
     }
     
@@ -50,15 +53,18 @@ public class ConspectusController : ControllerBase
             string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Files", fileName);
 
             // copying file to files folder
-            FileStream fileStream = new FileStream(filePath, FileMode.Create);
-            formFile.CopyTo(fileStream);
-            
+            using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                formFile.CopyTo(fileStream);
+            }
+        
             // saving file to conspectus.txt (temp db)
             _conspectusHandler.UploadConspectus(new Conspectus(filePath));
         }
-        
+    
         return Ok(_conspectusHandler.ConspectusList);
     }
+
 
     [HttpGet("download/{conspectusId}")]
     public IActionResult DownloadFile(string conspectusId)
