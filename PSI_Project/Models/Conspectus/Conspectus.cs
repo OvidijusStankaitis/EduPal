@@ -5,7 +5,7 @@ namespace PSI_Project;
 public class Conspectus
 {
     public static string NextId = "0"; // TODO: delete line when database is added
-    public string Id;
+    public string Id{ get; }
     public string Path { get; set; }
     
     public Conspectus(string id, string path)
