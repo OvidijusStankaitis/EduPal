@@ -27,7 +27,7 @@ public class ConspectusHandler
                 if (line == null)
                     continue;
                 
-                String[] conspectusData = line.Split(" ");
+                String[] conspectusData = line.Split(";");
                 Conspectus conspectus = new Conspectus(conspectusData[0], conspectusData[1]);
                 ConspectusList.Add(conspectus);
             }
@@ -56,7 +56,7 @@ public class ConspectusHandler
         try
         {
             StreamWriter sw = File.AppendText(DatabaseFilePath);
-            sw.WriteLine(conspectus.Id + " " + conspectus.Path);
+            sw.WriteLine(conspectus.Id + ";" + conspectus.Path + ";");
             
             ConspectusList.Add(conspectus);
             
@@ -84,7 +84,7 @@ public class ConspectusHandler
             string? line;
             while((line = sr.ReadLine()) != null)
             {
-                string dbConspectusId = line.Split(" ")[0];
+                string dbConspectusId = line.Split(";")[0];
                 if (dbConspectusId == conspectusId)
                     continue;
                 

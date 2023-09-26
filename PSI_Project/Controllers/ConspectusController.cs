@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
 
 namespace PSI_Project.Controllers;
 
@@ -7,6 +8,32 @@ namespace PSI_Project.Controllers;
 public class ConspectusController : ControllerBase
 {
     private ConspectusHandler _conspectusHandler = new ConspectusHandler();
+    
+    [HttpGet("get/{conspectusId}")]
+    public IActionResult GetConspectus(string conspectusId)
+    {
+        try
+        {
+            Conspectus? conspectus = _conspectusHandler.GetConspectusById(conspectusId);
+            
+            if (conspectus == null)
+                throw new Exception("file not found");
+            
+            string dirPath = Path.GetDirectoryName(conspectus.Path);
+            string filename = Path.GetFileName(conspectus.Path);
+            
+            IFileProvider provider = new PhysicalFileProvider(dirPath);
+            IFileInfo fileInfo = provider.GetFileInfo(filename);
+            var readStream = fileInfo.CreateReadStream();
+
+            return File(readStream, "application/pdf", filename);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return NotFound();
+        }
+    }
     
     [HttpGet("list")]
     public IActionResult ListUploadedFiles()
@@ -44,7 +71,7 @@ public class ConspectusController : ControllerBase
         // checking if the file with such path exists
         string filePath = conspectus.Path;
         if (System.IO.File.Exists(filePath))
-            return PhysicalFile(filePath, "application/octet-stream");
+            return PhysicalFile(filePath, "application/pdf");
         
         // if there is no file, return not found error
         return NotFound();
