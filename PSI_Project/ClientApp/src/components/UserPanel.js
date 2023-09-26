@@ -5,6 +5,23 @@ export const UserPanel = () => {
     const [files, setFiles] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
 
+    useEffect(() => {
+        fetch('https://localhost:7283/Conspectus/list')
+            .then(response => response.json())
+            .then(data => {
+                const fileList = data.map(fileObj => {
+                    const fullPath = fileObj.path;
+                    const fileName = fullPath.split('\\').pop();
+                    return {
+                        name: fileName,
+                        isSelected: false
+                    };
+                });
+                setFiles(fileList);
+            })
+            .catch(error => console.error('Error fetching files:', error));
+    }, []);
+
     const handleFileChange = (event) => {
         const fileList = Array.from(event.target.files).map(file => {
             return {
@@ -13,24 +30,29 @@ export const UserPanel = () => {
                 isSelected: false
             };
         });
-        setFiles([...files, ...fileList]);
+        
+        const formData = new FormData();
+        fileList.forEach(file => formData.append('files', file.data));
+
+        fetch('https://localhost:7283/Conspectus/upload', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                const updatedFiles = data.map(fileObj => {
+                    const fullPath = fileObj.path;
+                    const fileName = fullPath.split('\\').pop();
+                    return {
+                        name: fileName,
+                        isSelected: false
+                    };
+                });
+                setFiles(updatedFiles);
+            })
+            .catch(error => console.error('Error uploading files:', error));
     };
-
-    const handleFileClick = (file) => {
-        setSelectedFile(file.data);
-
-        if (file !== selectedFile) {
-            files.forEach(f => {
-                if (f.name === file.name) {
-                    f.isSelected = true;
-                } else {
-                    f.isSelected = false;
-                }
-            });
-            setFiles([...files]);
-        }
-    };
-
+    
     return (
         <div className="user-panel">
             <h1>User File Upload</h1>
@@ -44,23 +66,23 @@ export const UserPanel = () => {
                     <ul className="files-list">
                         {files.length > 0 ? (
                             files.map((file, index) => (
-                                <li
-                                    key={index}
-                                    onClick={() => handleFileClick(file)}
-                                    className={file.isSelected ? 'selected' : ''}
-                                >
-                                    {file.name}
+                                <li key={index}>
+                                    <span className="file-name">
+                                        {file.name} {/* Ensure you're accessing the name property */}
+                                    </span>
+                                    <button className="small-button download-button">Download</button>
+                                    <button className="small-button delete-button">Delete</button>
                                 </li>
                             ))
                         ) : (
                             <li className="empty">Empty list</li>
                         )}
                     </ul>
+
                 </div>
-                
+
                 {/* PDF Viewer */}
                 <div className="pdf-viewer">
-                    {selectedFile && <iframe src={URL.createObjectURL(selectedFile)} type="application/pdf" />}
                 </div>
             </div>
         </div>
