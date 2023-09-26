@@ -11,9 +11,9 @@ public class SubjectController : ControllerBase
     public IActionResult ListSubjects()
     {
         //TESTS
-        SubjectHandler.CreateSubject("a", "b");
-        SubjectHandler.CreateSubject("a1", "b1");
-        SubjectHandler.CreateSubject("a12", "b12");
+        // SubjectHandler.CreateSubject("a", "b");
+        // SubjectHandler.CreateSubject("a1", "b1");
+        // SubjectHandler.CreateSubject("a12", "b12");
         
         return Ok(SubjectHandler.SubjectList);
     }

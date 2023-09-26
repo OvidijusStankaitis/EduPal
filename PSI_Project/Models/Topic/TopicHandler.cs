@@ -19,10 +19,9 @@ public static class TopicHandler
         Topic newTopic = new Topic(topicName, topicDescription, topicSubjectName);
 
         // TODO: data base + file handling
-        //creating a method for READING FROM db (.txt file from now) all the info about the Topics stored 
-        //creating a method for WRITING INTO db (.txt file from now) all the info about the Topics stored
-        TopicList.Add(newTopic);
 
+        TopicList.Add(newTopic);
+        WriteTopicIntoDB(newTopic);
         
         return newTopic;
     }
@@ -35,11 +34,11 @@ public static class TopicHandler
         }
     }
 
-    public static void ReadAllTopicsFromDB()
+    private static void ReadAllTopicsFromDB()
     {
         using (var streamReader = new StreamReader("..//DB//TopicInfromation.txt"))
         {
-            streamReader.ReadLine();
+            streamReader.ReadLine(); //skipping the first line with the info about topics (fields/properties)
             string? topicInfo = streamReader.ReadLine();
             while (topicInfo != null)
             {

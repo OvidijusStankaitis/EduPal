@@ -9,8 +9,6 @@ public class TopicController : ControllerBase
     [HttpGet]
     public IActionResult ListTopics()
     {
-        //TESTS
-        
         return Ok(TopicHandler.TopicList);
     }
 }

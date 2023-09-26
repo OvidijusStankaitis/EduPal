@@ -20,9 +20,6 @@ public static class SubjectHandler
         Subject newSubject = new Subject(subjectName, subjectDescription);
         
         // TODO: data base + file handling
-        //creating a method for READING FROM db (.txt file from now) all the info about the Subjects stored 
-        //creating a method for WRITING INTO db (.txt file from now) all the info about the Subjects stored
-        //DB CONSISTS OF: the fields of the class
         
         SubjectList.Add(newSubject);
         WriteSubjectIntoDB(newSubject);
@@ -42,7 +39,7 @@ public static class SubjectHandler
     {
         using (var streamReader = new StreamReader("..//DB//SubjectInfromation.txt"))
         {
-            streamReader.ReadLine();
+            streamReader.ReadLine(); //skipping the first line with the info about subjects (fields/properties)
             string? subjectInfo = streamReader.ReadLine();
             while (subjectInfo != null)
             {
