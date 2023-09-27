@@ -1,15 +1,10 @@
 ﻿namespace PSI_Project;
 
-public class Topic
+public class Topic : BaseEntity
 {
-    public Topic(string topicName, string topicDescription, string subjectName)
+    public string SubjectName { get; set; } //the subject to which the topic is assigned
+    public Topic(string topicName, string topicDescription, string subjectName) : base(topicName, topicDescription)
     {
-        Name = topicName;
-        Description = topicDescription;
         SubjectName = subjectName;
     }
-    public string Name {get; set;}
-    public string Description {get; set;}
-    public string SubjectName { get; set; } //the subject to which the topic is assigned
-    
 }

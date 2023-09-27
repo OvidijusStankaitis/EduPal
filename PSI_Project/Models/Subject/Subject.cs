@@ -1,12 +1,8 @@
 ﻿namespace PSI_Project;
 
-public class Subject
+public class Subject : BaseEntity
 {
-    public Subject(string subjectName, string subjectDescription)
+    public Subject(string subjectName, string subjectDescription) : base(subjectName, subjectDescription)
     {
-        Name = subjectName;
-        Description = subjectDescription;
     }
-    public string Name {get; set;}
-    public string Description {get; set;}
 }

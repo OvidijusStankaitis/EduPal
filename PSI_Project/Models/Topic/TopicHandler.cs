@@ -7,14 +7,17 @@ public static class TopicHandler
         TopicList = new List<Topic>();
         ReadAllTopicsFromDB();
     }
+
     public static List<Topic> TopicList { get; set; }
 
     // public static void AddNewTopic(Topic topic)
     // {
     //     TopicList.Add(topic);
     // }
-    
-    public static Topic CreateTopic(string topicName, string topicDescription, string topicSubjectName) //subject = the subject in which topic is created
+
+    public static Topic
+        CreateTopic(string topicName, string topicDescription,
+            string topicSubjectName) //subject = the subject in which topic is created
     {
         Topic newTopic = new Topic(topicName, topicDescription, topicSubjectName);
 
@@ -22,15 +25,17 @@ public static class TopicHandler
 
         TopicList.Add(newTopic);
         WriteTopicIntoDB(newTopic);
-        
+
         return newTopic;
     }
-    
+
     private static void WriteTopicIntoDB(Topic topic) //void? what happens in case of an error? 
     {
-        using (var streamWriter = new StreamWriter("..//DB//TopicInfromation.txt",true)) //true makes it possible to append(not overwrite text) to a file 
+        using (var streamWriter =
+               new StreamWriter("..//DB//TopicInfromation.txt",
+                   true)) //true makes it possible to append(not overwrite text) to a file 
         {
-            streamWriter.WriteLine($"{topic.Name} {topic.Description} {topic.SubjectName}");//is async method needed?
+            streamWriter.WriteLine($"{topic.Name} {topic.Description} {topic.SubjectName}"); //is async method needed?
         }
     }
 
@@ -43,7 +48,7 @@ public static class TopicHandler
             while (topicInfo != null)
             {
                 String[] topicFields = topicInfo.Split(new char[] { ' ' });
-                TopicList.Add(new Topic(topicFields[0],topicFields[1], topicFields[2]));
+                TopicList.Add(new Topic(topicFields[0], topicFields[1], topicFields[2]));
             }
         }
     }
