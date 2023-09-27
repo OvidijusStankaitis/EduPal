@@ -6,7 +6,7 @@ public class SubjectHandler : BaseHandler<Subject>
     {
         ReadAllItemsFromDB();
     }
-    
+
     protected override string DbFilePath => "..//DB//SubjectInformation.txt";
 
     protected override string ItemToDbString(Subject item)
@@ -18,5 +18,10 @@ public class SubjectHandler : BaseHandler<Subject>
     {
         String[] subjectFields = dbString.Split(new char[] { ' ' });
         return new Subject(subjectFields[0], subjectFields[1]);
+    }
+
+    protected override void AfterOperation()
+    {
+        Items.Sort();
     }
 }
