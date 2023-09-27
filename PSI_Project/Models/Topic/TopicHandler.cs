@@ -6,7 +6,7 @@ public class TopicHandler : BaseHandler<Topic>
     {
         ReadAllItemsFromDB();
     }
-    
+
     protected override string DbFilePath => "..//DB//TopicInformation.txt";
 
     protected override string ItemToDbString(Topic item)
