@@ -7,22 +7,31 @@ namespace PSI_Project.Controllers;
 [Route("[controller]")]
 public class SubjectController : ControllerBase
 {
+    private readonly SubjectHandler _subjectHandler;
+    private readonly TopicHandler _topicHandler;
+
+    public SubjectController()
+    {
+        _subjectHandler = new SubjectHandler();
+        _topicHandler = new TopicHandler();
+    }
+
     [HttpGet]
     public IActionResult ListSubjects()
     {
         //TESTS
-        // SubjectHandler.CreateSubject("a", "b");
-        // SubjectHandler.CreateSubject("a1", "b1");
-        // SubjectHandler.CreateSubject("a12", "b12");
+        // _subjectHandler.CreateSubject("a", "b");
+        // _subjectHandler.CreateSubject("a1", "b1");
+        // _subjectHandler.CreateSubject("a12", "b12");
         
-        return Ok(SubjectHandler.SubjectList);
+        return Ok(_subjectHandler.Items);
     }
     
     [HttpGet("{subjectName}")]
     public IActionResult ListTopics(string subjectName)
     {
         List<Topic> subjectTopics = new List<Topic>();
-        foreach (var topic in TopicHandler.TopicList)
+        foreach (var topic in _topicHandler.Items)
         {
             if (topic.SubjectName == subjectName)
             {
@@ -31,5 +40,4 @@ public class SubjectController : ControllerBase
         }
         return Ok(subjectTopics); 
     }
-
 }
