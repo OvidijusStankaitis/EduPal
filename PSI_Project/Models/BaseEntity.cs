@@ -3,7 +3,7 @@
 public class BaseEntity
 {
     public string Name {get; set;}
-    public string Description {get; set;}
+    public string? Description {get; set;}
 
 
     public BaseEntity(string name, string description)
