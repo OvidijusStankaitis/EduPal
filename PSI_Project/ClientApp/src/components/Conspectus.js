@@ -1,7 +1,9 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
-import './UserPanel.css';
+import './Conspectus.css';
+import {useParams} from "react-router-dom";
 
-export const UserPanel = () => {
+export const Conspectus = () => {
+    const { topicName } = useParams();
     const [files, setFiles] = useState([]);
     const iframeRef = useRef(null);
 
@@ -71,7 +73,7 @@ export const UserPanel = () => {
 
     return (
         <div className="user-panel">
-            <h1>User File Upload</h1>
+            <h1>{topicName}</h1>
             <div className="main-content">
                 <div className="file-section">
                     <button onClick={() => document.getElementById('fileInput').click()}>Upload</button>
@@ -99,5 +101,3 @@ export const UserPanel = () => {
         </div>
     );
 };
-
-export default UserPanel;
