@@ -1,22 +1,12 @@
-﻿using PSI_Project;
+﻿using PSI_Project.DAL;
+
+namespace PSI_Project.HelperFunctions;
 
 public class TopicHandler : BaseHandler<Topic>
 {
+    public override EntityDbOperations<Topic> EntityDbOperations { get; set; } = new TopicDbOperations();
     public TopicHandler()
     {
-        ReadAllItemsFromDB();
-    }
-
-    protected override string DbFilePath => "..//DB//TopicInformation.txt";
-
-    protected override string ItemToDbString(Topic item)
-    {
-        return $"{item.Id};{item.Name};{item.Description};{item.SubjectName}";
-    }
-
-    protected override Topic StringToItem(string dbString)
-    {
-        String[] topicFields = dbString.Split(new char[] { ';' });
-        return new Topic(topicFields[0], topicFields[1], topicFields[2], topicFields[3]);
+        // ReadAllItemsFromDB();
     }
 }

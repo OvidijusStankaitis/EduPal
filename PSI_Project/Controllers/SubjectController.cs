@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using PSI_Project.HelperFunctions;
 
 namespace PSI_Project.Controllers;
 
@@ -16,13 +17,12 @@ public class SubjectController : ControllerBase
         _topicHandler = new TopicHandler();
     }
 
-    [HttpGet]
+    [HttpGet("list")]
     public IActionResult ListSubjects()
     {
-        //TESTS
-        // _subjectHandler.CreateSubject("a", "b");
-        // _subjectHandler.CreateSubject("a1", "b1");
-        // _subjectHandler.CreateSubject("a12", "b12");
+        // TODO: delete comments
+        // Subject subject = new Subject("0", "pewpew", "aaa");
+        // _subjectHandler.CreateItem(subject);
         
         return Ok(_subjectHandler.Items);
     }

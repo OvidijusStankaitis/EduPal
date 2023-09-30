@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PSI_Project.HelperFunctions;
 
 namespace PSI_Project.Controllers;
 
@@ -13,9 +14,13 @@ public class TopicController : ControllerBase
         _topicHandler = new TopicHandler();
     }
 
-    [HttpGet]
+    [HttpGet("list")]
     public IActionResult ListTopics()
     {
+        // TODO: delete comments
+        // Topic topic = new Topic("0", "pewpew", "aaa", "aaaa");
+        // _topicHandler.CreateItem(topic);
+        
         return Ok(_topicHandler.Items);
     }
 }
