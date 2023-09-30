@@ -22,10 +22,11 @@
         <Content Remove="$(SpaRoot)**"/>
         <None Remove="$(SpaRoot)**"/>
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**"/>
+        <Content Remove="DatabaseOperations\**" />
+        <None Remove="DatabaseOperations\**" />
     </ItemGroup>
     
     <ItemGroup>
-        <Folder Include="DatabaseOperations\" />
         <Folder Include="DB\" />
     </ItemGroup>
 
@@ -38,6 +39,24 @@
       <Folder Include="DB\" />
       <Folder Include="Files\" />
       <Folder Include="wwwroot\" />
+    </ItemGroup>
+
+
+
+
+
+
+    <ItemGroup>
+      <Compile Remove="DatabaseOperations\**" />
+    </ItemGroup>
+
+
+
+
+
+
+    <ItemGroup>
+      <EmbeddedResource Remove="DatabaseOperations\**" />
     </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

@@ -1,9 +1,16 @@
-﻿namespace PSI_Project;
+﻿using PSI_Project.DAL;
 
-public class Subject : BaseEntity, IComparable<Subject>, IEquatable<Subject>
+namespace PSI_Project;
+
+public class Subject : BaseEntity, IStorable, IComparable<Subject>, IEquatable<Subject>
 {
-    public Subject(string subjectName, string subjectDescription) : base(subjectName, subjectDescription)
+    private IdGenerator _idGenerator = new IdGenerator();
+    public string Id{ get; }
+
+    public Subject(string id, string subjectName, string subjectDescription) : base(subjectName, subjectDescription)
     {
+        Id = id;
+        _idGenerator.IncrementId();
     }
 
     public int CompareTo(Subject other)
