@@ -8,6 +8,7 @@ public class SubjectHandler : BaseHandler<Subject>
     }
 
     protected override string DbFilePath => "..//DB//SubjectInformation.txt";
+    protected override string TempDbFilePath => "..//DB//SubjectInformation_temp.txt";
 
     protected override string ItemToDbString(Subject item)
     {
@@ -22,6 +23,6 @@ public class SubjectHandler : BaseHandler<Subject>
 
     protected override void AfterOperation()
     {
-        Items.Sort();
+        ItemList.Sort();
     }
 }
