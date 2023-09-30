@@ -89,4 +89,16 @@ public abstract class BaseHandler<T> where T : BaseEntity
     protected virtual void AfterOperation()
     {
     }
+    
+    public virtual T? CheckItemInList (string itemName)
+    {
+        foreach (var item in ItemList)
+        {
+            if (item.Name == itemName)
+            {
+                return item;
+            }
+        }
+        return null;
+    }
 }

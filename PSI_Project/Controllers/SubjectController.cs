@@ -36,31 +36,29 @@ public class SubjectController : ControllerBase
     }
     
     [HttpPost("upload")]
-    public IActionResult UploadSubject(string subjectName, string subjectDescription)
+    public IActionResult UploadSubject(string subjectName, string subjectDescription = " ") //how can this method get its parameters?
     {
         _subjectHandler.CreateItem(new Subject(subjectName, subjectDescription));
         return Ok(_subjectHandler.ItemList);
     }
     
-    [HttpPost("modify")]
-    public IActionResult ModifySubject(Subject oldSubject,string subjectName, string subjectDescription) 
+    [HttpPost("{oldSubjectName}/modify")] // should the parameter in {} be only string or it can represent different types?
+    public IActionResult ModifySubject(string oldSubjectName,string subjectName, string subjectDescription = " ")
     {
-        _subjectHandler.ModifyItem(oldSubject, new Subject(subjectName, subjectDescription));
-        return Ok(_subjectHandler.ItemList);
+        Subject? oldSubject = _subjectHandler.CheckItemInList(oldSubjectName);
+        if (oldSubject != null)
+        {
+            _subjectHandler.ModifyItem(oldSubject, new Subject(subjectName, subjectDescription));
+            return Ok(_subjectHandler.ItemList);
+        }
+
+        return NotFound();
     }
     
-    [HttpDelete("delete/{subjectName}")] //should "delete/" be here?
+    [HttpDelete("{subjectName}/delete")] //should "delete/" be here?
     public void RemoveSubject(string subjectName)
     {
-        Subject? subjectToRemove = null;
-        foreach (var subject in _subjectHandler.ItemList)
-        {
-            if (subject.Name == subjectName)
-            {
-                subjectToRemove = subject;
-                break;
-            }
-        }
+        Subject? subjectToRemove = _subjectHandler.CheckItemInList(subjectName);
         if (subjectToRemove != null)
         {
             _subjectHandler.RemoveItem(subjectToRemove);

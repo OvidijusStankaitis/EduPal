@@ -21,25 +21,22 @@ public class TopicController : ControllerBase
         return Ok(_topicHandler.ItemList);
     }
     
-    [HttpPost("modify")]
-    public IActionResult ModifyTopic(Topic oldTopic,string topicName, string topicDescription, string subjectName) 
+    [HttpPost("{topicOldName}/modify")]
+    public IActionResult ModifyTopic(string topicOldName,string topicName, string topicDescription, string subjectName)
     {
-        _topicHandler.ModifyItem(oldTopic, new Topic(topicName, topicDescription, subjectName));
-        return Ok(_topicHandler.ItemList);
+        Topic? oldTopic = _topicHandler.CheckItemInList(topicOldName);
+        if (oldTopic != null)
+        {
+            _topicHandler.ModifyItem(oldTopic, new Topic(topicName, topicDescription, subjectName));
+            return Ok(_topicHandler.ItemList);
+        }
+        return NotFound();
     }
     
-    [HttpDelete("delete/{topicName}")] //should "delete/" be here?
+    [HttpDelete("{topicName}/delete")] //should "delete/" be here?
     public void RemoveTopic(string topicName)
     {
-        Topic? topicToRemove = null;
-        foreach (var topic in _topicHandler.ItemList)
-        {
-            if (topicToRemove.Name == topicName)
-            {
-                topicToRemove = topic;
-                break;
-            }
-        }
+        Topic? topicToRemove = _topicHandler.CheckItemInList(topicName);
         if (topicToRemove != null)
         {
             _topicHandler.RemoveItem(topicToRemove);
