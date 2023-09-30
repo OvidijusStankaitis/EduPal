@@ -8,6 +8,8 @@ public class TopicHandler : BaseHandler<Topic>
     }
 
     protected override string DbFilePath => "..//DB//TopicInformation.txt";
+    protected override string TempDbFilePath => "..//DB//TopicInformation_temp.txt";
+
 
     protected override string ItemToDbString(Topic item)
     {

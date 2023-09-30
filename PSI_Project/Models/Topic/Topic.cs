@@ -2,7 +2,7 @@
 
 public class Topic : BaseEntity
 {
-    public string SubjectName { get; set; } //the subject to which the topic is assigned
+    public string SubjectName { get; set; } //the subject to which the topic is assigned to
     public Topic(string topicName, string topicDescription, string subjectName) : base(topicName, topicDescription)
     {
         SubjectName = subjectName;

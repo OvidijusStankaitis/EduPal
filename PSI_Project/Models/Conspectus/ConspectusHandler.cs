@@ -68,7 +68,7 @@ public class ConspectusHandler
         }
     }
 
-    public List<Conspectus> RemoveConspectus(string conspectusId)
+    public List<Conspectus> RemoveConspectus(string conspectusId) //why List<Conspectus> MAYBE VOID??? 
     {
         try
         {

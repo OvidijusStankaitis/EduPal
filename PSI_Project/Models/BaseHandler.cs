@@ -2,11 +2,15 @@
 
 public abstract class BaseHandler<T> where T : BaseEntity
 {
-    public List<T> Items { get; private set; } = new List<T>();
+    public List<T> ItemList { get; private set; } = new List<T>();
 
     // This abstract property ensures that derived classes provide the correct file path.
     protected abstract string DbFilePath { get; }
-
+    protected abstract string TempDbFilePath { get; }
+    
+    // Derived classes must implement how an item is converted to a string for the database/ how a string is converted to an item.
+    protected abstract string ItemToDbString(T item);
+    protected abstract T StringToItem(string dbString);
     protected void WriteItemToDB(T item)
     {
         using (var streamWriter = new StreamWriter(DbFilePath, true))
@@ -14,10 +18,6 @@ public abstract class BaseHandler<T> where T : BaseEntity
             streamWriter.WriteLine(ItemToDbString(item));
         }
     }
-
-    // Derived classes must implement how an item is converted to a string for the database.
-    protected abstract string ItemToDbString(T item);
-
     public void ReadAllItemsFromDB()
     {
         using (var streamReader = new StreamReader(DbFilePath))
@@ -26,18 +26,14 @@ public abstract class BaseHandler<T> where T : BaseEntity
             string? itemInfo = streamReader.ReadLine();
             while (itemInfo != null)
             {
-                Items.Add(StringToItem(itemInfo));
+                ItemList.Add(StringToItem(itemInfo));
                 itemInfo = streamReader.ReadLine();
             }
         }
     }
-
-    // Derived classes must implement how a string from the database is converted to an item.
-    protected abstract T StringToItem(string dbString);
-
     public virtual T CreateItem(T item)
     {
-        Items.Add(item);
+        ItemList.Add(item);
         WriteItemToDB(item);
         AfterOperation();
         return item;
@@ -45,20 +41,45 @@ public abstract class BaseHandler<T> where T : BaseEntity
 
     public virtual bool RemoveItem(T item)
     {
-        bool removed = Items.Remove(item);
+        try
+        {
+            FileInfo tempFile = new FileInfo(DbFilePath);
+            tempFile.MoveTo(TempDbFilePath);
+            
+            StreamReader sr = File.OpenText(TempDbFilePath);
+            StreamWriter sw = File.CreateText(DbFilePath);
+            
+            string? line;
+            while((line = sr.ReadLine()) != null)
+            {
+                string dbId = line.Split(" ")[0]; // TO DO: TO CHOOSE ID FOR SUBJECT AND HANDLER
+                if (dbId == item.Name)
+                    continue;
+                sw.WriteLine(line);
+            }
+            
+            sw.Close();
+            sr.Close();
+            tempFile.Delete();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        
+        bool removed = ItemList.Remove(item);
         if (removed) AfterOperation();
         return removed;
     }
 
     public virtual T ModifyItem(T oldItem, T newItem)
     {
-        int index = Items.IndexOf(oldItem);
+        int index = ItemList.IndexOf(oldItem);
         if (index != -1)
         {
-            Items[index] = newItem;
+            ItemList[index] = newItem;
             AfterOperation();
         }
-
         return newItem;
     }
 
