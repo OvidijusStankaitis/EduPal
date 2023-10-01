@@ -8,32 +8,26 @@ namespace PSI_Project.Controllers;
 [Route("[controller]")]
 public class SubjectController : ControllerBase
 {
-    private readonly SubjectHandler _subjectHandler;
-    private readonly TopicHandler _topicHandler;
-
-    public SubjectController()
-    {
-        _subjectHandler = new SubjectHandler();
-        _topicHandler = new TopicHandler();
-    }
+    private readonly SubjectHandler _subjectHandler = new();
+    private readonly TopicHandler _topicHandler = new();
 
     [HttpGet("list")]
     public IActionResult ListSubjects()
     {
         // TODO: delete comments
-        // Subject subject = new Subject("0", "pewpew", "aaa");
-        // _subjectHandler.CreateItem(subject);
+        // Subject subject = new Subject("pewpew", "aaa");
+        // _subjectHandler.InsertItem(subject);
         
-        return Ok(_subjectHandler.Items);
+        return Ok(_subjectHandler.GetSubjectList());
     }
     
-    [HttpGet("{subjectName}")]
-    public IActionResult ListTopics(string subjectName)
+    [HttpGet("{subjectId}")]
+    public IActionResult ListTopics(string subjectId)
     {
         List<Topic> subjectTopics = new List<Topic>();
         foreach (var topic in _topicHandler.Items)
         {
-            if (topic.SubjectName == subjectName)
+            if (topic.Id == subjectId)
             {
                 subjectTopics.Add(topic);
             }

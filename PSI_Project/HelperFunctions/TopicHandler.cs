@@ -2,11 +2,18 @@
 
 namespace PSI_Project.HelperFunctions;
 
-public class TopicHandler : BaseHandler<Topic>
+public class TopicHandler : BaseHandler<Topic, TopicDbOperations>
 {
-    public override EntityDbOperations<Topic> EntityDbOperations { get; set; } = new TopicDbOperations();
+    public override TopicDbOperations DbOperations { get; set; } = new TopicDbOperations();
+
     public TopicHandler()
     {
-        // ReadAllItemsFromDB();
+        Items = DbOperations.ReadAllItemsFromDB();
     }
+
+    public List<Topic> GetTopicListBySubjectId(string subjectId)
+    {
+        return DbOperations.GetTopicListBySubjectId(subjectId);
+    }
+    
 }

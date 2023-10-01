@@ -14,7 +14,7 @@ public class ConspectusController : ControllerBase
     {
         try
         {
-            Conspectus? conspectus = _conspectusHandler.GetConspectusById(conspectusId);
+            Conspectus? conspectus = _conspectusHandler.GetItemById(conspectusId);
         
             if (conspectus == null)
                 return NotFound(new { error = "File not found in database." });
@@ -38,14 +38,14 @@ public class ConspectusController : ControllerBase
         }
     }
     
-    [HttpGet("list")]
-    public IActionResult ListUploadedFiles()
+    [HttpGet("list/{topicId}")]
+    public IActionResult GetTopicFiles(string topicId)
     {   
-        return Ok(_conspectusHandler.ConspectusList);
+        return Ok(_conspectusHandler.GetConspectusListByTopicId(topicId));
     }
     
-    [HttpPost("upload")]
-    public IActionResult UploadFiles(List<IFormFile> files)
+    [HttpPost("upload/{topicId}")]
+    public IActionResult UploadFiles(string topicId, List<IFormFile> files)
     {
         foreach (var formFile in files)
         {
@@ -57,49 +57,41 @@ public class ConspectusController : ControllerBase
             {
                 formFile.CopyTo(fileStream);
             }
-        
-            // saving file to conspectus.txt (temp db)
-            _conspectusHandler.UploadConspectus(new Conspectus(filePath));
+
+            _conspectusHandler.InsertItem(new Conspectus(topicId, filePath));
         }
     
-        return Ok(_conspectusHandler.ConspectusList);
+        return Ok(_conspectusHandler.GetConspectusListByTopicId(topicId));
     }
-
 
     [HttpGet("download/{conspectusId}")]
     public IActionResult DownloadFile(string conspectusId)
     {
-        // checking if there is conspectus with such id
-        Conspectus? conspectus = _conspectusHandler.GetConspectusById(conspectusId);
+        Conspectus? conspectus = _conspectusHandler.GetItemById(conspectusId);
         if (conspectus == null)
             return NotFound();
         
-        // checking if the file with such path exists
         string filePath = conspectus.Path;
         if (System.IO.File.Exists(filePath))
             return PhysicalFile(filePath, "application/pdf");
         
-        // if there is no file, return not found error
         return NotFound();
     }
 
     [HttpDelete("delete/{conspectusId}")]
     public void DeleteFile(string conspectusId)
     {
-        Conspectus? conspectus = _conspectusHandler.GetConspectusById(conspectusId);
+        Conspectus? conspectus = _conspectusHandler.GetItemById(conspectusId);
         if (conspectus == null)
             return;
-                
+        
         string filePath = conspectus.Path;
         try
         {
             if (System.IO.File.Exists(filePath))
             {
-                // deleting conspectus from filesystem
                 System.IO.File.Delete(filePath);
-                
-                // deleting conspectus from conspectus.txt (temp db)
-                _conspectusHandler.RemoveConspectus(conspectusId);
+                _conspectusHandler.RemoveItem(conspectusId);
             }
         }
         catch (IOException ex)

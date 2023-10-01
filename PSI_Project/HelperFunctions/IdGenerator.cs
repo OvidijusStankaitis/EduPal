@@ -2,16 +2,16 @@
 
 public class IdGenerator
 {
-    public static string CurrId = "-1";
+    private int _currId = -1;   // TODO: IdGenerator isn't working correctly - resolve
 
     public string GenerateId()
     {
         IncrementId();
-        return CurrId;
+        return (_currId).ToString();
     }
 
     public void IncrementId()
     {
-        CurrId = (Int32.Parse(CurrId) + 1).ToString();
+        _currId += 1;
     }
 }

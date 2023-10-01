@@ -5,20 +5,22 @@ namespace PSI_Project;
 
 public class Conspectus : IStorable
 {
-    private IdGenerator _idGenerator = new IdGenerator();
+    private static IdGenerator _idGenerator = new IdGenerator();
     public string Id{ get; }
+    public string TopicId;
     public string Path { get; set; }
     
-    public Conspectus(string id, string path)
+    public Conspectus(string id, string topicId, string path)
     {
         Id = id;
         _idGenerator.IncrementId();
-        
+        TopicId = topicId;
         Path = path;
     }
-    public Conspectus(string path)
+    public Conspectus(string topicId, string path)
     {
         Id = _idGenerator.GenerateId();
+        TopicId = topicId;
         Path = path;
     }
 }

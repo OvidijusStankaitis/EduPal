@@ -7,20 +7,15 @@ namespace PSI_Project.Controllers;
 [Route("[controller]")]
 public class TopicController : ControllerBase
 {
-    private readonly TopicHandler _topicHandler;
+    private readonly TopicHandler _topicHandler = new();
 
-    public TopicController()
-    {
-        _topicHandler = new TopicHandler();
-    }
-
-    [HttpGet("list")]
-    public IActionResult ListTopics()
+    [HttpGet("list/{subjectId}")]
+    public IActionResult ListTopics(String subjectId)
     {
         // TODO: delete comments
-        // Topic topic = new Topic("0", "pewpew", "aaa", "aaaa");
-        // _topicHandler.CreateItem(topic);
+        // Topic topic = new Topic("0", "0", "pewpew");
+        // _topicHandler.InsertItem(topic);
         
-        return Ok(_topicHandler.Items);
+        return Ok(_topicHandler.GetTopicListBySubjectId(subjectId));
     }
 }

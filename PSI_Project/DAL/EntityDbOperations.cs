@@ -1,36 +1,81 @@
 ﻿namespace PSI_Project.DAL;
 
-public abstract class EntityDbOperations<T> where T : BaseEntity
+public abstract class EntityDbOperations<T> where T : IStorable
 {
-    // This abstract property ensures that derived classes provide the correct file path.
     protected abstract string DbFilePath { get; }
-    public List<T> Items { get; private set; } = new List<T>();
-    
-    public void WriteItemToDB(T item)
+    protected abstract string ItemToDbString(T item);
+    protected abstract T StringToItem(string dbString);
+
+    public T? GetById(string itemId)
     {
-        using (StreamWriter sw = File.AppendText(DbFilePath))
+        using (StreamReader sr = File.OpenText(DbFilePath))
         {
-            sw.WriteLine(ItemToDbString(item));
+            string? line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                T item = StringToItem(line);
+                if (item.Id == itemId)
+                    return item;
+            }
         }
+
+        return default(T?);
     }
     
-    // Derived classes must implement how an item is converted to a string for the database.
-    protected abstract string ItemToDbString(T item);
-
-    public void ReadAllItemsFromDB()
+    public List<T> ReadAllItemsFromDB()
     {
+        List<T> items = new List<T>();
+        
         using (var streamReader = new StreamReader(DbFilePath))
         {
             streamReader.ReadLine();
             string? itemInfo = streamReader.ReadLine();
             while (itemInfo != null)
             {
-                Items.Add(StringToItem(itemInfo));
+                items.Add(StringToItem(itemInfo));
                 itemInfo = streamReader.ReadLine();
             }
         }
+
+        return items;
     }
 
-    // Derived classes must implement how a string from the database is converted to an item.
-    protected abstract T StringToItem(string dbString);
+    public void InsertItem(T item)
+    {
+        using (StreamWriter sw = File.AppendText(DbFilePath))
+        {
+            sw.WriteLine(ItemToDbString(item));
+        }
+    }
+
+    public void RemoveItem(string itemId)
+    {
+        try
+        {
+            string tempFileName = Path.GetFileNameWithoutExtension(DbFilePath) + "_temp" + ".txt";
+            string tempFilePath = Path.Combine(Directory.GetCurrentDirectory(), "DB", tempFileName);
+            FileInfo oldDbFile = new FileInfo(DbFilePath);
+            oldDbFile.MoveTo(tempFilePath);
+            
+            using (StreamReader sr = File.OpenText(tempFilePath))
+            using (StreamWriter sw = File.CreateText(DbFilePath))
+            {
+                string? line;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    T item = StringToItem(line);
+                    if (item.Id.Equals(itemId))
+                        continue;
+
+                    sw.WriteLine(line);
+                }
+            }
+            
+            oldDbFile.Delete();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
 }

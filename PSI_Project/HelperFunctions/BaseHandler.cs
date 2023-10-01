@@ -1,24 +1,44 @@
-﻿using PSI_Project;
-using PSI_Project.DAL;
+﻿using PSI_Project.DAL;
 
-public abstract class BaseHandler<T> where T : BaseEntity
+namespace PSI_Project.HelperFunctions;
+
+public abstract class BaseHandler<T, S> 
+    where T : IStorable
+    where S : EntityDbOperations<T>
 {
-    public abstract EntityDbOperations<T> EntityDbOperations { get; set; }
+    public abstract S DbOperations { get; set; }
 
-    public List<T> Items { get; private set; } = new List<T>();
+    public List<T> Items { get; set; } = new List<T>();
+    
+    public virtual T? GetItemById(string itemId)
+    {
+        return DbOperations.GetById(itemId);
+    }
 
-    public virtual T CreateItem(T item)
+    public virtual T InsertItem(T item)
     {
         Items.Add(item);
-        EntityDbOperations.WriteItemToDB(item);
+        DbOperations.InsertItem(item);
         AfterOperation();
         return item;
     }
 
-    public virtual bool RemoveItem(T item)
+    public virtual bool RemoveItem(string itemId)
     {
-        bool removed = Items.Remove(item);
-        if (removed) AfterOperation();
+        DbOperations.RemoveItem(itemId);
+        bool removed = false;
+        foreach (T item in Items)
+        {
+            if (item.Id == itemId)
+            {
+                removed = Items.Remove(item);
+                break;
+            }
+        } 
+        
+        if (removed) 
+            AfterOperation();
+        
         return removed;
     }
 
@@ -35,8 +55,6 @@ public abstract class BaseHandler<T> where T : BaseEntity
     }
 
     // This method is executed after any operation. By default, it does nothing.
-    // Derived classes can override it to add specific behavior, like sorting. 
-    // Only overriden in SubjectHandler class, not TopicHandler class.
     protected virtual void AfterOperation()
     {
     }

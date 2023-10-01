@@ -4,7 +4,7 @@ namespace PSI_Project;
 
 public class Subject : BaseEntity, IStorable, IComparable<Subject>, IEquatable<Subject>
 {
-    private IdGenerator _idGenerator = new IdGenerator();
+    private static IdGenerator _idGenerator = new IdGenerator();
     public string Id{ get; }
 
     public Subject(string id, string subjectName, string subjectDescription) : base(subjectName, subjectDescription)
@@ -12,6 +12,12 @@ public class Subject : BaseEntity, IStorable, IComparable<Subject>, IEquatable<S
         Id = id;
         _idGenerator.IncrementId();
     }
+    
+    public Subject(string subjectName, string subjectDescription) : base(subjectName, subjectDescription)
+    {
+        Id = _idGenerator.GenerateId();
+    }
+
 
     public int CompareTo(Subject other)
     {
