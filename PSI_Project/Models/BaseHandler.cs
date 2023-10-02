@@ -22,7 +22,6 @@ public abstract class BaseHandler<T> where T : BaseEntity
     {
         using (var streamReader = new StreamReader(DbFilePath))
         {
-            streamReader.ReadLine();
             string? itemInfo = streamReader.ReadLine();
             while (itemInfo != null)
             {
@@ -70,17 +69,6 @@ public abstract class BaseHandler<T> where T : BaseEntity
         bool removed = ItemList.Remove(item);
         if (removed) AfterOperation();
         return removed;
-    }
-
-    public virtual T ModifyItem(T oldItem, T newItem)
-    {
-        int index = ItemList.IndexOf(oldItem);
-        if (index != -1)
-        {
-            ItemList[index] = newItem;
-            AfterOperation();
-        }
-        return newItem;
     }
 
     // This method is executed after any operation. By default, it does nothing.

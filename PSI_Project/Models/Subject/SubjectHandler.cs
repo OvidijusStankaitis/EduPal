@@ -7,8 +7,8 @@ public class SubjectHandler : BaseHandler<Subject>
         ReadAllItemsFromDB();
     }
 
-    protected override string DbFilePath => "..//DB//SubjectInformation.txt";
-    protected override string TempDbFilePath => "..//DB//SubjectInformation_temp.txt";
+    protected override string DbFilePath => "DB//SubjectInformation.txt";
+    protected override string TempDbFilePath => "DB//SubjectInformation_temp.txt";
 
     protected override string ItemToDbString(Subject item)
     {
