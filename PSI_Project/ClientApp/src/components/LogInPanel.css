@@ -5,14 +5,16 @@
     font-style: normal;
 }
 
-*, button, input, h1, .dialog-header {
+*, button, input, h1 {
     font-family: 'Jetbrains Mono', monospace;
 }
 
 .edu{
+    z-index: 1;
     margin-bottom: 2rem;
     font-size: 8rem;
     margin-top: 35rem;
+    color: white;
 }
 
 body {
@@ -22,9 +24,32 @@ body {
     position: relative;
     align-items: center;
     justify-content: center;
+    background: radial-gradient(circle at center, rgba(34, 34, 85, 1) 0%, rgba(23, 23, 58, 1) 30%, rgba(12, 12, 30, 1) 60%, rgba(0, 0, 0, 1) 100%);
+    overflow: hidden;
+}
+
+.star {
+    z-index: -1;
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background-color: white;
+    border-radius: 50%;
+    opacity: 0.7;
+    animation: flyStar infinite linear;
+}
+
+@keyframes flyStar {
+    0% {
+        transform: translate(0, 0);
+    }
+    100% {
+        transform: translate(calc(50vw * var(--dx)), calc(50vh * var(--dy)));
+    }
 }
 
 .buttons {
+    z-index: 1;
     margin-top: 0vh;
     display: flex;
     flex-direction: column;
@@ -39,22 +64,22 @@ body {
     height: 10vh;
     width: 20vw;
     padding: 2vh 4vw;
-    font-size: 1.8vh;
+    font-size: 2.5vh;
     border: none;
     cursor: pointer;
-    background-color: #007BFF;
-    color: white;
+    background-color: rgba(58, 58, 128, 0.8);
+    color: #E0E0FF; 
     border-radius: 0.5vw;
     transition: background-color 0.3s;
+    box-shadow: 0 0.5vw 1vw rgba(34, 34, 85, 0.6); 
+}
+
+.buttons button:hover {
+    background-color: rgba(80, 80, 160, 0.9); 
 }
 
 .buttons button:hover, .form-section button:hover, .dialog-footer button:hover {
-    background-color: #0056b3;
-}
-
-.container.blurred .buttons {
-    filter: blur(0.5vw); /* Adjusted from pixels */
-    pointer-events: none;
+    background-color: rgba(80, 80, 160, 0.9);
 }
 
 .dialog {
@@ -65,41 +90,32 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    height: 50vh;
+    height: 60vh;
     width: 50vw;
-    background: #fff;
+    background: radial-gradient(circle at center, rgba(45, 45, 90, 0.95) 0%, rgba(30, 30, 60, 0.95) 70%, rgba(15, 15, 30, 0.95) 100%);
     padding: 2vh;
     border-radius: 1vw;
+    box-shadow: 0 0.5vw 2vw rgba(0, 0, 0, 0.5); /* Adding a shadow for depth */
     z-index: 100;
     animation: slideCenter 0.5s forwards;
 }
 
-.dialog-header {
-    text-align: center;
-    padding-bottom: 2vh;
-    font-weight: bold;
-    font-size: 2.5vh;
-}
-
 .dialog-content {
     display: flex;
-    justify-content: space-between; /* Distribute space between form sections */
+    justify-content: center;
 }
 
 .form-section {
     display: flex;
-    justify-content: center;
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center children horizontally */
+    justify-content: flex-start; /* Start children from the top */
     flex: 1;
     padding: 2vh 2vw;
 }
 
 .form-section input, .form-section button {
-    width: 100%;
     margin: 0 auto 2vh;
-}
-
-.form-section:first-child {
-    border-right: 1px solid #ccc;
 }
 
 .form-section button {
@@ -107,10 +123,11 @@ body {
     font-size: 1.8vh;
     border: none;
     cursor: pointer;
-    background-color: #007BFF;
-    color: white;
+    background-color: rgba(58, 58, 128, 0.8);
+    color: #E0E0FF;
     border-radius: 0.5vw;
     transition: background-color 0.3s;
+    box-shadow: 0 0.5vw 1vw rgba(34, 34, 85, 0.6);
 }
 
 .dialog-footer button {
@@ -118,10 +135,11 @@ body {
     font-size: 1.5vh;
     border: none;
     cursor: pointer;
-    background-color: #007BFF;
-    color: white;
+    background-color: rgba(58, 58, 128, 0.8);
+    color: #E0E0FF;
     border-radius: 0.5vw;
     transition: background-color 0.3s;
+    box-shadow: 0 0.5vw 1vw rgba(34, 34, 85, 0.6);
     width: 20vw;
     height: 5vh;
     margin-bottom: -2vh;
@@ -140,4 +158,38 @@ body {
     100% {
         transform: translate(-50%, -50%);
     }
+}
+
+input {
+    width: 20vw; /* Set the width same as buttons */
+    padding: 1vh 1vw; /* Adjust for comfortable padding */
+    margin-bottom: 1vh; /* Space between inputs */
+    border: 1px solid rgba(58, 58, 128, 0.8); /* Border color */
+    border-radius: 0.5vw; /* Rounded corners */
+    background-color: rgba(45, 45, 90, 0.95); /* Background color */
+    color: #E0E0FF; /* Text color */
+    font-size: 1.8vh; /* Font size */
+    transition: border-color 0.3s, box-shadow 0.3s; /* Smooth transition for border and shadow */
+
+    /* Placeholder styling */
+    ::placeholder {
+        color: rgba(224, 224, 255, 0.7); /* Lighter text color for placeholder */
+    }
+
+    /* Focus styling */
+    :focus {
+        border-color: rgba(80, 80, 160, 0.9); /* Change border color on focus */
+        box-shadow: 0 0 0.5vw rgba(80, 80, 160, 0.5); /* Add a subtle shadow on focus */
+        outline: none; /* Remove default browser outline */
+    }
+}
+
+.form-name {
+    color: #E0E0FF; /* Text color */
+    font-size: 2.5vh; /* Font size */
+    margin-bottom: 1vh; /* Space below the header */
+    text-align: center; /* Center the text */
+    width: 100%; /* Take full width */
+    margin-top: -5vh; /* Remove default margin */
+    margin-bottom: 3vh;
 }

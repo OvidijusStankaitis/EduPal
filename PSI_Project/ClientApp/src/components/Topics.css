@@ -1,0 +1,130 @@
+﻿.topics-page-container {
+    width: 100vw;
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+}
+
+.topics-container {
+    padding-top: 2rem;
+    height: calc(100vh - 2rem);
+}
+
+h1 {
+    color: white;
+    display: flex;
+    justify-content: center;
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    margin-top: 2rem;
+}
+
+.topics-grid {
+    width: 100vw;
+    display: grid;
+    justify-content: center;
+    grid-template-columns: 25vh 25vh 25vh 25vh;
+    gap: 10vh;
+    margin-top: 5rem;
+}
+
+.topic-grid-item {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: rgba(58, 58, 128, 0.8);
+    color: white;
+    position: relative;
+    aspect-ratio: 1;
+    height: 25vh;
+    width: 25vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-topic {
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.add-topic:hover {
+    background-color: rgba(80, 80, 160, 0.9);
+    box-shadow: 0 0 0.5rem rgba(255, 255, 255, 0.5);
+}
+
+.plus-icon {
+    font-size: 2rem;
+    border: 0.125rem solid white;
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s;
+}
+
+.add-topic:hover .plus-icon {
+    color: rgba(58, 58, 128, 0.8);
+}
+
+.dialog-t {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 25vh;
+    width: 30vw;
+    background: radial-gradient(circle at center, rgba(45, 45, 90, 0.95) 0%, rgba(30, 30, 60, 0.95) 70%, rgba(15, 15, 30, 0.95) 100%);
+    padding: 4vh;
+    border-radius: 1vw;
+    box-shadow: 0 0.5vw 2vw rgba(0, 0, 0, 0.5); /* Adding a shadow for depth */
+    z-index: 100;
+    animation: slideCenter 0.5s forwards;
+}
+
+.dialog-t button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    background-color: rgba(58, 58, 128, 0.8);
+    color: white;
+    transition: background-color 0.3s;
+    width: 100%;
+}
+
+.dialog-t button:hover {
+    background-color: rgba(80, 80, 160, 0.9);
+}
+
+.dialog-t input {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    width: 28vw; /* Set the width same as buttons */
+    padding: 1vh 1vw; /* Adjust for comfortable padding */
+    border: 1px solid rgba(58, 58, 128, 0.8); /* Border color */
+    border-radius: 0.5vw; /* Rounded corners */
+    background-color: rgba(45, 45, 90, 0.95); /* Background color */
+    color: #E0E0FF; /* Text color */
+    font-size: 1.8vh; /* Font size */
+    transition: border-color 0.3s, box-shadow 0.3s; /* Smooth transition for border and shadow */
+
+    /* Placeholder styling */
+    ::placeholder {
+        color: rgba(224, 224, 255, 0.7); /* Lighter text color for placeholder */
+    }
+
+    /* Focus styling */
+    :focus {
+        border-color: rgba(80, 80, 160, 0.9); /* Change border color on focus */
+        box-shadow: 0 0 0.5vw rgba(80, 80, 160, 0.5); /* Add a subtle shadow on focus */
+        outline: none; /* Remove default browser outline */
+    }
+}

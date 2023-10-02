@@ -1,0 +1,153 @@
+﻿*, h1, button, li, .empty {
+    font-family: 'Jetbrains Mono', monospace;
+}
+
+h1 {
+    color: white;
+    display: flex;
+    justify-content: center;
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    margin-top: -0.5rem;
+}
+
+/* Base styles for the upload button */
+button {
+    padding: 1rem 2rem;
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    border: none;
+    border-radius: 0.5rem;
+    background-color: rgba(70, 70, 140, 0.9); /* Adjusted color for more contrast */
+    color: #E0E0FF; /* Text color from the space theme */
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s; /* Added transition for the glow effect */
+    width: 100%;
+}
+
+button:hover {
+    background-color: rgba(100, 100, 180, 0.9); /* Lighter shade of purple on hover */
+    box-shadow: 0 0 0.5vw rgba(100, 100, 180, 0.5); /* Light purple glow effect */
+}
+
+.main-content {
+    display: grid;
+    width: 100vw;
+    height: 80vh;
+    grid-template-columns: 1fr 2fr;
+    grid-gap: 2rem;  /* spacing between grid items */
+    margin-right: 1rem;
+}
+
+.file-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: 1.5rem;
+    padding: 1rem;
+    border: 0.2vw solid rgba(58, 58, 128, 0.8); /* Adjusted border color to match the scheme */
+    border-radius: 1rem;
+    background: radial-gradient(circle at center, rgba(45, 45, 90, 0.95) 0%, rgba(30, 30, 60, 0.95) 70%, rgba(15, 15, 30, 0.95) 100%);
+    box-shadow: 0 0.5vw 2vw rgba(0, 0, 0, 0.5); /* Adding a shadow for depth, similar to the dialog */
+}
+
+.files-list {
+    overflow-y: auto; /* scroll if list gets too long */
+    max-height: 60vh; /* limit height of file list */
+    width: 100%; /* use the full width of the container */
+    list-style-type: none; /* removes the bullet points from the list */
+    padding-left: 0; /* remove default padding from ul */
+}
+
+.empty{
+    color: #888;
+}
+
+.files-list li.empty:hover {
+    color: #888;
+    background-color: initial;
+    cursor: default; 
+}
+
+.small-button {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+    border: none;
+    border-radius: 0.5rem;
+    width: auto;
+    margin-bottom: 0; /* Ensure no extra margin at the bottom */
+}
+
+.file-name {
+    flex: 1;
+    cursor: pointer;
+}
+
+/* Base styles for both buttons */
+.download-button, .delete-button {
+    margin-left: 0.5rem;
+    transition: box-shadow 0.3s, background-color 0.3s; /* Smooth transition for glow effect and color */
+    color: #E0E0FF; /* Text color from the space theme */
+}
+
+/* Specific styles for download button */
+.download-button {
+    background-color: rgba(70, 70, 140, 0.9); /* Adjusted color for more contrast */
+}
+
+.download-button:hover {
+    background-color: rgba(0, 255, 0, 0.6); /* Greenish color on hover */
+    box-shadow: 0 0 0.5vw rgba(0, 255, 0, 0.5); /* Green glow effect */
+}
+
+/* Specific styles for delete button */
+.delete-button {
+    background-color: rgba(70, 70, 140, 0.9); /* Adjusted color for more contrast */
+}
+
+.delete-button:hover {
+    background-color: rgba(255, 0, 0, 0.6); /* Reddish color on hover */
+    box-shadow: 0 0 0.5vw rgba(255, 0, 0, 0.5); /* Red glow effect */
+}
+
+.files-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1.2rem;
+    border: 1px solid rgba(58, 58, 128, 0.8); /* Adjusted border color to match the scheme */
+    border-radius: 0.5rem;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+    margin-bottom: 0.5rem;
+    background-color: rgba(45, 45, 90, 0.7); /* Base color */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Slightly darker shadow for depth */
+}
+
+.files-list li:nth-child(even) {
+    background-color: rgba(30, 30, 60, 0.7); /* Slightly different shade for even items */
+}
+
+.files-list li:hover {
+    background-color: rgba(15, 15, 30, 0.8); /* Darker shade on hover */
+}
+
+.pdf-viewer {
+    flex: 1;
+    margin-right: 1.5rem;
+    overflow: auto;
+    background: radial-gradient(circle at center, rgba(45, 45, 90, 0.95) 0%, rgba(30, 30, 60, 0.95) 70%, rgba(15, 15, 30, 0.95) 100%);
+    border: 0.2vw solid rgba(58, 58, 128, 0.8); /* Adjusted border color to match the scheme */
+    border-radius: 1rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0.5vw 2vw rgba(0, 0, 0, 0.5); /* Adding a shadow for depth, similar to the dialog */
+}
+
+.pdf-viewer iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
