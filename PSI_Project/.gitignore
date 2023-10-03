@@ -233,5 +233,6 @@ _Pvt_Extensions
 
 *.pdf
 conspectus.txt
-TopicInformation.txt
-SubjectInformation.txt
+/DB/conspectus.txt
+/DB/subject.txt
+/DB/topic.txt

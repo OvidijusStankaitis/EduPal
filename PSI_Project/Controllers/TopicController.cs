@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using PSI_Project.HelperFunctions;
 
 namespace PSI_Project.Controllers;
 
@@ -15,7 +16,7 @@ public class TopicController : ControllerBase
         List<Topic> subjectTopics = new List<Topic>();
         foreach (var topic in _topicHandler.ItemList)
         {
-            if (topic.SubjectName == subjectName)
+            if (topic.SubjectName.Equals(subjectName))
             {
                 subjectTopics.Add(topic);
             }
@@ -34,7 +35,7 @@ public class TopicController : ControllerBase
             string topicDescription = topicDescriptionProperty.GetString() ?? " ";
             string subjectName = subjectNameProperty.GetString();
 
-            _topicHandler.CreateItem(new Topic(topicName, topicDescription, subjectName));
+            _topicHandler.InsertItem(new Topic(topicName, subjectName, topicDescription));
             return Ok(_topicHandler.ItemList);
         }
         return BadRequest("Invalid request body");
@@ -46,7 +47,7 @@ public class TopicController : ControllerBase
         Topic? topicToRemove = _topicHandler.CheckItemInList(topicName);
         if (topicToRemove != null)
         {
-            _topicHandler.RemoveItem(topicToRemove);
+            _topicHandler.RemoveItem(topicToRemove.SubjectId);
         }
     }
 }
