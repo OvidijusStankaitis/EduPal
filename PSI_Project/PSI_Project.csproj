@@ -25,10 +25,6 @@
         <Content Remove="DatabaseOperations\**" />
         <None Remove="DatabaseOperations\**" />
     </ItemGroup>
-    
-    <ItemGroup>
-        <Folder Include="DB\" />
-    </ItemGroup>
 
 
 
@@ -36,7 +32,6 @@
 
 
     <ItemGroup>
-      <Folder Include="DB\" />
       <Folder Include="Files\" />
       <Folder Include="wwwroot\" />
     </ItemGroup>

@@ -1,17 +1,48 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Subjects.css';
 
 export const Subjects = () => {
     const [subjects, setSubjects] = useState([]);
     const [showDialog, setShowDialog] = useState(false);
+    const [refreshSubjects, setRefreshSubjects] = useState(false);
     const [newSubjectName, setNewSubjectName] = useState('');
 
-    const handleAddSubject = () => {
+    useEffect(() => {
+        const fetchSubjects = async () => {
+            const response = await fetch('https://localhost:7283/Subject/list');
+            const data = await response.json();
+            console.log("Fetched subjects:", data);
+            setSubjects(data.map(subject => subject.name));
+        };
+
+        fetchSubjects();
+    }, [refreshSubjects]);
+
+    const handleAddSubject = async () => {
         if (newSubjectName) {
-            setSubjects([newSubjectName, ...subjects]);
-            setNewSubjectName('');
-            setShowDialog(false);
+            const requestBody = {
+                subjectName: newSubjectName,
+                subjectDescription: ""  // default empty description
+            };
+            console.log(requestBody);
+            const response = await fetch('https://localhost:7283/Subject/upload', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setSubjects(data.map(subject => subject.name));
+                setNewSubjectName('');
+                setShowDialog(false);
+                setRefreshSubjects(prev => !prev);  // Toggle the state to trigger re-fetching
+            } else {
+                console.error("Error uploading subject:", await response.text());
+            }
         }
     };
 
