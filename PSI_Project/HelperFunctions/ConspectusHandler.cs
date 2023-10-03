@@ -6,10 +6,14 @@ namespace PSI_Project;
 public class ConspectusHandler : BaseHandler<Conspectus, ConspectusDbOperations>
 {
     public override ConspectusDbOperations DbOperations { get; set; } = new ConspectusDbOperations();
-    
+
     public List<Conspectus> GetConspectusListByTopicName(string topicName)
     {
         return DbOperations.GetConspectusListByTopicName(topicName);
     }
 
+    public bool IsFileUsedInOtherTopics(string filePath)
+    {
+        return DbOperations.IsFileUsedInOtherTopics(filePath);
+    }
 }

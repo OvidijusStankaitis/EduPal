@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
+using PSI_Project.DAL;
 
 namespace PSI_Project.Controllers;
 
@@ -8,7 +9,7 @@ namespace PSI_Project.Controllers;
 public class ConspectusController : ControllerBase
 {
     private ConspectusHandler _conspectusHandler = new ConspectusHandler();
-    
+
     [HttpGet("get/{conspectusId}")]
     public IActionResult GetConspectus(string conspectusId)
     {
@@ -37,13 +38,13 @@ public class ConspectusController : ControllerBase
             return NotFound(new { error = ex.Message });
         }
     }
-    
+
     [HttpGet("list/{topicName}")]
     public IActionResult GetTopicFiles(string topicName)
     {   
         return Ok(_conspectusHandler.GetConspectusListByTopicName(topicName));
     }
-    
+
     [HttpPost("upload/{topicName}")]
     public IActionResult UploadFiles(string topicName, List<IFormFile> files)
     {
@@ -70,11 +71,19 @@ public class ConspectusController : ControllerBase
         Conspectus? conspectus = _conspectusHandler.GetItemById(conspectusId);
         if (conspectus == null)
             return NotFound();
-        
+    
         string filePath = conspectus.Path;
         if (System.IO.File.Exists(filePath))
-            return PhysicalFile(filePath, "application/pdf");
-        
+        {
+            var fileBytes = System.IO.File.ReadAllBytes(filePath);
+            var response = new FileContentResult(fileBytes, "application/pdf")
+            {
+                FileDownloadName = Path.GetFileName(filePath) // Set the desired filename
+            };
+            Response.Headers.Add("Content-Disposition", "attachment; filename=" + Path.GetFileName(filePath));
+            return response;
+        }
+    
         return NotFound();
     }
 
@@ -88,10 +97,12 @@ public class ConspectusController : ControllerBase
         string filePath = conspectus.Path;
         try
         {
-            if (System.IO.File.Exists(filePath))
+            _conspectusHandler.RemoveItem(conspectusId);
+
+            // Check if the file is used in other topics before deleting
+            if (!_conspectusHandler.IsFileUsedInOtherTopics(filePath))
             {
                 System.IO.File.Delete(filePath);
-                _conspectusHandler.RemoveItem(conspectusId);
             }
         }
         catch (IOException ex)

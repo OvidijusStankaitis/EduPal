@@ -232,7 +232,6 @@ _Pvt_Extensions
 .fake/
 
 *.pdf
-conspectus.txt
 /DB/conspectus.txt
 /DB/subject.txt
 /DB/topic.txt
