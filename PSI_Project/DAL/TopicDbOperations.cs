@@ -6,13 +6,13 @@ public class TopicDbOperations : EntityDbOperations<Topic>
 
     protected override string ItemToDbString(Topic item)
     {
-        return $"{item.Id};{item.SubjectId};{item.Name}";
+        return $"{item.Id};{item.SubjectName};{item.Name};{item.Description};";
     }
 
     protected override Topic StringToItem(string dbString)
     {
         String[] topicFields = dbString.Split(";");
-        return new Topic(topicFields[0], topicFields[1], topicFields[2]);
+        return new Topic(topicFields[0], topicFields[1], topicFields[2], topicFields[3]);
     }
     
     public List<Topic> GetTopicListBySubjectId(string subjectId)

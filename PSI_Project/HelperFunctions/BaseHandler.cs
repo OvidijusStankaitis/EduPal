@@ -3,12 +3,12 @@
 namespace PSI_Project.HelperFunctions;
 
 public abstract class BaseHandler<T, S> 
-    where T : IStorable
+    where T : BaseEntity, IStorable
     where S : EntityDbOperations<T>
 {
     public abstract S DbOperations { get; set; }
 
-    public List<T> Items { get; set; } = new List<T>();
+    public List<T> ItemList { get; set; } = new List<T>();
     
     public virtual T? GetItemById(string itemId)
     {
@@ -17,7 +17,7 @@ public abstract class BaseHandler<T, S>
 
     public virtual T InsertItem(T item)
     {
-        Items.Add(item);
+        ItemList.Add(item);
         DbOperations.InsertItem(item);
         AfterOperation();
         return item;
@@ -27,11 +27,11 @@ public abstract class BaseHandler<T, S>
     {
         DbOperations.RemoveItem(itemId);
         bool removed = false;
-        foreach (T item in Items)
+        foreach (T item in ItemList)
         {
             if (item.Id == itemId)
             {
-                removed = Items.Remove(item);
+                removed = ItemList.Remove(item);
                 break;
             }
         } 
@@ -41,17 +41,17 @@ public abstract class BaseHandler<T, S>
         
         return removed;
     }
-
-    public virtual T ModifyItem(T oldItem, T newItem)
+    
+    public virtual T? CheckItemInList (string itemName)
     {
-        int index = Items.IndexOf(oldItem);
-        if (index != -1)
+        foreach (var item in ItemList)
         {
-            Items[index] = newItem;
-            AfterOperation();
+            if (item.Name.Equals(itemName))
+            {
+                return item;
+            }
         }
-
-        return newItem;
+        return default;
     }
 
     // This method is executed after any operation. By default, it does nothing.

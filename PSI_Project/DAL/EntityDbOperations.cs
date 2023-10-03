@@ -28,7 +28,6 @@ public abstract class EntityDbOperations<T> where T : IStorable
         
         using (var streamReader = new StreamReader(DbFilePath))
         {
-            streamReader.ReadLine();
             string? itemInfo = streamReader.ReadLine();
             while (itemInfo != null)
             {

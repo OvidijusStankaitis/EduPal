@@ -8,7 +8,7 @@ public class SubjectHandler : BaseHandler<Subject, SubjectDbOperations>
 
     public SubjectHandler()
     {
-        Items = DbOperations.ReadAllItemsFromDB();
+        ItemList = DbOperations.ReadAllItemsFromDB();
     }
 
     public List<Subject> GetSubjectList()
@@ -18,6 +18,6 @@ public class SubjectHandler : BaseHandler<Subject, SubjectDbOperations>
     
     protected override void AfterOperation()
     {
-        Items.Sort();
+        ItemList.Sort();
     }
 }

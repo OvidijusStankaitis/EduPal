@@ -6,7 +6,7 @@ public class ConspectusDbOperations : EntityDbOperations<Conspectus>
     
     protected override string ItemToDbString(Conspectus item)
     {
-        return $"{item.Id};{item.TopicId};{item.Path}";
+        return $"{item.Id};{item.TopicName};{item.Path};";
     }
     
     protected override Conspectus StringToItem(string dbString)
@@ -15,7 +15,7 @@ public class ConspectusDbOperations : EntityDbOperations<Conspectus>
         return new Conspectus(fields[0], fields[1], fields[2]);
     }
 
-    public List<Conspectus> GetConspectusListByTopicId(string topicId)
+    public List<Conspectus> GetConspectusListByTopicName(string topicName)
     {
         List<Conspectus> conspectusList = new List<Conspectus>();
         
@@ -25,7 +25,7 @@ public class ConspectusDbOperations : EntityDbOperations<Conspectus>
             while ((line = sr.ReadLine()) != null)
             {
                 Conspectus conspectus = StringToItem(line);
-                if (conspectus.TopicId == topicId)
+                if (conspectus.TopicName == topicName)
                     conspectusList.Add(conspectus);
             }
         }

@@ -38,14 +38,14 @@ public class ConspectusController : ControllerBase
         }
     }
     
-    [HttpGet("list/{topicId}")]
-    public IActionResult GetTopicFiles(string topicId)
+    [HttpGet("list/{topicName}")]
+    public IActionResult GetTopicFiles(string topicName)
     {   
-        return Ok(_conspectusHandler.GetConspectusListByTopicId(topicId));
+        return Ok(_conspectusHandler.GetConspectusListByTopicName(topicName));
     }
     
-    [HttpPost("upload/{topicId}")]
-    public IActionResult UploadFiles(string topicId, List<IFormFile> files)
+    [HttpPost("upload/{topicName}")]
+    public IActionResult UploadFiles(string topicName, List<IFormFile> files)
     {
         foreach (var formFile in files)
         {
@@ -58,10 +58,10 @@ public class ConspectusController : ControllerBase
                 formFile.CopyTo(fileStream);
             }
 
-            _conspectusHandler.InsertItem(new Conspectus(topicId, filePath));
+            _conspectusHandler.InsertItem(new Conspectus(topicName, filePath));
         }
     
-        return Ok(_conspectusHandler.GetConspectusListByTopicId(topicId));
+        return Ok(_conspectusHandler.GetConspectusListByTopicName(topicName));
     }
 
     [HttpGet("download/{conspectusId}")]

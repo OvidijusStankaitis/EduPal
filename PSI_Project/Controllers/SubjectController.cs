@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using PSI_Project.HelperFunctions;
 
 namespace PSI_Project.Controllers;
 
@@ -9,7 +10,6 @@ namespace PSI_Project.Controllers;
 public class SubjectController : ControllerBase
 {
     private readonly SubjectHandler _subjectHandler = new SubjectHandler();
-    private readonly TopicHandler _topicHandler = new TopicHandler();
 
     [HttpGet("list")]
     public IActionResult ListSubjects()
@@ -26,7 +26,7 @@ public class SubjectController : ControllerBase
             string subjectName = subjectNameProperty.GetString();
             string subjectDescription = subjectDescriptionProperty.GetString() ?? " ";
 
-            _subjectHandler.CreateItem(new Subject(subjectName, subjectDescription));
+            _subjectHandler.InsertItem(new Subject(subjectName, subjectDescription));
             return Ok(_subjectHandler.ItemList);
         }
         return BadRequest("Invalid request body");
@@ -38,7 +38,7 @@ public class SubjectController : ControllerBase
         Subject? subjectToRemove = _subjectHandler.CheckItemInList(subjectName);
         if (subjectToRemove != null)
         {
-            _subjectHandler.RemoveItem(subjectToRemove);
+            _subjectHandler.RemoveItem(subjectToRemove.Id);
         }
     }
 }

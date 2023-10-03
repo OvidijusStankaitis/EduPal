@@ -8,7 +8,7 @@ public class TopicHandler : BaseHandler<Topic, TopicDbOperations>
 
     public TopicHandler()
     {
-        Items = DbOperations.ReadAllItemsFromDB();
+        ItemList = DbOperations.ReadAllItemsFromDB();
     }
 
     public List<Topic> GetTopicListBySubjectId(string subjectId)

@@ -3,24 +3,25 @@ using PSI_Project.DAL;
 
 namespace PSI_Project;
 
-public class Conspectus : IStorable
+public class Conspectus : BaseEntity, IStorable
 {
     private static IdGenerator _idGenerator = new IdGenerator();
     public string Id{ get; }
     public string TopicId;
+    public string TopicName;
     public string Path { get; set; }
     
-    public Conspectus(string id, string topicId, string path)
+    public Conspectus(string id, string topicName, string path)
     {
         Id = id;
         _idGenerator.IncrementId(id);
-        TopicId = topicId;
+        TopicName = topicName;
         Path = path;
     }
-    public Conspectus(string topicId, string path)
+    public Conspectus(string topicName, string path)
     {
         Id = _idGenerator.GenerateId();
-        TopicId = topicId;
+        TopicName = topicName;
         Path = path;
     }
 }

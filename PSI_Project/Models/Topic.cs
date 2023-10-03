@@ -6,16 +6,21 @@ public class Topic : BaseEntity, IStorable
 {
     private static IdGenerator _idGenerator = new IdGenerator();
     public string Id{ get; }
-    public string Name;
-    public string? Description;
     
     public string SubjectId;
+    public string SubjectName;
     
-    public Topic(string id, string subjectId, string name) : base(name)
+    public Topic(string id, string subjectName, string name, string description) : base(name, description)
     {
         Id = id;
         _idGenerator.IncrementId(id);
-        
-        SubjectId = subjectId;
+        SubjectName = subjectName;
     }
+    
+    public Topic(string name, string subjectName, string description) : base(name, description)
+    {
+        Id = _idGenerator.GenerateId();
+        SubjectName = subjectName;
+    }
+    
 }

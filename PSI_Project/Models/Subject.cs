@@ -7,13 +7,13 @@ public class Subject : BaseEntity, IStorable, IComparable<Subject>, IEquatable<S
     private static IdGenerator _idGenerator = new IdGenerator();
     public string Id{ get; }
 
-    public Subject(string id, string subjectName, string subjectDescription) : base(subjectName, subjectDescription)
+    public Subject(string id, string name, string description) : base(name, description)
     {
         Id = id;
         _idGenerator.IncrementId(id);
     }
     
-    public Subject(string subjectName, string subjectDescription) : base(subjectName, subjectDescription)
+    public Subject(string name, string description) : base(name, description)
     {
         Id = _idGenerator.GenerateId();
     }
