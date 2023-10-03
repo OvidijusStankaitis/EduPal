@@ -32,4 +32,19 @@ public class ConspectusDbOperations : EntityDbOperations<Conspectus>
 
         return conspectusList;
     }
+
+    public bool IsFileUsedInOtherTopics(string filePath)
+    {
+        using (StreamReader sr = File.OpenText(DbFilePath))
+        {
+            string? line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                Conspectus conspectus = StringToItem(line);
+                if (conspectus.Path == filePath)
+                    return true;
+            }
+        }
+        return false;
+    }
 }

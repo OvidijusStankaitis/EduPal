@@ -8,7 +8,7 @@ export const Conspectus = () => {
     const iframeRef = useRef(null);
 
     useEffect(() => {
-        fetch('https://localhost:7283/Conspectus/list')
+        fetch(`https://localhost:7283/Conspectus/list/${topicName}`)
             .then(response => response.json())
             .then(data => {
                 const fileList = data.map(fileObj => {
@@ -23,7 +23,7 @@ export const Conspectus = () => {
                 setFiles(fileList);
             })
             .catch(error => console.error('Error fetching files:', error));
-    }, []);
+    }, [topicName]);
 
     const handleFileChange = (event) => {
         const fileList = Array.from(event.target.files).map(file => {
@@ -37,7 +37,7 @@ export const Conspectus = () => {
         const formData = new FormData();
         fileList.forEach(file => formData.append('files', file.data));
 
-        fetch('https://localhost:7283/Conspectus/upload', {
+        fetch(`https://localhost:7283/Conspectus/upload/${topicName}`, {
             method: 'POST',
             body: formData
         })
@@ -71,6 +71,32 @@ export const Conspectus = () => {
             });
     };
 
+    const handleFileDownload = (fileId) => {
+        const fileToDownload = files.find(file => file.id === fileId);
+        const downloadLink = document.createElement('a');
+        downloadLink.href = `https://localhost:7283/Conspectus/download/${fileId}`;
+        downloadLink.download = fileToDownload ? fileToDownload.name : ''; // Set the desired filename
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+    };
+
+    const handleFileDelete = (fileId) => {
+        fetch(`https://localhost:7283/Conspectus/delete/${fileId}`, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (response.ok) {
+                    const updatedFiles = files.filter(file => file.id !== fileId);
+                    setFiles(updatedFiles);
+                    window.location.reload();
+                } else {
+                    console.error('Error deleting file:', response.statusText);
+                }
+            })
+            .catch(error => console.error('Error deleting file:', error));
+    };
+
     return (
         <div className="user-panel">
             <h1>{topicName}</h1>
@@ -85,8 +111,12 @@ export const Conspectus = () => {
                                     <button className="small-button file-name" onClickCapture={() => handleFileClick(file.id)}>
                                         {file.name}
                                     </button>
-                                    <button className="small-button download-button">Download</button>
-                                    <button className="small-button delete-button">Delete</button>
+                                    <button className="small-button download-button" onClick={() => handleFileDownload(file.id)}>
+                                        Download
+                                    </button>
+                                    <button className="small-button delete-button" onClick={() => handleFileDelete(file.id)}>
+                                        Delete
+                                    </button>
                                 </li>
                             ))
                         ) : (
