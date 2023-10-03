@@ -13,7 +13,7 @@ public class Conspectus : IStorable
     public Conspectus(string id, string topicId, string path)
     {
         Id = id;
-        _idGenerator.IncrementId();
+        _idGenerator.IncrementId(id);
         TopicId = topicId;
         Path = path;
     }

@@ -10,7 +10,7 @@ public class Subject : BaseEntity, IStorable, IComparable<Subject>, IEquatable<S
     public Subject(string id, string subjectName, string subjectDescription) : base(subjectName, subjectDescription)
     {
         Id = id;
-        _idGenerator.IncrementId();
+        _idGenerator.IncrementId(id);
     }
     
     public Subject(string subjectName, string subjectDescription) : base(subjectName, subjectDescription)

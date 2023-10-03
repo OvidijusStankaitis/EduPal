@@ -6,12 +6,12 @@ public class IdGenerator
 
     public string GenerateId()
     {
-        IncrementId();
-        return (_currId).ToString();
+        IncrementId(_currId.ToString());
+        return _currId.ToString();
     }
 
-    public void IncrementId()
+    public void IncrementId(string id)
     {
-        _currId += 1;
+        _currId = int.Max(int.Parse(id), _currId) + 1;
     }
 }

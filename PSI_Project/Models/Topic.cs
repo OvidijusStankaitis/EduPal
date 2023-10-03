@@ -14,7 +14,7 @@ public class Topic : BaseEntity, IStorable
     public Topic(string id, string subjectId, string name) : base(name)
     {
         Id = id;
-        _idGenerator.IncrementId();
+        _idGenerator.IncrementId(id);
         
         SubjectId = subjectId;
     }
