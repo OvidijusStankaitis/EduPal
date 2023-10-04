@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 using PSI_Project.DAL;
+using PSI_Project.Repositories;
 
 namespace PSI_Project.Controllers;
 
@@ -8,14 +9,14 @@ namespace PSI_Project.Controllers;
 [Route("[controller]")]
 public class ConspectusController : ControllerBase
 {
-    private ConspectusHandler _conspectusHandler = new ConspectusHandler();
+    private ConspectusRepository _conspectusRepository = new ConspectusRepository();
 
     [HttpGet("get/{conspectusId}")]
     public IActionResult GetConspectus(string conspectusId)
     {
         try
         {
-            Conspectus? conspectus = _conspectusHandler.GetItemById(conspectusId);
+            Conspectus? conspectus = _conspectusRepository.GetItemById(conspectusId);
         
             if (conspectus == null)
                 return NotFound(new { error = "File not found in database." });
@@ -42,7 +43,7 @@ public class ConspectusController : ControllerBase
     [HttpGet("list/{topicName}")]
     public IActionResult GetTopicFiles(string topicName)
     {   
-        return Ok(_conspectusHandler.GetConspectusListByTopicName(topicName));
+        return Ok(_conspectusRepository.GetConspectusListByTopicName(topicName));
     }
 
     [HttpPost("upload/{topicName}")]
@@ -59,16 +60,16 @@ public class ConspectusController : ControllerBase
                 formFile.CopyTo(fileStream);
             }
 
-            _conspectusHandler.InsertItem(new Conspectus(topicName, filePath));
+            _conspectusRepository.InsertItem(new Conspectus(topicName, filePath));
         }
     
-        return Ok(_conspectusHandler.GetConspectusListByTopicName(topicName));
+        return Ok(_conspectusRepository.GetConspectusListByTopicName(topicName));
     }
 
     [HttpGet("download/{conspectusId}")]
     public IActionResult DownloadFile(string conspectusId)
     {
-        Conspectus? conspectus = _conspectusHandler.GetItemById(conspectusId);
+        Conspectus? conspectus = _conspectusRepository.GetItemById(conspectusId);
         if (conspectus == null)
             return NotFound();
     
@@ -90,17 +91,17 @@ public class ConspectusController : ControllerBase
     [HttpDelete("delete/{conspectusId}")]
     public void DeleteFile(string conspectusId)
     {
-        Conspectus? conspectus = _conspectusHandler.GetItemById(conspectusId);
+        Conspectus? conspectus = _conspectusRepository.GetItemById(conspectusId);
         if (conspectus == null)
             return;
         
         string filePath = conspectus.Path;
         try
         {
-            _conspectusHandler.RemoveItem(conspectusId);
+            _conspectusRepository.RemoveItem(conspectusId);
 
             // Check if the file is used in other topics before deleting
-            if (!_conspectusHandler.IsFileUsedInOtherTopics(filePath))
+            if (!_conspectusRepository.IsFileUsedInOtherTopics(filePath))
             {
                 System.IO.File.Delete(filePath);
             }
