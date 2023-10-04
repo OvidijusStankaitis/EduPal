@@ -6,15 +6,6 @@ namespace PSI_Project.Repositories
     {
         protected override string DbFilePath => "..//PSI_Project//DB//topic.txt";
 
-        public TopicRepository() : base()
-        {
-            Console.WriteLine($"Loaded {Items.Count} topics.");
-            foreach (var topic in Items)
-            {
-                Console.WriteLine($"Topic: {topic.Name}, Subject: {topic.SubjectName}");
-            }
-        }
-
         protected override string ItemToDbString(Topic item)
         {
             return $"{item.Id};{item.SubjectName};{item.Name};";
@@ -23,10 +14,6 @@ namespace PSI_Project.Repositories
         protected override Topic StringToItem(string dbString)
         {
             String[] topicFields = dbString.Split(";");
-            if (topicFields.Length < 3)
-            {
-                throw new FormatException($"Unexpected data format for topic: {dbString}");
-            }
 
             return new Topic(topicFields[2], topicFields[1]);
         }

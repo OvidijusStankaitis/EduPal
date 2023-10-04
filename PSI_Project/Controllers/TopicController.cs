@@ -14,7 +14,6 @@ public class TopicController : ControllerBase
     public IActionResult ListTopics(string subjectName)
     {
         List<Topic> subjectTopics = _topicRepository.GetTopicsBySubjectName(subjectName);
-        Console.WriteLine($"Fetched {subjectTopics.Count} topics for subject: {subjectName}");
         return Ok(subjectTopics); 
     }
     

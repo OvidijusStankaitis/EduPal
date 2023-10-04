@@ -4,7 +4,7 @@ namespace PSI_Project
 {
     public class Conspectus : BaseEntity, IStorable
     {
-        public string TopicId { get; set; } // Using properties is better than fields for data encapsulation
+        public string TopicId { get; set; }
         public string TopicName { get; set; }
         public string Path { get; set; }
     
