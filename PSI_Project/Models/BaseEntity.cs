@@ -1,21 +1,19 @@
-﻿namespace PSI_Project;
-
-public class BaseEntity
+﻿namespace PSI_Project
 {
-    public string Name {get; set;}
-    public string? Description {get; set;}
+    public class BaseEntity
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
 
-    public BaseEntity()
-    {
-        
-    }
-    public BaseEntity(string name)
-    {
-        Name = name;
-    }
-    public BaseEntity(string name, string description)
-    {
-        Name = name;
-        Description = description;
+        public BaseEntity()
+        {
+            Id = Guid.NewGuid().ToString(); // Generate a unique Id
+        }
+
+        public BaseEntity(string name)
+        {
+            Id = Guid.NewGuid().ToString(); // Generate a unique Id
+            Name = name;
+        }
     }
 }
