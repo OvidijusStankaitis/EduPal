@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
-using PSI_Project.DAL;
+using PSI_Project.Models;
 using PSI_Project.Repositories;
 
 namespace PSI_Project.Controllers;
@@ -89,26 +89,10 @@ public class ConspectusController : ControllerBase
     }
 
     [HttpDelete("delete/{conspectusId}")]
-    public void DeleteFile(string conspectusId)
+    public IActionResult DeleteFile(string conspectusId)
     {
-        Conspectus? conspectus = _conspectusRepository.GetItemById(conspectusId);
-        if (conspectus == null)
-            return;
-        
-        string filePath = conspectus.Path;
-        try
-        {
-            _conspectusRepository.RemoveItem(conspectusId);
-
-            // Check if the file is used in other topics before deleting
-            if (!_conspectusRepository.IsFileUsedInOtherTopics(filePath))
-            {
-                System.IO.File.Delete(filePath);
-            }
-        }
-        catch (IOException ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
+        return _conspectusRepository.RemoveItemById(conspectusId) 
+            ? new JsonResult("File has been successfully deleted") 
+            : new JsonResult("An error occured while deleting file");
     }
 }

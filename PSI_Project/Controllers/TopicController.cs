@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using PSI_Project.Models;
 using PSI_Project.Repositories;
 
 namespace PSI_Project.Controllers;
@@ -32,13 +33,11 @@ public class TopicController : ControllerBase
         return BadRequest("Invalid request body");
     }
     
-    [HttpDelete("{topicName}/delete")]
-    public void RemoveTopic(string topicName)
+    [HttpDelete("{topicId}/delete")]
+    public IActionResult RemoveTopic(string topicId)
     {
-        Topic? topicToRemove = _topicRepository.GetItemByName(topicName);
-        if (topicToRemove != null)
-        {
-            _topicRepository.RemoveItem(topicToRemove.Id);
-        }
+        return _topicRepository.RemoveItemById(topicId) 
+            ? new JsonResult("Topic has been successfully deleted") 
+            : new JsonResult("An error occured while deleting the topic");
     }
 }
