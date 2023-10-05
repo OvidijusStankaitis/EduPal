@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
-using PSI_Project.HelperFunctions;
+using PSI_Project.Repositories;
 
 namespace PSI_Project.Controllers;
 
@@ -8,46 +8,37 @@ namespace PSI_Project.Controllers;
 [Route("[controller]")]
 public class TopicController : ControllerBase
 {
-    private readonly TopicHandler _topicHandler = new TopicHandler();
-
+    private readonly TopicRepository _topicRepository = new TopicRepository();
+    
     [HttpGet("list/{subjectName}")]
     public IActionResult ListTopics(string subjectName)
     {
-        List<Topic> subjectTopics = new List<Topic>();
-        foreach (var topic in _topicHandler.ItemList)
-        {
-            if (topic.SubjectName.Equals(subjectName))
-            {
-                subjectTopics.Add(topic);
-            }
-        }
+        List<Topic> subjectTopics = _topicRepository.GetTopicsBySubjectName(subjectName);
         return Ok(subjectTopics); 
     }
     
     [HttpPost("upload")]
     public IActionResult UploadTopic([FromBody] JsonElement request)
     {
-        if (request.TryGetProperty("topicName", out var topicNameProperty) && 
-            request.TryGetProperty("topicDescription", out var topicDescriptionProperty) &&
+        if (request.TryGetProperty("topicName", out var topicNameProperty) &&
             request.TryGetProperty("subjectName", out var subjectNameProperty))
         {
             string topicName = topicNameProperty.GetString();
-            string topicDescription = topicDescriptionProperty.GetString() ?? " ";
             string subjectName = subjectNameProperty.GetString();
 
-            _topicHandler.InsertItem(new Topic(topicName, subjectName, topicDescription));
-            return Ok(_topicHandler.ItemList);
+            _topicRepository.InsertItem(new Topic(topicName, subjectName));
+            return Ok(_topicRepository.Items);
         }
         return BadRequest("Invalid request body");
     }
     
-    [HttpDelete("{topicName}/delete")] //should "delete/" be here?
+    [HttpDelete("{topicName}/delete")]
     public void RemoveTopic(string topicName)
     {
-        Topic? topicToRemove = _topicHandler.CheckItemInList(topicName);
+        Topic? topicToRemove = _topicRepository.GetItemByName(topicName);
         if (topicToRemove != null)
         {
-            _topicHandler.RemoveItem(topicToRemove.SubjectId);
+            _topicRepository.RemoveItem(topicToRemove.Id);
         }
     }
 }

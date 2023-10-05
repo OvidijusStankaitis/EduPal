@@ -1,26 +1,15 @@
 ﻿using PSI_Project.DAL;
 
-namespace PSI_Project;
-
-public class Topic : BaseEntity, IStorable
+namespace PSI_Project
 {
-    private static IdGenerator _idGenerator = new IdGenerator();
-    public string Id{ get; }
-    
-    public string SubjectId;
-    public string SubjectName;
-    
-    public Topic(string id, string subjectName, string name, string description) : base(name, description)
+    public class Topic : BaseEntity, IStorable
     {
-        Id = id;
-        _idGenerator.IncrementId(id);
-        SubjectName = subjectName;
+        public string SubjectId { get; set; }
+        public string SubjectName { get; set; }
+
+        public Topic(string name, string subjectName) : base(name)
+        {
+            SubjectName = subjectName;
+        }
     }
-    
-    public Topic(string name, string subjectName, string description) : base(name, description)
-    {
-        Id = _idGenerator.GenerateId();
-        SubjectName = subjectName;
-    }
-    
 }

@@ -1,7 +1,6 @@
 ﻿using System.Text.Json;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using PSI_Project.HelperFunctions;
+using PSI_Project.Repositories;
 
 namespace PSI_Project.Controllers;
 
@@ -9,36 +8,33 @@ namespace PSI_Project.Controllers;
 [Route("[controller]")]
 public class SubjectController : ControllerBase
 {
-    private readonly SubjectHandler _subjectHandler = new SubjectHandler();
+    private readonly SubjectRepository _subjectRepository = new SubjectRepository();
 
     [HttpGet("list")]
     public IActionResult ListSubjects()
     {
-        return Ok(_subjectHandler.ItemList);
+        return Ok(_subjectRepository.Items);
     }
     
     [HttpPost("upload")]
     public IActionResult UploadSubject([FromBody] JsonElement request)
     {
-        if (request.TryGetProperty("subjectName", out var subjectNameProperty) && 
-            request.TryGetProperty("subjectDescription", out var subjectDescriptionProperty))
+        if (request.TryGetProperty("subjectName", out var subjectNameProperty))
         {
             string subjectName = subjectNameProperty.GetString();
-            string subjectDescription = subjectDescriptionProperty.GetString() ?? " ";
-
-            _subjectHandler.InsertItem(new Subject(subjectName, subjectDescription));
-            return Ok(_subjectHandler.ItemList);
+            _subjectRepository.InsertItem(new Subject(subjectName));
+            return Ok(_subjectRepository.Items);
         }
         return BadRequest("Invalid request body");
     }
     
-    [HttpDelete("{subjectName}/delete")] //should "delete/" be here?
+    [HttpDelete("{subjectName}/delete")]
     public void RemoveSubject(string subjectName)
     {
-        Subject? subjectToRemove = _subjectHandler.CheckItemInList(subjectName);
+        Subject? subjectToRemove = _subjectRepository.GetItemByName(subjectName);
         if (subjectToRemove != null)
         {
-            _subjectHandler.RemoveItem(subjectToRemove.Id);
+            _subjectRepository.RemoveItem(subjectToRemove.Id);
         }
     }
 }

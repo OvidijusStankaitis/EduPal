@@ -1,42 +1,37 @@
 ﻿using PSI_Project.DAL;
 
-namespace PSI_Project;
-
-public class Subject : BaseEntity, IStorable, IComparable<Subject>, IEquatable<Subject>
+namespace PSI_Project
 {
-    private static IdGenerator _idGenerator = new IdGenerator();
-    public string Id{ get; }
-
-    public Subject(string id, string name, string description) : base(name, description)
+    public class Subject : BaseEntity, IStorable, IComparable<Subject>, IEquatable<Subject>
     {
-        Id = id;
-        _idGenerator.IncrementId(id);
-    }
-    
-    public Subject(string name, string description) : base(name, description)
-    {
-        Id = _idGenerator.GenerateId();
-    }
+        public Subject(string name) : base(name)
+        {
+        }
 
+        public int CompareTo(Subject other)
+        {
+            return Name.CompareTo(other.Name);
+        }
 
-    public int CompareTo(Subject other)
-    {
-        return Name.CompareTo(other.Name);
-    }
+        public bool Equals(Subject other)
+        {
+            if (other == null)
+                return false;
 
-    public bool Equals(Subject other)
-    {
-        if (other == null)
+            return Name == other.Name;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Subject)
+                return Equals((Subject)obj);
+
             return false;
+        }
 
-        return Name == other.Name && Description == other.Description;
-    }
-
-    public override bool Equals(object obj)
-    {
-        if (obj is Subject)
-            return Equals((Subject)obj);
-
-        return false;
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode();
+        }
     }
 }
