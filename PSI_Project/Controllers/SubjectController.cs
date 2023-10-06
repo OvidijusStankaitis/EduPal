@@ -20,13 +20,10 @@ public class SubjectController : ControllerBase
     [HttpPost("upload")]
     public IActionResult UploadSubject([FromBody] JsonElement request)
     {
-        if (request.TryGetProperty("subjectName", out var subjectNameProperty))
-        {
-            string subjectName = subjectNameProperty.GetString();
-            _subjectRepository.InsertItem(new Subject(subjectName));
-            return Ok(_subjectRepository.Items);
-        }
-        return BadRequest("Invalid request body");
+        List<Subject>? subjectList = _subjectRepository.CreateSubject(request);
+        return subjectList == null
+            ? BadRequest("Invalid request body")
+            : Ok(subjectList);
     }
     
     [HttpDelete("{subjectId}/delete")]

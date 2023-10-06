@@ -69,22 +69,13 @@ public abstract class BaseRepository<T> where T : BaseEntity
         return removed;
     }
 
-    public virtual bool RemoveItemByName(string itemName)
-    {
-        T? itemToRemove = GetItemByName(itemName);
-        if (itemToRemove != null)
-            return RemoveItemById(itemToRemove.Id);
-
-        return false;
-    }
-
     protected bool RemoveItemFromDB(string itemId)
     {
         bool removed = false;
 
         try
         {
-            string tempFileName = Path.GetFileNameWithoutExtension(DbFilePath) + "_temp" + ".txt";
+            string tempFileName = Path.GetFileNameWithoutExtension(DbFilePath) + "_temp.txt";
             string tempFilePath = Path.Combine(Directory.GetCurrentDirectory(), "DB", tempFileName);
             FileInfo oldDbFile = new FileInfo(DbFilePath);
             oldDbFile.MoveTo(tempFilePath);
