@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
 using PSI_Project.Models;
 
 namespace PSI_Project.Repositories;
@@ -9,6 +11,31 @@ public class ConspectusRepository : BaseRepository<Conspectus>
     public List<Conspectus> GetConspectusListByTopicName(string topicName)
     {
         return Items.Where(conspectus => conspectus.TopicName == topicName).ToList();
+    }
+
+    public Stream? GetConspectusPdfStream(string conspectusId)
+    {
+        try
+        {
+            Conspectus? conspectus = GetItemById(conspectusId);
+            if (conspectus == null)
+                return null;
+        
+            string dirPath = Path.GetDirectoryName(conspectus.Path);
+            string filename = Path.GetFileName(conspectus.Path);
+        
+            IFileProvider provider = new PhysicalFileProvider(dirPath);
+            IFileInfo fileInfo = provider.GetFileInfo(filename);
+            if (!fileInfo.Exists)
+                return null;
+
+            return fileInfo.CreateReadStream();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return null;
+        }
     }
 
     public List<Conspectus> UploadConspectus(string topicName, List<IFormFile> files)

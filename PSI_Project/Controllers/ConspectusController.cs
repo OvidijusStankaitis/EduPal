@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
@@ -14,30 +15,10 @@ public class ConspectusController : ControllerBase
     [HttpGet("get/{conspectusId}")]
     public IActionResult GetConspectus(string conspectusId)
     {
-        try
-        {
-            Conspectus? conspectus = _conspectusRepository.GetItemById(conspectusId);
-        
-            if (conspectus == null)
-                return NotFound(new { error = "File not found in database." });
-        
-            string dirPath = Path.GetDirectoryName(conspectus.Path);
-            string filename = Path.GetFileName(conspectus.Path);
-        
-            IFileProvider provider = new PhysicalFileProvider(dirPath);
-            IFileInfo fileInfo = provider.GetFileInfo(filename);
-            if (!fileInfo.Exists)
-                return NotFound(new { error = "File not found on server." });
-
-            var readStream = fileInfo.CreateReadStream();
-
-            return File(readStream, "application/pdf", filename);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            return NotFound(new { error = ex.Message });
-        }
+        Stream? pdfStream = _conspectusRepository.GetConspectusPdfStream(conspectusId);
+        return pdfStream != null
+            ? File(pdfStream, "application/pdf")
+            : NotFound(new { error = "File not found." });
     }
 
     [HttpGet("list/{topicName}")]
