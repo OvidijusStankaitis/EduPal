@@ -15,23 +15,16 @@ public class TopicController : ControllerBase
     [HttpGet("list/{subjectName}")]
     public IActionResult ListTopics(string subjectName)
     {
-        List<Topic> subjectTopics = _topicRepository.GetTopicsBySubjectName(subjectName);
-        return Ok(subjectTopics); 
+        return Ok(_topicRepository.GetTopicsBySubjectName(subjectName)); 
     }
     
     [HttpPost("upload")]
     public IActionResult UploadTopic([FromBody] JsonElement request)
     {
-        if (request.TryGetProperty("topicName", out var topicNameProperty) &&
-            request.TryGetProperty("subjectName", out var subjectNameProperty))
-        {
-            string topicName = topicNameProperty.GetString();
-            string subjectName = subjectNameProperty.GetString();
-
-            _topicRepository.InsertItem(new Topic(topicName, subjectName));
-            return Ok(_topicRepository.Items);
-        }
-        return BadRequest("Invalid request body");
+        List<Topic>? topicList = _topicRepository.CreateTopic(request);
+        return topicList == null
+            ? BadRequest("Invalid request body")
+            : Ok(topicList);
     }
     
     [HttpDelete("{topicId}/delete")]

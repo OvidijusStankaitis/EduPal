@@ -1,4 +1,5 @@
-﻿using PSI_Project.Models;
+﻿using System.Text.Json;
+using PSI_Project.Models;
 
 namespace PSI_Project.Repositories;
 public class TopicRepository : BaseRepository<Topic>
@@ -9,7 +10,24 @@ public class TopicRepository : BaseRepository<Topic>
     {
         return Items.Where(topic => topic.SubjectName.Equals(subjectName)).ToList();
     }
-    
+
+    public List<Topic>? CreateTopic(JsonElement request)
+    {
+        if (request.TryGetProperty("topicName", out var topicNameProperty) &&
+            request.TryGetProperty("subjectName", out var subjectNameProperty))
+        {
+            string? topicName = topicNameProperty.GetString();
+            string? subjectName = subjectNameProperty.GetString();
+
+            if (subjectName == null || topicName == null)
+                return null;
+
+            InsertItem(new Topic(topicName, subjectName));
+            return Items;
+        }
+        return null;
+    }
+
     protected override string ItemToDbString(Topic item)
     {
         return $"{item.Id};{item.SubjectName};{item.Name};";
