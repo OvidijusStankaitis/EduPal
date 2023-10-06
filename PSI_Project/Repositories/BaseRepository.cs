@@ -26,13 +26,13 @@ public abstract class BaseRepository<T> where T : BaseEntity
     {
         List<T> items = new List<T>();
 
-        using (var streamReader = new StreamReader(DbFilePath))
+        using (var sr = new StreamReader(DbFilePath))
         {
-            string? itemInfo = streamReader.ReadLine();
+            string? itemInfo = sr.ReadLine();
             while (itemInfo != null)
             {
                 items.Add(StringToItem(itemInfo));
-                itemInfo = streamReader.ReadLine();
+                itemInfo = sr.ReadLine();
             }
         }
 

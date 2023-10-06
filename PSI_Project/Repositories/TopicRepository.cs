@@ -18,13 +18,13 @@ public class TopicRepository : BaseRepository<Topic>
         {
             string? topicName = topicNameProperty.GetString();
             string? subjectName = subjectNameProperty.GetString();
-
-            if (subjectName == null || topicName == null)
-                return null;
-
-            InsertItem(new Topic(topicName, subjectName));
-            return Items;
+            if (subjectName != null && topicName != null)
+            {
+                InsertItem(new Topic(topicName, subjectName));
+                return Items;
+            }
         }
+
         return null;
     }
 
@@ -36,8 +36,10 @@ public class TopicRepository : BaseRepository<Topic>
     protected override Topic StringToItem(string dbString)
     {
         String[] topicFields = dbString.Split(";");
-        Topic newTopic = new Topic(topicFields[2], topicFields[1]); // use only name to construct Subject
-        newTopic.Id = topicFields[0];
+        Topic newTopic = new Topic(topicFields[2], topicFields[1])
+        {
+            Id = topicFields[0]
+        };
         return newTopic;
     }
 }

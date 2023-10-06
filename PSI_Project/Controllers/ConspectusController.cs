@@ -42,7 +42,7 @@ public class ConspectusController : ControllerBase
         return fileContent;
     }
 
-    [HttpDelete("delete/{conspectusId}")]
+    [HttpDelete("{conspectusId}/delete")]
     public IActionResult DeleteFile(string conspectusId)
     {
         return _conspectusRepository.RemoveItemById(conspectusId) 

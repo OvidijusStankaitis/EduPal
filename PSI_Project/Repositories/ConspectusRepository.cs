@@ -12,6 +12,12 @@ public class ConspectusRepository : BaseRepository<Conspectus>
     {
         return Items.Where(conspectus => conspectus.TopicName == topicName).ToList();
     }
+    
+    public string GetConspectusPath(string conspectusId)
+    {
+        Conspectus conspectus = GetItemById(conspectusId);
+        return conspectus.Path;
+    }
 
     public Stream? GetConspectusPdfStream(string conspectusId)
     {
@@ -36,12 +42,6 @@ public class ConspectusRepository : BaseRepository<Conspectus>
             Console.WriteLine(ex.Message);
             return null;
         }
-    }
-
-    public string GetConspectusPath(string conspectusId)
-    {
-        Conspectus conspectus = GetItemById(conspectusId);
-        return conspectus.Path;
     }
 
     public FileContentResult? DownloadConspectus(string itemId)

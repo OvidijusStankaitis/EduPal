@@ -39,8 +39,10 @@ public class SubjectRepository : BaseRepository<Subject>
     protected override Subject StringToItem(string dbString)
     {
         String[] subjectFields = dbString.Split(";");
-        Subject newSubject = new Subject(subjectFields[1]);
-        newSubject.Id = subjectFields[0];
+        Subject newSubject = new Subject(subjectFields[1])
+        {
+            Id = subjectFields[0]
+        };
         return newSubject;
     }
 }

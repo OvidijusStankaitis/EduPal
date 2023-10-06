@@ -82,7 +82,7 @@ export const Conspectus = () => {
     };
 
     const handleFileDelete = (fileId) => {
-        fetch(`https://localhost:7283/Conspectus/delete/${fileId}`, {
+        fetch(`https://localhost:7283/Conspectus/${fileId}/delete`, {
             method: 'DELETE'
         })
             .then(response => {
