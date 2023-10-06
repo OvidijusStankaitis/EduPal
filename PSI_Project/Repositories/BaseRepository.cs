@@ -3,16 +3,16 @@
 public abstract class BaseRepository<T> where T : BaseEntity
 {
     protected abstract string DbFilePath { get; }
+    protected List<T> Items { get; private set; } = new List<T>();
     protected abstract string ItemToDbString(T item);
     protected abstract T StringToItem(string dbString);
-    protected List<T> Items { get; private set; } = new List<T>();
 
-    public BaseRepository()
+    protected BaseRepository()
     {
         Items = ReadAllItemsFromDB();
     }
-    
-    public T? GetItemById(string itemId)
+
+    protected T? GetItemById(string itemId)
     {
         return Items.FirstOrDefault(item => item.Id.Equals(itemId));
     }
@@ -21,7 +21,7 @@ public abstract class BaseRepository<T> where T : BaseEntity
     {
         return Items.FirstOrDefault(item => item.Name.Equals(itemName, StringComparison.OrdinalIgnoreCase));
     }
-    
+
     protected List<T> ReadAllItemsFromDB()
     {
         List<T> items = new List<T>();

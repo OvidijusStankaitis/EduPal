@@ -110,7 +110,7 @@ public class ConspectusRepository : BaseRepository<Conspectus>
         }
     }
     
-    public bool IsFileUsedInOtherTopics(string filePath)
+    private bool IsFileUsedInOtherTopics(string filePath)
     {
         return Items.Any(conspectus => conspectus.Path == filePath);
     }
