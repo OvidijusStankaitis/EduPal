@@ -33,7 +33,7 @@ public class SubjectController : ControllerBase
     public IActionResult RemoveSubject(string subjectId)
     { 
         return _subjectRepository.RemoveItemById(subjectId) 
-            ? new JsonResult("Subject has been successfully deleted") 
-            : new JsonResult("An error occured while deleting the subject");
+            ? Ok("Subject has been successfully deleted") 
+            : BadRequest("An error occured while deleting the subject");
     }
 }

@@ -92,7 +92,7 @@ public class ConspectusController : ControllerBase
     public IActionResult DeleteFile(string conspectusId)
     {
         return _conspectusRepository.RemoveItemById(conspectusId) 
-            ? new JsonResult("File has been successfully deleted") 
-            : new JsonResult("An error occured while deleting file");
+            ? Ok("File has been successfully deleted") 
+            : BadRequest("An error occured while deleting file");
     }
 }

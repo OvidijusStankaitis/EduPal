@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
@@ -37,7 +38,7 @@ public class TopicController : ControllerBase
     public IActionResult RemoveTopic(string topicId)
     {
         return _topicRepository.RemoveItemById(topicId) 
-            ? new JsonResult("Topic has been successfully deleted") 
-            : new JsonResult("An error occured while deleting the topic");
+            ? Ok("Topic has been successfully deleted")
+            : BadRequest("An error occured while deleting the topic");
     }
 }
