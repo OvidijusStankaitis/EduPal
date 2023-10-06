@@ -14,7 +14,7 @@ public class SubjectController : ControllerBase
     [HttpGet("list")]
     public IActionResult ListSubjects()
     {
-        return Ok(_subjectRepository.Items);
+        return Ok(_subjectRepository.GetSubjectList());
     }
     
     [HttpPost("upload")]

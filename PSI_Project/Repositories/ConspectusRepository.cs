@@ -38,6 +38,33 @@ public class ConspectusRepository : BaseRepository<Conspectus>
         }
     }
 
+    public string GetConspectusPath(string conspectusId)
+    {
+        Conspectus conspectus = GetItemById(conspectusId);
+        return conspectus.Path;
+    }
+
+    public FileContentResult? DownloadConspectus(string itemId)
+    {
+        Conspectus? conspectus = GetItemById(itemId);
+        if (conspectus == null)
+            return null;
+        
+        string filePath = conspectus.Path;
+        if (File.Exists(filePath))
+        {
+            var fileBytes = File.ReadAllBytes(filePath);
+            var response = new FileContentResult(fileBytes, "application/pdf")
+            {
+                FileDownloadName = Path.GetFileName(filePath) // Set the desired filename
+            };
+            
+            return response;
+        }
+
+        return null;
+    }
+
     public List<Conspectus> UploadConspectus(string topicName, List<IFormFile> files)
     {
         foreach (var formFile in files)

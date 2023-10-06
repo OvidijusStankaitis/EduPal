@@ -5,15 +5,13 @@ public abstract class BaseRepository<T> where T : BaseEntity
     protected abstract string DbFilePath { get; }
     protected abstract string ItemToDbString(T item);
     protected abstract T StringToItem(string dbString);
-
-    public List<T> Items { get; private set; } = new List<T>();
+    protected List<T> Items { get; private set; } = new List<T>();
 
     public BaseRepository()
     {
         Items = ReadAllItemsFromDB();
     }
     
-    // From BaseHandler
     public T? GetItemById(string itemId)
     {
         return Items.FirstOrDefault(item => item.Id.Equals(itemId));
@@ -23,8 +21,7 @@ public abstract class BaseRepository<T> where T : BaseEntity
     {
         return Items.FirstOrDefault(item => item.Name.Equals(itemName, StringComparison.OrdinalIgnoreCase));
     }
-
-    // From EntityDbOperations
+    
     protected List<T> ReadAllItemsFromDB()
     {
         List<T> items = new List<T>();
@@ -42,12 +39,11 @@ public abstract class BaseRepository<T> where T : BaseEntity
         return items;
     }
     
-    public virtual T InsertItem(T item)
+    public void InsertItem(T item)
     {
         Items.Add(item);
         InsertItemToDB(item);
         AfterOperation();
-        return item;
     }
     
     protected void InsertItemToDB(T item)

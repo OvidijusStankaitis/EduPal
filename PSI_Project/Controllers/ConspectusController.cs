@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.FileProviders;
-using PSI_Project.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 using PSI_Project.Repositories;
 
 namespace PSI_Project.Controllers;
@@ -36,23 +33,13 @@ public class ConspectusController : ControllerBase
     [HttpGet("download/{conspectusId}")]
     public IActionResult DownloadFile(string conspectusId)
     {
-        Conspectus? conspectus = _conspectusRepository.GetItemById(conspectusId);
-        if (conspectus == null)
+        FileContentResult? fileContent = _conspectusRepository.DownloadConspectus(conspectusId);
+        if (fileContent == null)
             return NotFound();
-    
-        string filePath = conspectus.Path;
-        if (System.IO.File.Exists(filePath))
-        {
-            var fileBytes = System.IO.File.ReadAllBytes(filePath);
-            var response = new FileContentResult(fileBytes, "application/pdf")
-            {
-                FileDownloadName = Path.GetFileName(filePath) // Set the desired filename
-            };
-            Response.Headers.Add("Content-Disposition", "attachment; filename=" + Path.GetFileName(filePath));
-            return response;
-        }
-    
-        return NotFound();
+        
+        string conspectusPath = _conspectusRepository.GetConspectusPath(conspectusId);
+        Response.Headers.Add("Content-Disposition", "attachment; filename=" + Path.GetFileName(conspectusPath));
+        return fileContent;
     }
 
     [HttpDelete("delete/{conspectusId}")]

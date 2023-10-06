@@ -33,13 +33,13 @@ public class SubjectRepository : BaseRepository<Subject>
     
     protected override string ItemToDbString(Subject item)
     {
-        return $"{item.Id};{item.Name};"; // Removed the description field
+        return $"{item.Id};{item.Name};";
     }
     
     protected override Subject StringToItem(string dbString)
     {
         String[] subjectFields = dbString.Split(";");
-        Subject newSubject = new Subject(subjectFields[1]); // use only name to construct Subject
+        Subject newSubject = new Subject(subjectFields[1]);
         newSubject.Id = subjectFields[0];
         return newSubject;
     }
