@@ -49,21 +49,7 @@ public class ConspectusController : ControllerBase
     [HttpPost("upload/{topicName}")]
     public IActionResult UploadFiles(string topicName, List<IFormFile> files)
     {
-        foreach (var formFile in files)
-        {
-            string fileName = formFile.FileName;
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Files", fileName);
-
-            // copying file to files folder
-            using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                formFile.CopyTo(fileStream);
-            }
-
-            _conspectusRepository.InsertItem(new Conspectus(topicName, filePath));
-        }
-    
-        return Ok(_conspectusRepository.GetConspectusListByTopicName(topicName));
+        return Ok(_conspectusRepository.UploadConspectus(topicName, files));
     }
 
     [HttpGet("download/{conspectusId}")]

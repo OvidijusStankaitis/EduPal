@@ -1,4 +1,5 @@
-﻿using PSI_Project.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using PSI_Project.Models;
 
 namespace PSI_Project.Repositories;
 public class ConspectusRepository : BaseRepository<Conspectus>
@@ -8,6 +9,25 @@ public class ConspectusRepository : BaseRepository<Conspectus>
     public List<Conspectus> GetConspectusListByTopicName(string topicName)
     {
         return Items.Where(conspectus => conspectus.TopicName == topicName).ToList();
+    }
+
+    public List<Conspectus> UploadConspectus(string topicName, List<IFormFile> files)
+    {
+        foreach (var formFile in files)
+        {
+            string fileName = formFile.FileName;
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Files", fileName);
+
+            // copying file to files folder
+            using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                formFile.CopyTo(fileStream);
+            }
+
+            InsertItem(new Conspectus(topicName, filePath));
+        }
+
+        return GetConspectusListByTopicName(topicName);
     }
 
     public override bool RemoveItemById(string itemId)
