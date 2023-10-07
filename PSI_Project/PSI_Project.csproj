@@ -24,6 +24,8 @@
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**"/>
         <Content Remove="DatabaseOperations\**" />
         <None Remove="DatabaseOperations\**" />
+        <Content Remove="DB\**" />
+        <None Remove="DB\**" />
     </ItemGroup>
 
 
@@ -43,6 +45,7 @@
 
     <ItemGroup>
       <Compile Remove="DatabaseOperations\**" />
+      <Compile Remove="DB\**" />
     </ItemGroup>
 
 
@@ -52,6 +55,7 @@
 
     <ItemGroup>
       <EmbeddedResource Remove="DatabaseOperations\**" />
+      <EmbeddedResource Remove="DB\**" />
     </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

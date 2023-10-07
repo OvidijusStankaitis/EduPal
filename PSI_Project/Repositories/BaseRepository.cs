@@ -23,6 +23,7 @@ namespace PSI_Project.Repositories
                 if (item.Id == itemId)
                     return item;
             }
+
             return null;
         }
 
@@ -42,6 +43,7 @@ namespace PSI_Project.Repositories
                 Items.RemoveAll(i => i.Id == itemId);
                 AfterOperation();
             }
+
             return removed;
         }
 
@@ -99,6 +101,7 @@ namespace PSI_Project.Repositories
                             removed = true;
                             continue;
                         }
+
                         sw.WriteLine(line);
                     }
                 }
@@ -112,5 +115,30 @@ namespace PSI_Project.Repositories
 
             return removed;
         }
+        
+        // Updates the database in accordance with the Items list
+        protected bool UpdateDB()
+        {
+            bool updated = false;
+            try
+            {
+                using (StreamWriter sw = new StreamWriter(DbFilePath))
+                {
+                    foreach (var item in Items)
+                    {
+                        sw.WriteLine(ItemToDbString(item));
+                    }
+                }
+                updated = true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return updated;
+        }
+        
     }
 }
+
+
