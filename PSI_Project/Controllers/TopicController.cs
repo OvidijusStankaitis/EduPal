@@ -12,19 +12,28 @@ public class TopicController : ControllerBase
 {
     private readonly TopicRepository _topicRepository = new TopicRepository();
     
-    [HttpGet("list/{subjectName}")]
-    public IActionResult ListTopics(string subjectName)
+    [HttpGet("get/{topicId}")]
+    public IActionResult GetSubject(string topicId)
     {
-        return Ok(_topicRepository.GetTopicsBySubjectName(subjectName)); 
+        Topic? topic = _topicRepository.GetItemById(topicId);
+        return topic == null
+            ? NotFound(new { error = "Topic not found." })
+            : Ok(topic);
+    }
+    
+    [HttpGet("list/{subjectId}")]
+    public IActionResult ListTopics(string subjectId)
+    {
+        return Ok(_topicRepository.GetTopicsBySubjectName(subjectId)); 
     }
     
     [HttpPost("upload")]
     public IActionResult UploadTopic([FromBody] JsonElement request)
     {
-        List<Topic>? topicList = _topicRepository.CreateTopic(request);
-        return topicList == null
+        Topic? topic = _topicRepository.CreateTopic(request);
+        return topic == null
             ? BadRequest("Invalid request body")
-            : Ok(topicList);
+            : Ok(topic);
     }
     
     [HttpDelete("{topicId}/delete")]

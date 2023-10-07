@@ -7,12 +7,12 @@
 
         public BaseEntity()
         {
-            Id = Guid.NewGuid().ToString(); // Generate a unique Id
+            Id = Guid.NewGuid().ToString();
         }
 
         public BaseEntity(string name)
         {
-            Id = Guid.NewGuid().ToString(); // Generate a unique Id
+            Id = Guid.NewGuid().ToString().Substring(0, 8);
             Name = name;
         }
     }

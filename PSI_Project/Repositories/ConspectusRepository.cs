@@ -8,9 +8,9 @@ public class ConspectusRepository : BaseRepository<Conspectus>
 {
     protected override string DbFilePath => "..//PSI_Project//DB//conspectus.txt";
     
-    public List<Conspectus> GetConspectusListByTopicName(string topicName)
+    public List<Conspectus> GetConspectusListByTopicName(string topicId)
     {
-        return Items.Where(conspectus => conspectus.TopicName == topicName).ToList();
+        return Items.Where(conspectus => conspectus.TopicId == topicId).ToList();
     }
     
     public string GetConspectusPath(string conspectusId)
@@ -56,7 +56,7 @@ public class ConspectusRepository : BaseRepository<Conspectus>
             var fileBytes = File.ReadAllBytes(filePath);
             var response = new FileContentResult(fileBytes, "application/pdf")
             {
-                FileDownloadName = Path.GetFileName(filePath) // Set the desired filename
+                FileDownloadName = Path.GetFileName(filePath) 
             };
             
             return response;
@@ -65,7 +65,7 @@ public class ConspectusRepository : BaseRepository<Conspectus>
         return null;
     }
 
-    public List<Conspectus> UploadConspectus(string topicName, List<IFormFile> files)
+    public List<Conspectus> UploadConspectus(string topicId, List<IFormFile> files)
     {
         foreach (var formFile in files)
         {
@@ -78,10 +78,10 @@ public class ConspectusRepository : BaseRepository<Conspectus>
                 formFile.CopyTo(fileStream);
             }
 
-            InsertItem(new Conspectus(topicName, filePath));
+            InsertItem(new Conspectus(topicId, filePath));
         }
 
-        return GetConspectusListByTopicName(topicName);
+        return GetConspectusListByTopicName(topicId);
     }
 
     public override bool RemoveItemById(string itemId)
@@ -117,14 +117,16 @@ public class ConspectusRepository : BaseRepository<Conspectus>
     
     protected override string ItemToDbString(Conspectus item)
     {
-        return $"{item.Id};{item.TopicName};{item.Path};";
+        return $"{item.Id};{item.TopicId};{item.Path};";
     }
     
     protected override Conspectus StringToItem(string dbString)
     {
         String[] fields = dbString.Split(";");
-        Conspectus newConspectus = new Conspectus(fields[1], fields[2]);
-        newConspectus.Id = fields[0];
+        Conspectus newConspectus = new Conspectus(fields[1], fields[2])
+        {
+            Id = fields[0]
+        };
         return newConspectus;
     }
 }

@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import './Subjects.css';
 
 export const Subjects = () => {
-    const [subjects, setSubjects] = useState([]);
+    const [subjectIds, setSubjectIds] = useState([]);
+    const [subjectNames, setSubjectNames] = useState([]);
     const [showDialog, setShowDialog] = useState(false);
     const [refreshSubjects, setRefreshSubjects] = useState(false);
     const [newSubjectName, setNewSubjectName] = useState('');
@@ -13,7 +14,8 @@ export const Subjects = () => {
             const response = await fetch('https://localhost:7283/Subject/list');
             const data = await response.json();
             console.log("Fetched subjects:", data);
-            setSubjects(data.map(subject => subject.name));
+            setSubjectIds(data.map(subject => subject.id));
+            setSubjectNames(data.map(subject => subject.name));
         };
 
         fetchSubjects();
@@ -22,8 +24,7 @@ export const Subjects = () => {
     const handleAddSubject = async () => {
         if (newSubjectName) {
             const requestBody = {
-                subjectName: newSubjectName,
-                subjectDescription: ""  // default empty description
+                subjectName: newSubjectName
             };
             console.log(requestBody);
             const response = await fetch('https://localhost:7283/Subject/upload', {
@@ -36,7 +37,15 @@ export const Subjects = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                setSubjects(data.map(subject => subject.name));
+
+                var updatedIdsArr = subjectIds;
+                updatedIdsArr.push(data.id);
+                setSubjectIds(updatedIdsArr);
+                
+                var updatedNamesArr = subjectNames;
+                updatedNamesArr.push(data.name);
+                setSubjectNames(updatedNamesArr);
+                
                 setNewSubjectName('');
                 setShowDialog(false);
                 setRefreshSubjects(prev => !prev);  // Toggle the state to trigger re-fetching
@@ -51,8 +60,8 @@ export const Subjects = () => {
             <div className="subjects-container">
                 <h1>Subjects</h1>
                 <div className="subjects-grid">
-                    {subjects.map((subject, index) => (
-                        <Link to={`/Subjects/${subject}-Topics`} key={index} className="subject-grid-item">
+                    {subjectNames.map((subject, index) => (
+                        <Link to={`/Subjects/${subjectIds.at(index)}-Topics`} key={index} className="subject-grid-item">
                             <h2>{subject}</h2>
                         </Link>
                     ))}

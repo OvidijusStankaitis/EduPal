@@ -11,15 +11,16 @@ public class SubjectRepository : BaseRepository<Subject>
         return Items.ToList();
     }
 
-    public List<Subject>? CreateSubject(JsonElement request)
+    public Subject? CreateSubject(JsonElement request)
     {
         if (request.TryGetProperty("subjectName", out var subjectNameProperty))
         {
             string? subjectName = subjectNameProperty.GetString();
             if (subjectName != null)
             {
-                InsertItem(new Subject(subjectName));
-                return Items;
+                Subject newSubject = new Subject(subjectName);
+                if(InsertItem(newSubject));
+                    return newSubject;
             }
         }
 

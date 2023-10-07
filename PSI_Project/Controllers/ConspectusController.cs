@@ -18,16 +18,16 @@ public class ConspectusController : ControllerBase
             : NotFound(new { error = "File not found." });
     }
 
-    [HttpGet("list/{topicName}")]
-    public IActionResult GetTopicFiles(string topicName)
+    [HttpGet("list/{topicId}")]
+    public IActionResult GetTopicFiles(string topicId)
     {   
-        return Ok(_conspectusRepository.GetConspectusListByTopicName(topicName));
+        return Ok(_conspectusRepository.GetConspectusListByTopicName(topicId));
     }
 
-    [HttpPost("upload/{topicName}")]
-    public IActionResult UploadFiles(string topicName, List<IFormFile> files)
+    [HttpPost("upload/{topicId}")]
+    public IActionResult UploadFiles(string topicId, List<IFormFile> files)
     {
-        return Ok(_conspectusRepository.UploadConspectus(topicName, files));
+        return Ok(_conspectusRepository.UploadConspectus(topicId, files));
     }
 
     [HttpGet("download/{conspectusId}")]

@@ -11,6 +11,15 @@ public class SubjectController : ControllerBase
 {
     private readonly SubjectRepository _subjectRepository = new SubjectRepository();
 
+    [HttpGet("get/{subjectId}")]
+    public IActionResult GetSubject(string subjectId)
+    {
+        Subject? subject = _subjectRepository.GetItemById(subjectId);
+        return subject == null
+            ? NotFound(new { error = "Subject not found." })
+            : Ok(subject);
+    }
+    
     [HttpGet("list")]
     public IActionResult ListSubjects()
     {
@@ -20,10 +29,10 @@ public class SubjectController : ControllerBase
     [HttpPost("upload")]
     public IActionResult UploadSubject([FromBody] JsonElement request)
     {
-        List<Subject>? subjectList = _subjectRepository.CreateSubject(request);
-        return subjectList == null
+        Subject? addedSubject = _subjectRepository.CreateSubject(request);
+        return addedSubject == null
             ? BadRequest("Invalid request body")
-            : Ok(subjectList);
+            : Ok(addedSubject);
     }
     
     [HttpDelete("{subjectId}/delete")]

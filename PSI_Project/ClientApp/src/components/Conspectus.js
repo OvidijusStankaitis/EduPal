@@ -3,12 +3,18 @@ import './Conspectus.css';
 import {useParams} from "react-router-dom";
 
 export const Conspectus = () => {
-    const { topicName } = useParams();
+    const { topicId } = useParams();
+    const [topicName, setTopicName] = useState("");
     const [files, setFiles] = useState([]);
     const iframeRef = useRef(null);
 
     useEffect(() => {
-        fetch(`https://localhost:7283/Conspectus/list/${topicName}`)
+        fetch(`https://localhost:7283/Topic/get/${topicId}`)
+            .then(response => response.json())
+            .then(data => setTopicName(data.name))
+            .catch(error => console.error('Error getting topic name:', error))
+        
+        fetch(`https://localhost:7283/Conspectus/list/${topicId}`)
             .then(response => response.json())
             .then(data => {
                 const fileList = data.map(fileObj => {
@@ -23,7 +29,7 @@ export const Conspectus = () => {
                 setFiles(fileList);
             })
             .catch(error => console.error('Error fetching files:', error));
-    }, [topicName]);
+    }, [topicId]);
 
     const handleFileChange = (event) => {
         const fileList = Array.from(event.target.files).map(file => {
@@ -37,7 +43,7 @@ export const Conspectus = () => {
         const formData = new FormData();
         fileList.forEach(file => formData.append('files', file.data));
 
-        fetch(`https://localhost:7283/Conspectus/upload/${topicName}`, {
+        fetch(`https://localhost:7283/Conspectus/upload/${topicId}`, {
             method: 'POST',
             body: formData
         })

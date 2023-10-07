@@ -3,29 +3,36 @@ import { Link, useParams } from 'react-router-dom';
 import './Topics.css';
 
 export const Topics = () => {
-    const { subjectName } = useParams();
-    const [topics, setTopics] = useState([]);
+    const { subjectId } = useParams();
+    const [subjectName, setSubjectName] = useState("");
+    const [topicIds, setTopicIds] = useState([]);
+    const [topicNames, setTopicNames] = useState([]);
     const [showDialog, setShowDialog] = useState(false);
     const [refreshTopics, setRefreshTopics] = useState(false);
     const [newTopicName, setNewTopicName] = useState('');
-
+    
     useEffect(() => {
+        fetch(`https://localhost:7283/Subject/get/${subjectId}`)
+            .then(response => response.json())
+            .then(data => setSubjectName(data.name))
+            .catch(error => console.error('Error getting subject name:', error))        
+        
         const fetchTopics = async () => {
-            const response = await fetch(`https://localhost:7283/Topic/list/${subjectName}`);
+            const response = await fetch(`https://localhost:7283/Topic/list/${subjectId}`);
             const data = await response.json();
-            console.log("Fetched topics:", data);
-            setTopics(data.map(topic => topic.name));
+            console.log("Fetched topics:", data);            
+            setTopicIds(data.map(topic => topic.id));
+            setTopicNames(data.map(topic => topic.name));
         };
-
+        
         fetchTopics();
-    }, [refreshTopics, subjectName]);
+    }, [refreshTopics, subjectId]);
 
     const handleAddTopic = async () => {
         if (newTopicName) {
             const requestBody = {
                 topicName: newTopicName,
-                topicDescription: "",  // default empty description
-                subjectName: subjectName
+                subjectId: subjectId
             };
             console.log(requestBody);
             const response = await fetch('https://localhost:7283/Topic/upload', {
@@ -38,7 +45,15 @@ export const Topics = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                setTopics(data.map(topic => topic.name));
+
+                var updatedIdsArr = topicIds;
+                updatedIdsArr.push(data.id);
+                setTopicIds(updatedIdsArr);
+
+                var updatedNamesArr = topicNames;
+                updatedNamesArr.push(data.name);
+                setTopicNames(updatedNamesArr);
+                
                 setNewTopicName('');
                 setShowDialog(false);
                 setRefreshTopics(prev => !prev);  // Toggle the state to trigger re-fetching
@@ -53,8 +68,8 @@ export const Topics = () => {
             <div className="topics-container">
                 <h1>{subjectName}</h1>
                 <div className="topics-grid">
-                    {topics.map((topic, index) => (
-                        <Link to={`/Subjects/${subjectName}-Topics/${topic}-Conspectus`} key={index} className="topic-grid-item">
+                    {topicNames.map((topic, index) => (
+                        <Link to={`/Subjects/${subjectId}-Topics/${topicIds.at(index)}-Conspectus`} key={index} className="topic-grid-item">
                             <h2>{topic}</h2>
                         </Link>
                     ))}

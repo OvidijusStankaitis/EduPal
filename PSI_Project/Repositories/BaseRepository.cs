@@ -12,14 +12,9 @@ public abstract class BaseRepository<T> where T : BaseEntity
         Items = ReadAllItemsFromDB();
     }
 
-    protected T? GetItemById(string itemId)
+    public T? GetItemById(string itemId)
     {
         return Items.FirstOrDefault(item => item.Id.Equals(itemId));
-    }
-    
-    public T? GetItemByName(string itemName)
-    {
-        return Items.FirstOrDefault(item => item.Name.Equals(itemName, StringComparison.OrdinalIgnoreCase));
     }
 
     protected List<T> ReadAllItemsFromDB()
@@ -39,18 +34,31 @@ public abstract class BaseRepository<T> where T : BaseEntity
         return items;
     }
     
-    public void InsertItem(T item)
+    public bool InsertItem(T item)
     {
         Items.Add(item);
-        InsertItemToDB(item);
+        bool isInserted = InsertItemToDB(item);
+        
         AfterOperation();
+        
+        return isInserted;
     }
     
-    protected void InsertItemToDB(T item)
+    protected bool InsertItemToDB(T item)
     {
-        using (StreamWriter sw = File.AppendText(DbFilePath))
+        try
         {
-            sw.WriteLine(ItemToDbString(item));
+            using (StreamWriter sw = File.AppendText(DbFilePath))
+            {
+                sw.WriteLine(ItemToDbString(item));
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return false;
         }
     }
 

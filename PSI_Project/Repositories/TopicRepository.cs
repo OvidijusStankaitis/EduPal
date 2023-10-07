@@ -6,22 +6,24 @@ public class TopicRepository : BaseRepository<Topic>
 {
     protected override string DbFilePath => "..//PSI_Project//DB//topic.txt";
     
-    public List<Topic> GetTopicsBySubjectName(string subjectName)
+    public List<Topic> GetTopicsBySubjectName(string subjectId)
     {
-        return Items.Where(topic => topic.SubjectName.Equals(subjectName)).ToList();
+        return Items.Where(topic => topic.SubjectId.Equals(subjectId)).ToList();
     }
 
-    public List<Topic>? CreateTopic(JsonElement request)
+    public Topic? CreateTopic(JsonElement request)
     {
         if (request.TryGetProperty("topicName", out var topicNameProperty) &&
-            request.TryGetProperty("subjectName", out var subjectNameProperty))
+            request.TryGetProperty("subjectId", out var subjectNameProperty))
         {
             string? topicName = topicNameProperty.GetString();
-            string? subjectName = subjectNameProperty.GetString();
-            if (subjectName != null && topicName != null)
+            string? subjectId = subjectNameProperty.GetString();
+            
+            if (subjectId != null && topicName != null)
             {
-                InsertItem(new Topic(topicName, subjectName));
-                return Items;
+                Topic newTopic = new Topic(topicName, subjectId);
+                if(InsertItem(newTopic));
+                    return newTopic;
             }
         }
 
@@ -30,7 +32,7 @@ public class TopicRepository : BaseRepository<Topic>
 
     protected override string ItemToDbString(Topic item)
     {
-        return $"{item.Id};{item.SubjectName};{item.Name};";
+        return $"{item.Id};{item.SubjectId};{item.Name};";
     }
 
     protected override Topic StringToItem(string dbString)
