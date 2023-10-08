@@ -2,8 +2,8 @@
 
 public class Conspectus : BaseEntity
 {
-    public string TopicId { get; set; }
-    public string Path { get; set; }
+    public string TopicId {get; }
+    public string Path { get; }
 
     public Conspectus(string topicId, string path)
     {

@@ -5,8 +5,7 @@ import './Topics.css';
 export const Topics = () => {
     const { subjectId } = useParams();
     const [subjectName, setSubjectName] = useState("");
-    const [topicIds, setTopicIds] = useState([]);
-    const [topicNames, setTopicNames] = useState([]);
+    const [topics, setTopics] = useState([]);
     const [showDialog, setShowDialog] = useState(false);
     const [refreshTopics, setRefreshTopics] = useState(false);
     const [newTopicName, setNewTopicName] = useState('');
@@ -15,14 +14,27 @@ export const Topics = () => {
         fetch(`https://localhost:7283/Subject/get/${subjectId}`)
             .then(response => response.json())
             .then(data => setSubjectName(data.name))
-            .catch(error => console.error('Error getting subject name:', error))        
-        
+            .catch(error => console.error('Error getting subject name:', error))
+    }, []);
+    
+    useEffect(() => {
         const fetchTopics = async () => {
             const response = await fetch(`https://localhost:7283/Topic/list/${subjectId}`);
-            const data = await response.json();
-            console.log("Fetched topics:", data);            
-            setTopicIds(data.map(topic => topic.id));
-            setTopicNames(data.map(topic => topic.name));
+            
+            if(response.ok) {
+                const data = await response.json();
+                console.log("Fetched topics:", data);
+                
+                setTopics(data.map(topic => {
+                    return {
+                        id: topic.id,
+                        name: topic.name
+                    };
+                }));
+            }
+            else {
+                console.error("Error fetching topics: ", await response.text());
+            }
         };
         
         fetchTopics();
@@ -45,14 +57,12 @@ export const Topics = () => {
 
             if (response.ok) {
                 const data = await response.json();
-
-                var updatedIdsArr = topicIds;
-                updatedIdsArr.push(data.id);
-                setTopicIds(updatedIdsArr);
-
-                var updatedNamesArr = topicNames;
-                updatedNamesArr.push(data.name);
-                setTopicNames(updatedNamesArr);
+                
+                topics.push({
+                    id: data.id,
+                    name: data.name
+                });
+                setTopics(topics);
                 
                 setNewTopicName('');
                 setShowDialog(false);
@@ -68,9 +78,9 @@ export const Topics = () => {
             <div className="topics-container">
                 <h1>{subjectName}</h1>
                 <div className="topics-grid">
-                    {topicNames.map((topic, index) => (
-                        <Link to={`/Subjects/${subjectId}-Topics/${topicIds.at(index)}-Conspectus`} key={index} className="topic-grid-item">
-                            <h2>{topic}</h2>
+                    {topics.map((topic, index) => (
+                        <Link to={`/Subjects/${subjectId}-Topics/${topic.id}-Conspectus`} key={index} className="topic-grid-item">
+                            <h2>{topic.name}</h2>
                         </Link>
                     ))}
                     <div className="topic-grid-item add-topic" onClick={() => setShowDialog(true)}>

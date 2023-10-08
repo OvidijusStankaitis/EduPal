@@ -6,7 +6,7 @@ public class TopicRepository : BaseRepository<Topic>
 {
     protected override string DbFilePath => "..//PSI_Project//DB//topic.txt";
     
-    public List<Topic> GetTopicsBySubjectName(string subjectId)
+    public List<Topic> GetTopicsBySubjectId(string subjectId)
     {
         return Items.Where(topic => topic.SubjectId.Equals(subjectId)).ToList();
     }

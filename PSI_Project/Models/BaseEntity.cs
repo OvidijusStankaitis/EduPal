@@ -7,7 +7,7 @@
 
         public BaseEntity()
         {
-            Id = Guid.NewGuid().ToString();
+            Id = Guid.NewGuid().ToString().Substring(0, 8);
         }
 
         public BaseEntity(string name)

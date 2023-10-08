@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef} from 'react';
 import './Conspectus.css';
 import {useParams} from "react-router-dom";
 
@@ -12,8 +12,10 @@ export const Conspectus = () => {
         fetch(`https://localhost:7283/Topic/get/${topicId}`)
             .then(response => response.json())
             .then(data => setTopicName(data.name))
-            .catch(error => console.error('Error getting topic name:', error))
-        
+            .catch(error => console.error('Error getting topic name:', error));
+    }, []); 
+    
+    useEffect(() => {        
         fetch(`https://localhost:7283/Conspectus/list/${topicId}`)
             .then(response => response.json())
             .then(data => {

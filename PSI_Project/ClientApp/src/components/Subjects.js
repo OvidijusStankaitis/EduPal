@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import './Subjects.css';
 
 export const Subjects = () => {
+    const [subjects, setSubjects] = useState([]);
     const [subjectIds, setSubjectIds] = useState([]);
     const [subjectNames, setSubjectNames] = useState([]);
     const [showDialog, setShowDialog] = useState(false);
@@ -12,10 +13,21 @@ export const Subjects = () => {
     useEffect(() => {
         const fetchSubjects = async () => {
             const response = await fetch('https://localhost:7283/Subject/list');
-            const data = await response.json();
-            console.log("Fetched subjects:", data);
-            setSubjectIds(data.map(subject => subject.id));
-            setSubjectNames(data.map(subject => subject.name));
+            
+            if(response.ok) {
+                const data = await response.json();
+                console.log("Fetched subjects:", data);
+                
+                setSubjects(data.map(subject => {
+                    return {
+                        id: subject.id,
+                        name: subject.name
+                    };
+                }));
+            } 
+            else {
+                console.error("Error fetching subjects: ", await response.text());
+            }
         };
 
         fetchSubjects();
@@ -37,14 +49,12 @@ export const Subjects = () => {
 
             if (response.ok) {
                 const data = await response.json();
-
-                var updatedIdsArr = subjectIds;
-                updatedIdsArr.push(data.id);
-                setSubjectIds(updatedIdsArr);
                 
-                var updatedNamesArr = subjectNames;
-                updatedNamesArr.push(data.name);
-                setSubjectNames(updatedNamesArr);
+                subjects.push({
+                    id: data.id,
+                    name: data.name
+                });
+                setSubjects(subjects);
                 
                 setNewSubjectName('');
                 setShowDialog(false);
@@ -60,9 +70,9 @@ export const Subjects = () => {
             <div className="subjects-container">
                 <h1>Subjects</h1>
                 <div className="subjects-grid">
-                    {subjectNames.map((subject, index) => (
-                        <Link to={`/Subjects/${subjectIds.at(index)}-Topics`} key={index} className="subject-grid-item">
-                            <h2>{subject}</h2>
+                    {subjects.map((subject, index) => (
+                        <Link to={`/Subjects/${subject.id}-Topics`} key={index} className="subject-grid-item">
+                            <h2>{subject.name}</h2>
                         </Link>
                     ))}
                     <div className="subject-grid-item add-subject" onClick={() => setShowDialog(true)}>

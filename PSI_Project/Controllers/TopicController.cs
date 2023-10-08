@@ -24,7 +24,7 @@ public class TopicController : ControllerBase
     [HttpGet("list/{subjectId}")]
     public IActionResult ListTopics(string subjectId)
     {
-        return Ok(_topicRepository.GetTopicsBySubjectName(subjectId)); 
+        return Ok(_topicRepository.GetTopicsBySubjectId(subjectId)); 
     }
     
     [HttpPost("upload")]

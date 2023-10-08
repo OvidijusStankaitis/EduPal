@@ -8,7 +8,7 @@ public class ConspectusRepository : BaseRepository<Conspectus>
 {
     protected override string DbFilePath => "..//PSI_Project//DB//conspectus.txt";
     
-    public List<Conspectus> GetConspectusListByTopicName(string topicId)
+    public List<Conspectus> GetConspectusByTopicId(string topicId)
     {
         return Items.Where(conspectus => conspectus.TopicId == topicId).ToList();
     }
@@ -81,7 +81,7 @@ public class ConspectusRepository : BaseRepository<Conspectus>
             InsertItem(new Conspectus(topicId, filePath));
         }
 
-        return GetConspectusListByTopicName(topicId);
+        return GetConspectusByTopicId(topicId);
     }
 
     public override bool RemoveItemById(string itemId)

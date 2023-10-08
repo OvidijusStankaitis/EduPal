@@ -7,7 +7,7 @@ namespace PSI_Project.Controllers;
 [Route("[controller]")]
 public class ConspectusController : ControllerBase
 {
-    private ConspectusRepository _conspectusRepository = new ConspectusRepository();
+    private readonly ConspectusRepository _conspectusRepository = new ConspectusRepository();
 
     [HttpGet("get/{conspectusId}")]
     public IActionResult GetConspectus(string conspectusId)
@@ -21,7 +21,7 @@ public class ConspectusController : ControllerBase
     [HttpGet("list/{topicId}")]
     public IActionResult GetTopicFiles(string topicId)
     {   
-        return Ok(_conspectusRepository.GetConspectusListByTopicName(topicId));
+        return Ok(_conspectusRepository.GetConspectusByTopicId(topicId));
     }
 
     [HttpPost("upload/{topicId}")]
