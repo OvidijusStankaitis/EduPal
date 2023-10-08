@@ -14,7 +14,8 @@ namespace PSI_Project.Repositories
         protected override Conspectus StringToItem(string dbString)
         {
             String[] fields = dbString.Split(";");
-            return new Conspectus(topicName:fields[0], path:fields[1], rating:int.Parse(fields[2]));
+            int i = 0;
+            return new Conspectus(topicName:fields[1], path:fields[2], rating:int.Parse(fields[3]));
         }
 
         public List<Conspectus> GetConspectusListByTopicName(string topicName)
@@ -37,10 +38,9 @@ namespace PSI_Project.Repositories
                 int conspectusIndex = Items.IndexOf(conspectus);
                 Items[conspectusIndex].Rating =
                     toIncrease ? Items[conspectusIndex].Rating++ : Items[conspectusIndex].Rating--;
-                UpdateDB();
+                UpdateDB(); // should it be here?
                 return true;
             }
-
             return false;
         }
     }

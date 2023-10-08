@@ -119,7 +119,7 @@ public class ConspectusController : ControllerBase
         if (!isError)
            return NotFound(new { error = "File not found in database." });
 
-        return Ok(_conspectusRepository.Items);
+        return Ok(_conspectusRepository.GetItemById(conspectusId));
     }
     [HttpPost("rateDown/{conspectusId}")]
     public IActionResult RateConspectusDown(string conspectusId)
@@ -128,7 +128,7 @@ public class ConspectusController : ControllerBase
         if (!isError)
             return NotFound(new { error = "File not found in database." });
 
-        return Ok(_conspectusRepository.Items);
+        return Ok(_conspectusRepository.GetItemById(conspectusId));
     }
 
 }
