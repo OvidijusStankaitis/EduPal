@@ -14,7 +14,6 @@ namespace PSI_Project.Repositories
         protected override Conspectus StringToItem(string dbString)
         {
             String[] fields = dbString.Split(";");
-            int i = 0;
             return new Conspectus(topicName:fields[1], path:fields[2], rating:int.Parse(fields[3]));
         }
 
