@@ -26,6 +26,8 @@
         <None Remove="DatabaseOperations\**" />
         <Content Remove="DB\**" />
         <None Remove="DB\**" />
+        <Content Remove="Files\**" />
+        <None Remove="Files\**" />
     </ItemGroup>
 
 
@@ -34,7 +36,6 @@
 
 
     <ItemGroup>
-      <Folder Include="Files\" />
       <Folder Include="wwwroot\" />
     </ItemGroup>
 
@@ -46,6 +47,7 @@
     <ItemGroup>
       <Compile Remove="DatabaseOperations\**" />
       <Compile Remove="DB\**" />
+      <Compile Remove="Files\**" />
     </ItemGroup>
 
 
@@ -56,6 +58,7 @@
     <ItemGroup>
       <EmbeddedResource Remove="DatabaseOperations\**" />
       <EmbeddedResource Remove="DB\**" />
+      <EmbeddedResource Remove="Files\**" />
     </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

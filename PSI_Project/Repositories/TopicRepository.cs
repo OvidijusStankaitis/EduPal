@@ -15,12 +15,13 @@ namespace PSI_Project.Repositories
         {
             String[] topicFields = dbString.Split(";");
 
-            return new Topic(topicFields[2], topicFields[1]);
+            return new Topic(subjectName:topicFields[1], name:topicFields[2]);
         }
 
         public List<Topic> GetTopicsBySubjectName(string subjectName)
         {
             return Items.Where(topic => topic.SubjectName.Equals(subjectName)).ToList();
+            // return (from i in Items where i.SubjectName.Equals(subjectName) select i).ToList(); // the same but as a query
         }
 
         public Topic? GetItemByName(string topicName)

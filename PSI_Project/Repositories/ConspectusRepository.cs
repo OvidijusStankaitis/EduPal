@@ -14,7 +14,7 @@ namespace PSI_Project.Repositories
         protected override Conspectus StringToItem(string dbString)
         {
             String[] fields = dbString.Split(";");
-            return new Conspectus(fields[0], fields[1], int.Parse(fields[2]));
+            return new Conspectus(topicName:fields[0], path:fields[1], rating:int.Parse(fields[2]));
         }
 
         public List<Conspectus> GetConspectusListByTopicName(string topicName)
@@ -27,7 +27,8 @@ namespace PSI_Project.Repositories
             return Items.Any(conspectus => conspectus.Path == filePath);
         }
 
-        // Changes rating of a conspectus in accordance with its Id and updates the Topic DB //(when should it update the whole topic DB to keep its records up to date? - everytime when rating of a topic is changed?)
+        // Changes rating of a conspectus in accordance with its Id and updates the Topic DB
+        //(when should it update the whole topic DB to keep its records up to date? - everytime when rating of a topic is changed?)
         public bool ChangeRating(string conspectusId, bool toIncrease)
         {
             Conspectus? conspectus = GetItemById(conspectusId);
