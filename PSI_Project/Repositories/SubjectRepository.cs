@@ -27,7 +27,7 @@ public class SubjectRepository : BaseRepository<Subject>
         return null;
     }
     
-    protected override void AfterOperation()
+    protected override void AfterOperation() // 10: Sort method with IComparable interface used
     {
         Items.Sort((subject1, subject2) => String.Compare(subject1.Name, subject2.Name, StringComparison.Ordinal));
     }

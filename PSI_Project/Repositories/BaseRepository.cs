@@ -2,7 +2,7 @@
 
 namespace PSI_Project.Repositories;
 
-public abstract class BaseRepository<T> where T : BaseEntity    // 6: using generic type
+public abstract class BaseRepository<T> where T : BaseEntity    // 7: using generic type
 {
     protected abstract string DbFilePath { get; }
     protected List<T> Items { get; private set; }
@@ -12,6 +12,7 @@ public abstract class BaseRepository<T> where T : BaseEntity    // 6: using gene
     protected BaseRepository()
     {
         Items = ReadAllItemsFromDB();
+        AfterOperation();   // 10: IComparable used to sort items alphabetically in SubjectRepo.cs class
     }
 
     public T? GetItemById(string itemId)
@@ -19,7 +20,7 @@ public abstract class BaseRepository<T> where T : BaseEntity    // 6: using gene
         return Items.FirstOrDefault(item => item.Id.Equals(itemId));
     }
 
-    protected List<T> ReadAllItemsFromDB()
+    protected List<T> ReadAllItemsFromDB() // 6: Reading from a file using a stream;
     {
         List<T> items = new List<T>();
 
