@@ -62,12 +62,19 @@ public class ConspectusRepository : BaseRepository<Conspectus>
 
         return null;
     }
-
+    
     public List<Conspectus> UploadConspectus(string topicId, List<IFormFile> files)
     {
         foreach (var formFile in files) // 5: iterating through collection the right way
         {
             string fileName = formFile.FileName;
+            
+            if (!fileName.IsValidPdfName()) // 4. Extension method usage
+            {
+                Console.WriteLine($"The file {fileName} is not a valid PDF format.");
+                continue;
+            }
+
             string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Files", fileName);
             
             using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
