@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
 using PSI_Project.Models;
 
@@ -13,10 +12,9 @@ public class ConspectusRepository : BaseRepository<Conspectus>
         return Items.Where(conspectus => conspectus.TopicId == topicId).ToList();
     }
     
-    public string GetConspectusPath(string conspectusId)
+    public string? GetConspectusPath(string conspectusId)
     {
-        Conspectus conspectus = GetItemById(conspectusId);
-        return conspectus.Path;
+        return GetItemById(conspectusId)?.Path;
     }
 
     public Stream? GetConspectusPdfStream(string conspectusId)
@@ -56,7 +54,7 @@ public class ConspectusRepository : BaseRepository<Conspectus>
             var fileBytes = File.ReadAllBytes(filePath);
             var response = new FileContentResult(fileBytes, "application/pdf")
             {
-                FileDownloadName = Path.GetFileName(filePath) 
+                FileDownloadName = Path.GetFileName(conspectus.Name) 
             };
             
             return response;
@@ -67,18 +65,17 @@ public class ConspectusRepository : BaseRepository<Conspectus>
 
     public List<Conspectus> UploadConspectus(string topicId, List<IFormFile> files)
     {
-        foreach (var formFile in files)
+        foreach (var formFile in files) // 5: iterating through collection the right way
         {
             string fileName = formFile.FileName;
             string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Files", fileName);
-
-            // copying file to files folder
+            
             using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
             {
                 formFile.CopyTo(fileStream);
             }
 
-            InsertItem(new Conspectus(topicId, filePath));
+            InsertItem(new Conspectus(topicId, filePath, fileName));
         }
 
         return GetConspectusByTopicId(topicId);
@@ -94,8 +91,7 @@ public class ConspectusRepository : BaseRepository<Conspectus>
         try
         {
             RemoveItemFromDB(conspectus.Id);
-
-            // Check if the file is used in other topics before deleting
+            
             if (!IsFileUsedInOtherTopics(filePath))
             {
                 File.Delete(filePath);
@@ -117,13 +113,13 @@ public class ConspectusRepository : BaseRepository<Conspectus>
     
     protected override string ItemToDbString(Conspectus item)
     {
-        return $"{item.Id};{item.TopicId};{item.Path};";
+        return $"{item.Id};{item.Name};{item.TopicId};{item.Path};";
     }
     
     protected override Conspectus StringToItem(string dbString)
     {
         String[] fields = dbString.Split(";");
-        Conspectus newConspectus = new Conspectus(fields[1], fields[2])
+        Conspectus newConspectus = new Conspectus(name: fields[1], topicId: fields[2], path: fields[3]) // 3: named argument usage
         {
             Id = fields[0]
         };

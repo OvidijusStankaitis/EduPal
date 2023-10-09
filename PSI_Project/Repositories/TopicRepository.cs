@@ -8,7 +8,7 @@ public class TopicRepository : BaseRepository<Topic>
     
     public List<Topic> GetTopicsBySubjectId(string subjectId)
     {
-        return Items.Where(topic => topic.SubjectId.Equals(subjectId)).ToList();
+        return Items.Where(topic => topic.SubjectId.Equals(subjectId)).ToList();    // 9: using LINQ
     }
 
     public Topic? CreateTopic(JsonElement request)
@@ -38,7 +38,7 @@ public class TopicRepository : BaseRepository<Topic>
     protected override Topic StringToItem(string dbString)
     {
         String[] topicFields = dbString.Split(";");
-        Topic newTopic = new Topic(topicFields[2], topicFields[1])
+        Topic newTopic = new Topic(name: topicFields[2], subjectId: topicFields[1])
         {
             Id = topicFields[0]
         };

@@ -1,9 +1,11 @@
-﻿namespace PSI_Project.Repositories;
+﻿using PSI_Project.Models;
 
-public abstract class BaseRepository<T> where T : BaseEntity
+namespace PSI_Project.Repositories;
+
+public abstract class BaseRepository<T> where T : BaseEntity    // 6: using generic type
 {
     protected abstract string DbFilePath { get; }
-    protected List<T> Items { get; private set; } = new List<T>();
+    protected List<T> Items { get; private set; }
     protected abstract string ItemToDbString(T item);
     protected abstract T StringToItem(string dbString);
 

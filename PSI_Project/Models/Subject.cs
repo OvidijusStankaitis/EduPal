@@ -2,7 +2,7 @@
 
 public class Subject : BaseEntity, IComparable<Subject>, IEquatable<Subject>
 {
-    public Subject(string name) : base(name)
+    public Subject(string name = "untitled subject") : base(name)
     {
     }
 
@@ -11,7 +11,7 @@ public class Subject : BaseEntity, IComparable<Subject>, IEquatable<Subject>
         return Name.CompareTo(other.Name);
     }
 
-    public bool Equals(Subject other)
+    public bool Equals(Subject? other)
     {
         if (other == null)
             return false;
@@ -19,7 +19,7 @@ public class Subject : BaseEntity, IComparable<Subject>, IEquatable<Subject>
         return Name == other.Name;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj is Subject)
             return Equals((Subject)obj);

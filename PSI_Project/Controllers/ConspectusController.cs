@@ -37,8 +37,9 @@ public class ConspectusController : ControllerBase
         if (fileContent == null)
             return NotFound();
         
-        string conspectusPath = _conspectusRepository.GetConspectusPath(conspectusId);
+        string? conspectusPath = _conspectusRepository.GetConspectusPath(conspectusId);
         Response.Headers.Add("Content-Disposition", "attachment; filename=" + Path.GetFileName(conspectusPath));
+        
         return fileContent;
     }
 
