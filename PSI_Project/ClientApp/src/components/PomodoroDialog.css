@@ -1,0 +1,66 @@
+﻿.pomodoro-dialog {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 70vh;
+    width: 30vw;
+    background: radial-gradient(circle at center, rgba(45, 45, 90, 0.95) 0%, rgba(30, 30, 60, 0.95) 70%, rgba(15, 15, 30, 0.95) 100%);
+    padding: 2vh;
+    border-radius: 1vw;
+    box-shadow: 0 0.5vw 2vw rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    animation: slideCenter 0.5s forwards;
+}
+
+.pomodoro-dialog-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 2vh 2vw;
+}
+
+.pomodoro-dialog-content h3 {
+    color: #E0E0FF;
+    font-size: 2.5vh;
+    margin-bottom: 3vh;
+}
+
+.pomodoro-dialog-content select {
+    margin-top: 2vh;
+    margin-bottom: 2vh;
+    width: 90%;
+    height: 6vh;
+    padding: 1vh 1vw;
+    border-radius: 0.5vw;
+    font-size: 1.5vh;
+    background: rgba(30, 30, 60, 0.95);
+    color: #E0E0FF;
+    border: none;
+}
+
+.pomodoro-dialog-content button {
+    margin-top: 2vh;
+    margin-bottom: 0;
+    padding: 2vh 4vw;
+    font-size: 1.8vh;
+    border: none;
+    cursor: pointer;
+    background-color: rgba(58, 58, 128, 0.8);
+    color: #E0E0FF;
+    border-radius: 0.5vw;
+    transition: background-color 0.3s;
+    box-shadow: 0 0.5vw 1vw rgba(34, 34, 85, 0.6);
+}
+
+.time-desc{
+    text-align: justify;
+    color: #E0E0FF;
+    font-size: 1vw;
+    margin-top: 7vh;
+}
+

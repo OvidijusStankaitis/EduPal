@@ -1,19 +1,36 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Subjects.css';
+import { UserComponent } from "./UserComponent";
+import { PomodoroDialog } from './PomodoroDialog';
 
 export const Subjects = () => {
     const [subjects, setSubjects] = useState([]);
+    const [subjectIds, setSubjectIds] = useState([]);
+    const [subjectNames, setSubjectNames] = useState([]);
     const [showDialog, setShowDialog] = useState(false);
     const [refreshSubjects, setRefreshSubjects] = useState(false);
     const [newSubjectName, setNewSubjectName] = useState('');
+    const [showPomodoroDialog, setShowPomodoroDialog] = useState(false);
 
     useEffect(() => {
         const fetchSubjects = async () => {
             const response = await fetch('https://localhost:7283/Subject/list');
-            const data = await response.json();
-            console.log("Fetched subjects:", data);
-            setSubjects(data.map(subject => subject.name));
+            
+            if(response.ok) {
+                const data = await response.json();
+                console.log("Fetched subjects:", data);
+                
+                setSubjects(data.map(subject => {
+                    return {
+                        id: subject.id,
+                        name: subject.name
+                    };
+                }));
+            } 
+            else {
+                console.error("Error fetching subjects: ", await response.text());
+            }
         };
 
         fetchSubjects();
@@ -22,8 +39,7 @@ export const Subjects = () => {
     const handleAddSubject = async () => {
         if (newSubjectName) {
             const requestBody = {
-                subjectName: newSubjectName,
-                subjectDescription: ""  // default empty description
+                subjectName: newSubjectName
             };
             console.log(requestBody);
             const response = await fetch('https://localhost:7283/Subject/upload', {
@@ -36,7 +52,13 @@ export const Subjects = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                setSubjects(data.map(subject => subject.name));
+                
+                subjects.push({
+                    id: data.id,
+                    name: data.name
+                });
+                setSubjects(subjects);
+                
                 setNewSubjectName('');
                 setShowDialog(false);
                 setRefreshSubjects(prev => !prev);  // Toggle the state to trigger re-fetching
@@ -49,11 +71,14 @@ export const Subjects = () => {
     return (
         <div className="subjects-page-container">
             <div className="subjects-container">
-                <h1>Subjects</h1>
+                <div className="headersub">
+                    <h1>Subjects</h1>
+                    <UserComponent setShowPomodoroDialog={setShowPomodoroDialog} />
+                </div>
                 <div className="subjects-grid">
                     {subjects.map((subject, index) => (
-                        <Link to={`/Subjects/${subject}-Topics`} key={index} className="subject-grid-item">
-                            <h2>{subject}</h2>
+                        <Link to={`/Subjects/${subject.id}-Topics`} key={index} className="subject-grid-item">
+                            <h2>{subject.name}</h2>
                         </Link>
                     ))}
                     <div className="subject-grid-item add-subject" onClick={() => setShowDialog(true)}>
@@ -72,6 +97,10 @@ export const Subjects = () => {
                         <button onClick={() => setShowDialog(false)}>Cancel</button>
                     </div>
                 )}
+                <PomodoroDialog
+                    show={showPomodoroDialog}
+                    onClose={() => setShowPomodoroDialog(false)}
+                />
             </div>
         </div>
     );

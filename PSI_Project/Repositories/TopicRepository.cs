@@ -1,32 +1,47 @@
-﻿using PSI_Project.DAL;
+﻿using System.Text.Json;
+using PSI_Project.Models;
 
-namespace PSI_Project.Repositories
+namespace PSI_Project.Repositories;
+public class TopicRepository : BaseRepository<Topic>
 {
-    public class TopicRepository : BaseRepository<Topic>
+    protected override string DbFilePath => "..//PSI_Project//DB//topic.txt";
+    
+    public List<Topic> GetTopicsBySubjectId(string subjectId)
     {
-        protected override string DbFilePath => "..//PSI_Project//DB//topic.txt";
+        return Items.Where(topic => topic.SubjectId.Equals(subjectId)).ToList();    // 9: using LINQ
+    }
 
-        protected override string ItemToDbString(Topic item)
+    public Topic? CreateTopic(JsonElement request)
+    {
+        if (request.TryGetProperty("topicName", out var topicNameProperty) &&
+            request.TryGetProperty("subjectId", out var subjectNameProperty))
         {
-            return $"{item.Id};{item.SubjectName};{item.Name};";
+            string? topicName = topicNameProperty.GetString();
+            string? subjectId = subjectNameProperty.GetString();
+            
+            if (subjectId != null && topicName != null)
+            {
+                Topic newTopic = new Topic(topicName, subjectId);
+                if(InsertItem(newTopic));
+                    return newTopic;
+            }
         }
 
-        protected override Topic StringToItem(string dbString)
-        {
-            String[] topicFields = dbString.Split(";");
+        return null;
+    }
 
-            return new Topic(subjectName:topicFields[1], name:topicFields[2]);
-        }
+    protected override string ItemToDbString(Topic item)
+    {
+        return $"{item.Id};{item.SubjectId};{item.Name};";
+    }
 
-        public List<Topic> GetTopicsBySubjectName(string subjectName)
+    protected override Topic StringToItem(string dbString)
+    {
+        String[] topicFields = dbString.Split(";");
+        Topic newTopic = new Topic(name: topicFields[2], subjectId: topicFields[1])
         {
-            return Items.Where(topic => topic.SubjectName.Equals(subjectName)).ToList();
-            // return (from i in Items where i.SubjectName.Equals(subjectName) select i).ToList(); // the same but as a query
-        }
-
-        public Topic? GetItemByName(string topicName)
-        {
-            return Items.FirstOrDefault(topic => topic.Name.Equals(topicName));
-        }
+            Id = topicFields[0]
+        };
+        return newTopic;
     }
 }

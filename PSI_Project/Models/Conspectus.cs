@@ -1,18 +1,13 @@
-﻿using PSI_Project.DAL;
+﻿namespace PSI_Project.Models;
 
-namespace PSI_Project
+public class Conspectus : BaseEntity
 {
-    public class Conspectus : BaseEntity, IStorable
+    public string TopicId { get; }
+    public string Path { get; }
+
+    public Conspectus(string topicId, string path, string name) : base(name)
     {
-        public string TopicName { get; set; }
-        public string Path { get; set; }
-        public int Rating { get; set; }
-    
-        public Conspectus(string topicName, string path, int rating = 0)
-        {
-            TopicName = topicName;
-            Path = path;
-            Rating = rating;
-        }
+        TopicId = topicId;
+        Path = path;
     }
 }
