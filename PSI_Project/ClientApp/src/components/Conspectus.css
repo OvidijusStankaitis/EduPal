@@ -139,7 +139,6 @@ button:hover {
     border: 0.2vw solid rgba(58, 58, 128, 0.8); /* Adjusted border color to match the scheme */
     border-radius: 1rem;
     position: relative;
-    overflow: hidden;
     box-shadow: 0 0.5vw 2vw rgba(0, 0, 0, 0.5); /* Adding a shadow for depth, similar to the dialog */
 }
 
@@ -150,4 +149,14 @@ button:hover {
     width: 100%;
     height: 100%;
     border: none;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* This will vertically center the children */
+    margin-left: 5rem;
+    margin-right: 2.5rem;
+    margin-top: -3vh;
+    margin-bottom: 1vh;
 }

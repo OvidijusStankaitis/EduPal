@@ -1,0 +1,50 @@
+﻿.user-component {
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border: 0.1rem solid rgba(58, 58, 128, 0.8); /* Adjusted border color to match the scheme */
+    border-radius: 0.5rem;
+    background: radial-gradient(circle at center, rgba(45, 45, 90, 0.95) 0%, rgba(30, 30, 60, 0.95) 70%, rgba(15, 15, 30, 0.95) 100%); /* Adjusted background to match space theme */
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s; /* Added transitions */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Added shadow for depth */
+}
+
+.user-component:hover {
+    background-color: rgba(15, 15, 30, 0.8); /* Darker shade on hover */
+    transform: scale(1.05); /* Slightly enlarge the component on hover */
+    box-shadow: 0 0 0.5vw rgba(100, 100, 180, 0.5); /* Light purple glow effect */
+}
+
+.user-picture, .tomato, .gpt-logo {
+    width: 2rem;
+    height: 2rem;
+    margin-right: 1rem;
+    transition: box-shadow 0.3s;
+    border-radius: 50%;
+}
+
+.tomato{
+    
+    border-radius: 200%;
+}
+
+.tomato:hover {
+    box-shadow: 0 0 1vw 0.2vw rgb(255, 0, 0); /* Stronger Neon Red glow effect on hover */
+}
+
+.gpt-logo:hover {
+    box-shadow: 0 0 1vw 0.2vw rgba(0, 255, 0, 0.9); /* Stronger Neon Green glow effect on hover */
+}
+
+.username {
+    font-weight: bold;
+    margin-right: 1rem;
+    color: #E0E0FF; /* Text color from the space theme */
+}
+
+.pomodoro-time {
+    font-size: 1.2em;
+    margin-right: 1rem;
+    color: #E0E0FF; /* Text color from the space theme */
+}

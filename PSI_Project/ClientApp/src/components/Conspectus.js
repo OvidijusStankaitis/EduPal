@@ -1,12 +1,15 @@
 ﻿import React, { useState, useEffect, useRef} from 'react';
 import './Conspectus.css';
 import {useParams} from "react-router-dom";
+import {UserComponent} from "./UserComponent";
+import { PomodoroDialog } from './PomodoroDialog';
 
 export const Conspectus = () => {
     const { topicId } = useParams();
     const [topicName, setTopicName] = useState("");
     const [files, setFiles] = useState([]);
     const iframeRef = useRef(null);
+    const [showPomodoroDialog, setShowPomodoroDialog] = useState(false);
 
     useEffect(() => {
         fetch(`https://localhost:7283/Topic/get/${topicId}`)
@@ -107,7 +110,10 @@ export const Conspectus = () => {
 
     return (
         <div className="user-panel">
-            <h1>{topicName}</h1>
+            <div className="header">
+                <h1>{topicName}</h1>
+                <UserComponent setShowPomodoroDialog={setShowPomodoroDialog} />
+            </div>
             <div className="main-content">
                 <div className="file-section">
                     <button onClick={() => document.getElementById('fileInput').click()}>Upload</button>
@@ -135,6 +141,10 @@ export const Conspectus = () => {
                 <div className="pdf-viewer">
                     <iframe ref={iframeRef} type="application/pdf"/>
                 </div>
+                <PomodoroDialog
+                    show={showPomodoroDialog}
+                    onClose={() => setShowPomodoroDialog(false)}
+                />
             </div>
         </div>
     );

@@ -1,6 +1,8 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import './Topics.css';
+import {UserComponent} from "./UserComponent";
+import { PomodoroDialog } from './PomodoroDialog';
 
 export const Topics = () => {
     const { subjectId } = useParams();
@@ -9,6 +11,8 @@ export const Topics = () => {
     const [showDialog, setShowDialog] = useState(false);
     const [refreshTopics, setRefreshTopics] = useState(false);
     const [newTopicName, setNewTopicName] = useState('');
+    const [showPomodoroDialog, setShowPomodoroDialog] = useState(false);
+
     
     useEffect(() => {
         fetch(`https://localhost:7283/Subject/get/${subjectId}`)
@@ -76,7 +80,10 @@ export const Topics = () => {
     return (
         <div className="topics-page-container">
             <div className="topics-container">
-                <h1>{subjectName}</h1>
+                <div className="headert">
+                    <h1>{subjectName}</h1>
+                    <UserComponent setShowPomodoroDialog={setShowPomodoroDialog} />
+                </div>
                 <div className="topics-grid">
                     {topics.map((topic, index) => (
                         <Link to={`/Subjects/${subjectId}-Topics/${topic.id}-Conspectus`} key={index} className="topic-grid-item">
@@ -99,6 +106,10 @@ export const Topics = () => {
                         <button onClick={() => setShowDialog(false)}>Cancel</button>
                     </div>
                 )}
+                <PomodoroDialog
+                    show={showPomodoroDialog}
+                    onClose={() => setShowPomodoroDialog(false)}
+                />
             </div>
         </div>
     );
