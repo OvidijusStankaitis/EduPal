@@ -2,6 +2,7 @@
 import { Link, useParams } from 'react-router-dom';
 import './Topics.css';
 import {UserComponent} from "./UserComponent";
+import { PomodoroDialog } from './PomodoroDialog';
 
 export const Topics = () => {
     const { subjectName } = useParams();
@@ -9,6 +10,7 @@ export const Topics = () => {
     const [showDialog, setShowDialog] = useState(false);
     const [refreshTopics, setRefreshTopics] = useState(false);
     const [newTopicName, setNewTopicName] = useState('');
+    const [showPomodoroDialog, setShowPomodoroDialog] = useState(false);
 
     useEffect(() => {
         const fetchTopics = async () => {
@@ -54,7 +56,7 @@ export const Topics = () => {
             <div className="topics-container">
                 <div className="headert">
                     <h1>{subjectName}</h1>
-                    <UserComponent />
+                    <UserComponent setShowPomodoroDialog={setShowPomodoroDialog} />
                 </div>
                 <div className="topics-grid">
                     {topics.map((topic, index) => (
@@ -78,6 +80,10 @@ export const Topics = () => {
                         <button onClick={() => setShowDialog(false)}>Cancel</button>
                     </div>
                 )}
+                <PomodoroDialog
+                    show={showPomodoroDialog}
+                    onClose={() => setShowPomodoroDialog(false)}
+                />
             </div>
         </div>
     );

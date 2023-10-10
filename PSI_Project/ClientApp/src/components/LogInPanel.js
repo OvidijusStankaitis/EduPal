@@ -46,6 +46,8 @@ export const LogInPanel = () => {
 
     const handleLoginSubmit = async (e) => {
         e.preventDefault();
+        // Clear the stored username when a new user logs in
+        localStorage.removeItem('username');
         const response = await fetch(`https://localhost:7283/User/login`, {
             method: 'POST',
             headers: {
@@ -55,7 +57,9 @@ export const LogInPanel = () => {
         });
         const data = await response.json();
         if (data.success) {
+            localStorage.clear();
             setUserEmail(email); // Set the user's email directly in the parent component
+            localStorage.setItem('userEmail', email);
             navigate(targetRoute);
         }
     };
@@ -74,7 +78,9 @@ export const LogInPanel = () => {
         });
         const data = await response.json();
         if (data.success) {
+            localStorage.clear();
             setUserEmail(email);
+            localStorage.setItem('userEmail', email);
             navigate(targetRoute);
         }
     };

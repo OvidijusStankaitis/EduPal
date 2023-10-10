@@ -1,13 +1,15 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Subjects.css';
-import {UserComponent} from "./UserComponent";
+import { UserComponent } from "./UserComponent";
+import { PomodoroDialog } from './PomodoroDialog';
 
 export const Subjects = () => {
     const [subjects, setSubjects] = useState([]);
     const [showDialog, setShowDialog] = useState(false);
     const [refreshSubjects, setRefreshSubjects] = useState(false);
     const [newSubjectName, setNewSubjectName] = useState('');
+    const [showPomodoroDialog, setShowPomodoroDialog] = useState(false);
 
     useEffect(() => {
         const fetchSubjects = async () => {
@@ -52,7 +54,7 @@ export const Subjects = () => {
             <div className="subjects-container">
                 <div className="headersub">
                     <h1>Subjects</h1>
-                    <UserComponent />
+                    <UserComponent setShowPomodoroDialog={setShowPomodoroDialog} />
                 </div>
                 <div className="subjects-grid">
                     {subjects.map((subject, index) => (
@@ -76,6 +78,10 @@ export const Subjects = () => {
                         <button onClick={() => setShowDialog(false)}>Cancel</button>
                     </div>
                 )}
+                <PomodoroDialog
+                    show={showPomodoroDialog}
+                    onClose={() => setShowPomodoroDialog(false)}
+                />
             </div>
         </div>
     );
