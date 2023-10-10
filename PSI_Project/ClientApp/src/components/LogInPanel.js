@@ -53,8 +53,6 @@ export const LogInPanel = () => {
             },
             body: JSON.stringify({ email, password }),
         });
-        const payload = { email, password };
-        console.log("Sending payload:", payload);
         const data = await response.json();
         if (data.success) {
             setUserEmail(email); // Set the user's email directly in the parent component
@@ -76,6 +74,7 @@ export const LogInPanel = () => {
         });
         const data = await response.json();
         if (data.success) {
+            setUserEmail(email);
             navigate(targetRoute);
         }
     };
