@@ -1,6 +1,4 @@
-﻿using PSI_Project.DAL;
-
-namespace PSI_Project.Repositories
+﻿namespace PSI_Project.Repositories
 {
     public class TopicRepository : BaseRepository<Topic>
     {

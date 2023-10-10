@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
-using PSI_Project.DAL;
 using PSI_Project.Repositories;
 
 namespace PSI_Project.Controllers;

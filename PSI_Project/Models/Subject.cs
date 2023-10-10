@@ -1,8 +1,6 @@
-﻿using PSI_Project.DAL;
-
-namespace PSI_Project
+﻿namespace PSI_Project
 {
-    public class Subject : BaseEntity, IStorable, IComparable<Subject>, IEquatable<Subject>
+    public class Subject : BaseEntity, IComparable<Subject>, IEquatable<Subject>
     {
         public Subject(string name) : base(name)
         {

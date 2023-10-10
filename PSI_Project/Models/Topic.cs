@@ -1,8 +1,6 @@
-﻿using PSI_Project.DAL;
-
-namespace PSI_Project
+﻿namespace PSI_Project
 {
-    public class Topic : BaseEntity, IStorable
+    public class Topic : BaseEntity
     {
         public string SubjectId { get; set; }
         public string SubjectName { get; set; }

@@ -1,8 +1,6 @@
-﻿using PSI_Project.DAL;
-
-namespace PSI_Project
+﻿namespace PSI_Project
 {
-    public class User : BaseEntity, IStorable
+    public class User : BaseEntity
     {
         public string Email { get; set; }
         public string Password { get; set; }

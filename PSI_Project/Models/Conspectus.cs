@@ -1,8 +1,6 @@
-﻿using PSI_Project.DAL;
-
-namespace PSI_Project
+﻿namespace PSI_Project
 {
-    public class Conspectus : BaseEntity, IStorable
+    public class Conspectus : BaseEntity
     {
         public string TopicId { get; set; }
         public string TopicName { get; set; }

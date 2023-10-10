@@ -1,8 +1,6 @@
-﻿using PSI_Project.DAL;
-
-namespace PSI_Project.Repositories
+﻿namespace PSI_Project.Repositories
 {
-    public abstract class BaseRepository<T> where T : BaseEntity, IStorable
+    public abstract class BaseRepository<T> where T : BaseEntity
     {
         protected abstract string DbFilePath { get; }
         protected abstract string ItemToDbString(T item);
