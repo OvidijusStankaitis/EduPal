@@ -32,7 +32,7 @@
 
 
     <ItemGroup>
-      <Folder Include="Files\" />
+      <Folder Include="Extensions\" />
       <Folder Include="wwwroot\" />
     </ItemGroup>
 

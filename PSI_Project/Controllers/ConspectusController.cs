@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.FileProviders;
 using PSI_Project.Repositories;
 
 namespace PSI_Project.Controllers;
@@ -8,106 +7,47 @@ namespace PSI_Project.Controllers;
 [Route("[controller]")]
 public class ConspectusController : ControllerBase
 {
-    private ConspectusRepository _conspectusRepository = new ConspectusRepository();
+    private readonly ConspectusRepository _conspectusRepository = new ConspectusRepository();
 
     [HttpGet("get/{conspectusId}")]
     public IActionResult GetConspectus(string conspectusId)
     {
-        try
-        {
-            Conspectus? conspectus = _conspectusRepository.GetItemById(conspectusId);
-        
-            if (conspectus == null)
-                return NotFound(new { error = "File not found in database." });
-        
-            string dirPath = Path.GetDirectoryName(conspectus.Path);
-            string filename = Path.GetFileName(conspectus.Path);
-        
-            IFileProvider provider = new PhysicalFileProvider(dirPath);
-            IFileInfo fileInfo = provider.GetFileInfo(filename);
-            if (!fileInfo.Exists)
-                return NotFound(new { error = "File not found on server." });
-
-            var readStream = fileInfo.CreateReadStream();
-
-            return File(readStream, "application/pdf", filename);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            return NotFound(new { error = ex.Message });
-        }
+        Stream? pdfStream = _conspectusRepository.GetConspectusPdfStream(conspectusId);
+        return pdfStream != null
+            ? File(pdfStream, "application/pdf")
+            : NotFound(new { error = "File not found." });
     }
 
-    [HttpGet("list/{topicName}")]
-    public IActionResult GetTopicFiles(string topicName)
+    [HttpGet("list/{topicId}")]
+    public IActionResult GetTopicFiles(string topicId)
     {   
-        return Ok(_conspectusRepository.GetConspectusListByTopicName(topicName));
+        return Ok(_conspectusRepository.GetConspectusByTopicId(topicId));
     }
 
-    [HttpPost("upload/{topicName}")]
-    public IActionResult UploadFiles(string topicName, List<IFormFile> files)
+    [HttpPost("upload/{topicId}")]
+    public IActionResult UploadFiles(string topicId, List<IFormFile> files)
     {
-        foreach (var formFile in files)
-        {
-            string fileName = formFile.FileName;
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Files", fileName);
-
-            // copying file to files folder
-            using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                formFile.CopyTo(fileStream);
-            }
-
-            _conspectusRepository.InsertItem(new Conspectus(topicName, filePath));
-        }
-    
-        return Ok(_conspectusRepository.GetConspectusListByTopicName(topicName));
+        return Ok(_conspectusRepository.UploadConspectus(topicId, files));
     }
 
     [HttpGet("download/{conspectusId}")]
     public IActionResult DownloadFile(string conspectusId)
     {
-        Conspectus? conspectus = _conspectusRepository.GetItemById(conspectusId);
-        if (conspectus == null)
+        FileContentResult? fileContent = _conspectusRepository.DownloadConspectus(conspectusId);
+        if (fileContent == null)
             return NotFound();
-    
-        string filePath = conspectus.Path;
-        if (System.IO.File.Exists(filePath))
-        {
-            var fileBytes = System.IO.File.ReadAllBytes(filePath);
-            var response = new FileContentResult(fileBytes, "application/pdf")
-            {
-                FileDownloadName = Path.GetFileName(filePath) // Set the desired filename
-            };
-            Response.Headers.Add("Content-Disposition", "attachment; filename=" + Path.GetFileName(filePath));
-            return response;
-        }
-    
-        return NotFound();
+        
+        string? conspectusPath = _conspectusRepository.GetConspectusPath(conspectusId);
+        Response.Headers.Add("Content-Disposition", "attachment; filename=" + Path.GetFileName(conspectusPath));
+        
+        return fileContent;
     }
 
-    [HttpDelete("delete/{conspectusId}")]
-    public void DeleteFile(string conspectusId)
+    [HttpDelete("{conspectusId}/delete")]
+    public IActionResult DeleteFile(string conspectusId)
     {
-        Conspectus? conspectus = _conspectusRepository.GetItemById(conspectusId);
-        if (conspectus == null)
-            return;
-        
-        string filePath = conspectus.Path;
-        try
-        {
-            _conspectusRepository.RemoveItem(conspectusId);
-
-            // Check if the file is used in other topics before deleting
-            if (!_conspectusRepository.IsFileUsedInOtherTopics(filePath))
-            {
-                System.IO.File.Delete(filePath);
-            }
-        }
-        catch (IOException ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
+        return _conspectusRepository.RemoveItemById(conspectusId) 
+            ? Ok("File has been successfully deleted") 
+            : BadRequest("An error occured while deleting file");
     }
 }

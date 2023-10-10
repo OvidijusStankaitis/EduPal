@@ -1,114 +1,120 @@
-﻿namespace PSI_Project.Repositories
+﻿using PSI_Project.Models;
+
+namespace PSI_Project.Repositories;
+
+public abstract class BaseRepository<T> where T : BaseEntity    // 7: using generic type
 {
-    public abstract class BaseRepository<T> where T : BaseEntity
+    protected abstract string DbFilePath { get; }
+    protected List<T> Items { get; private set; }
+    protected abstract string ItemToDbString(T item);
+    protected abstract T StringToItem(string dbString);
+
+    protected BaseRepository()
     {
-        protected abstract string DbFilePath { get; }
-        protected abstract string ItemToDbString(T item);
-        protected abstract T StringToItem(string dbString);
+        Items = ReadAllItemsFromDB();
+        AfterOperation();   // 10: IComparable used to sort items alphabetically in SubjectRepo.cs class
+    }
 
-        public List<T> Items { get; private set; } = new List<T>();
+    public T? GetItemById(string itemId)
+    {
+        return Items.FirstOrDefault(item => item.Id.Equals(itemId));
+    }
 
-        public BaseRepository()
+    protected List<T> ReadAllItemsFromDB() // 6: Reading from a file using a stream;
+    {
+        List<T> items = new List<T>();
+
+        using (var sr = new StreamReader(DbFilePath))
         {
-            Items = ReadAllItemsFromDB();
-        }
-
-        // From BaseHandler
-        public virtual T? GetItemById(string itemId)
-        {
-            foreach (var item in Items)
+            string? itemInfo = sr.ReadLine();
+            while (itemInfo != null)
             {
-                if (item.Id == itemId)
-                    return item;
+                items.Add(StringToItem(itemInfo));
+                itemInfo = sr.ReadLine();
             }
-            return null;
         }
 
-        public virtual T InsertItem(T item)
-        {
-            Items.Add(item);
-            InsertItemToDB(item);
-            AfterOperation();
-            return item;
-        }
-
-        public virtual bool RemoveItem(string itemId)
-        {
-            bool removed = RemoveItemFromDB(itemId);
-            if (removed)
-            {
-                Items.RemoveAll(i => i.Id == itemId);
-                AfterOperation();
-            }
-            return removed;
-        }
-
-        // This method is executed after any operation. By default, it does nothing.
-        protected virtual void AfterOperation()
-        {
-        }
-
-        // From EntityDbOperations
-        protected List<T> ReadAllItemsFromDB()
-        {
-            List<T> items = new List<T>();
-
-            using (var streamReader = new StreamReader(DbFilePath))
-            {
-                string? itemInfo = streamReader.ReadLine();
-                while (itemInfo != null)
-                {
-                    items.Add(StringToItem(itemInfo));
-                    itemInfo = streamReader.ReadLine();
-                }
-            }
-
-            return items;
-        }
-
-        protected void InsertItemToDB(T item)
+        return items;
+    }
+    
+    public bool InsertItem(T item)
+    {
+        Items.Add(item);
+        bool isInserted = InsertItemToDB(item);
+        
+        AfterOperation();
+        
+        return isInserted;
+    }
+    
+    protected bool InsertItemToDB(T item)
+    {
+        try
         {
             using (StreamWriter sw = File.AppendText(DbFilePath))
             {
                 sw.WriteLine(ItemToDbString(item));
             }
-        }
 
-        protected bool RemoveItemFromDB(string itemId)
+            return true;
+        }
+        catch (Exception ex)
         {
-            bool removed = false;
-
-            try
-            {
-                string tempFileName = Path.GetFileNameWithoutExtension(DbFilePath) + "_temp" + ".txt";
-                string tempFilePath = Path.Combine(Directory.GetCurrentDirectory(), "DB", tempFileName);
-                FileInfo oldDbFile = new FileInfo(DbFilePath);
-                oldDbFile.MoveTo(tempFilePath);
-
-                using (StreamReader sr = File.OpenText(tempFilePath))
-                using (StreamWriter sw = File.CreateText(DbFilePath))
-                {
-                    string? line;
-                    while ((line = sr.ReadLine()) != null)
-                    {
-                        T item = StringToItem(line);
-                        if (item.Id.Equals(itemId))
-                        {
-                            removed = true;
-                            continue;
-                        }
-                        sw.WriteLine(line);
-                    }
-                }
-
-                oldDbFile.Delete();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-
-            return removed;
+            Console.WriteLine(ex.Message);
+            return false;
         }
+    }
+
+    public virtual bool RemoveItemById(string itemId)
+    {
+        bool removed = RemoveItemFromDB(itemId);
+        if (removed)
+        {
+            Items.RemoveAll(i => i.Id == itemId);
+            AfterOperation();
+        }
+        return removed;
+    }
+
+    protected bool RemoveItemFromDB(string itemId)
+    {
+        bool removed = false;
+
+        try
+        {
+            string tempFileName = Path.GetFileNameWithoutExtension(DbFilePath) + "_temp.txt";
+            string tempFilePath = Path.Combine(Directory.GetCurrentDirectory(), "DB", tempFileName);
+            FileInfo oldDbFile = new FileInfo(DbFilePath);
+            oldDbFile.MoveTo(tempFilePath);
+
+            using (StreamReader sr = File.OpenText(tempFilePath))
+            using (StreamWriter sw = File.CreateText(DbFilePath))
+            {
+                string? line;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    T item = StringToItem(line);
+                    if (item.Id.Equals(itemId))
+                    {
+                        removed = true;
+                        continue;
+                    }
+                    sw.WriteLine(line);
+                }
+            }
+
+            oldDbFile.Delete();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
+        return removed;
+    }
+    
+    // This method is executed after any operation. By default, it does nothing.
+    protected virtual void AfterOperation()
+    {
     }
 }

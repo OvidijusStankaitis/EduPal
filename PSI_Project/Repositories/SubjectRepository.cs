@@ -1,33 +1,49 @@
-﻿namespace PSI_Project.Repositories
+﻿using System.Text.Json;
+using PSI_Project.Models;
+
+namespace PSI_Project.Repositories;
+public class SubjectRepository : BaseRepository<Subject>
 {
-    public class SubjectRepository : BaseRepository<Subject>
+    protected override string DbFilePath => "..//PSI_Project//DB//subject.txt";
+
+    public List<Subject> GetSubjectList()
     {
-        protected override string DbFilePath => "..//PSI_Project//DB//subject.txt";
+        return Items.ToList();
+    }
 
-        protected override string ItemToDbString(Subject item)
+    public Subject? CreateSubject(JsonElement request)
+    {
+        if (request.TryGetProperty("subjectName", out var subjectNameProperty))
         {
-            return $"{item.Id};{item.Name};"; // Removed the description field
-        }
-
-        protected override Subject StringToItem(string dbString)
-        {
-            String[] subjectFields = dbString.Split(";");
-            return new Subject(subjectFields[1]); // use only name to construct Subject
-        }
-        
-        public Subject? GetItemByName(string subjectName)
-        {
-            return Items.FirstOrDefault(subject => subject.Name.Equals(subjectName, StringComparison.OrdinalIgnoreCase));
+            string? subjectName = subjectNameProperty.GetString();
+            if (subjectName != null)
+            {
+                Subject newSubject = new Subject(subjectName);
+                if(InsertItem(newSubject));
+                    return newSubject;
+            }
         }
 
-        public List<Subject> GetSubjectList()
+        return null;
+    }
+    
+    protected override void AfterOperation() // 10: Sort method with IComparable interface used
+    {
+        Items.Sort((subject1, subject2) => String.Compare(subject1.Name, subject2.Name, StringComparison.Ordinal));
+    }
+    
+    protected override string ItemToDbString(Subject item)
+    {
+        return $"{item.Id};{item.Name};";
+    }
+    
+    protected override Subject StringToItem(string dbString)
+    {
+        String[] subjectFields = dbString.Split(";");
+        Subject newSubject = new Subject(name: subjectFields[1])
         {
-            return Items.ToList();
-        }
-
-        protected override void AfterOperation()
-        {
-            Items.Sort((subject1, subject2) => subject1.Name.CompareTo(subject2.Name));
-        }
+            Id = subjectFields[0]
+        };
+        return newSubject;
     }
 }
