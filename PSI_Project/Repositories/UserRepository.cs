@@ -12,14 +12,7 @@
         protected override User StringToItem(string dbString)
         {
             var parts = dbString.Split(";");
-            return new User
-            {
-                Id = parts[0],
-                Name = parts[1],
-                Surname = parts[2],
-                Email = parts[3],
-                Password = parts[4]
-            };
+            return new User (name: parts[1],surname: parts[2],email: parts[3],password: parts[4]);
         }
 
         public User? GetUserByEmail(string email)
