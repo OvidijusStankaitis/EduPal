@@ -13,31 +13,17 @@ namespace PSI_Project.Controllers
         [HttpPost("register")]
         public IActionResult Register(User user)
         {
-            var existingUser = _userRepository.GetUserByEmail(user.Email);
-            if (existingUser != null)
-                return BadRequest(new { success = false, message = "Email already exists." });
-
-            _userRepository.InsertItem(user);
-            return Ok(new { success = true, message = "User registered successfully." });
+            return _userRepository.CheckUserRegister(user)
+                ? Ok(new { success = true, message = "Registration successful." })
+                : BadRequest(new { success = false, message = "Invalid payload." });
         }
 
         [HttpPost("login")]
         public IActionResult Login([FromBody] JsonElement payload)
         {
-            if (payload.TryGetProperty("email", out JsonElement emailElement) &&
-                payload.TryGetProperty("password", out JsonElement passwordElement))
-            {
-                var email = emailElement.GetString();
-                var password = passwordElement.GetString();
-
-                var user = _userRepository.GetUserByEmail(email);
-                if (user == null || user.Password != password)
-                    return BadRequest(new { success = false, message = "Invalid email or password." });
-
-                return Ok(new { success = true, message = "Login successful." });
-            }
-
-            return BadRequest(new { success = false, message = "Invalid payload." });
+            return _userRepository.CheckUserLogin(payload)
+                ? BadRequest(new { success = false, message = "Invalid payload." })
+                : Ok(new { success = true, message = "Login successful." });
         }
 
         [HttpGet("get-name")]
@@ -48,7 +34,6 @@ namespace PSI_Project.Controllers
             {
                 return Ok(new { name = user.Name });
             }
-
             return NotFound(new { message = "User not found." });
         }
     }

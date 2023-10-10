@@ -6,18 +6,23 @@ import user from "../assets/user.webp";
 import { useUserContext } from '../UserContext';
 
 const DURATIONS = {
-    Low: { study: 5, shortBreak: 2, longBreak: 3 }, // 5 seconds study, 2 seconds short break, 3 seconds long break
+    Low: { study: 5, shortBreak: 2, longBreak: 3 },
     Medium: { study: 6, shortBreak: 3, longBreak: 4 },
     High: { study: 7, shortBreak: 4, longBreak: 5 },
 };
 
 export const UserComponent = ({ setShowPomodoroDialog }) => {
     const { userEmail, setUsername, username, setUserEmail } = useUserContext();
-    const [remainingTime, setRemainingTime] = useState(0);
-    const [isActive, setIsActive] = useState(false);
-    const [timerShouldStart, setTimerShouldStart] = useState(false);
+    const [remainingTime, setRemainingTime] = useState(
+        parseInt(localStorage.getItem('remainingTime'), 10) || 0
+    );
+    const [isActive, setIsActive] = useState(
+        localStorage.getItem('shouldStartTimer') === 'true' ||
+        localStorage.getItem('isActive') === 'true'
+    );
     const [mode, setMode] = useState('study');
     const [completedStudySessions, setCompletedStudySessions] = useState(0);
+
 
     const fetchUsername = async () => {
         try {
@@ -63,22 +68,22 @@ export const UserComponent = ({ setShowPomodoroDialog }) => {
         return () => {
             window.removeEventListener('storage', startTimerBasedOnLocalStorage);
         };
-    }, [timerShouldStart]);
+    }, []);
 
     const startTimerBasedOnLocalStorage = () => {
         const shouldStart = localStorage.getItem('shouldStartTimer') === 'true';
         const storedRemainingTime = parseInt(localStorage.getItem('remainingTime'), 10);
         const intensity = localStorage.getItem('pomodoroIntensity');
+
         if (storedRemainingTime) {
             setRemainingTime(storedRemainingTime);
             setIsActive(true);
-        } else if (shouldStart || timerShouldStart) {
+        } else if (shouldStart) {
             if (intensity) {
-                setMode('study'); // Set the mode to study
+                setMode('study');
                 setRemainingTime(DURATIONS[intensity].study);
                 setIsActive(true);
                 localStorage.setItem('shouldStartTimer', 'false');
-                setTimerShouldStart(false);
             }
         } else if (intensity && !shouldStart && !isActive && remainingTime === 0) {
             setRemainingTime(DURATIONS[intensity].study);
@@ -91,11 +96,11 @@ export const UserComponent = ({ setShowPomodoroDialog }) => {
         const interval = setInterval(() => {
             setRemainingTime(prev => {
                 if (prev <= 0) {
+                    localStorage.setItem('isActive', 'false');
                     switch (mode) {
                         case 'study':
-                            // If we've completed 4 study sessions, take a long break
                             if (completedStudySessions >= 3) {
-                                setCompletedStudySessions(0);  // Reset the count
+                                setCompletedStudySessions(0);
                                 setMode('longBreak');
                                 return DURATIONS[localStorage.getItem('pomodoroIntensity')].longBreak;
                             } else {
@@ -124,6 +129,7 @@ export const UserComponent = ({ setShowPomodoroDialog }) => {
     useEffect(() => {
         if (isActive) {
             localStorage.setItem('remainingTime', remainingTime);
+            localStorage.setItem('isActive', 'true');
         }
     }, [remainingTime, isActive]);
 

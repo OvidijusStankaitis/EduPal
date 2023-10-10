@@ -1,4 +1,6 @@
-﻿namespace PSI_Project.Repositories
+﻿using System.Text.Json;
+
+namespace PSI_Project.Repositories
 {
     public class UserRepository : BaseRepository<User>
     {
@@ -18,6 +20,30 @@
         public User? GetUserByEmail(string email)
         {
             return Items.FirstOrDefault(user => user.Email == email);
+        }
+        
+        public bool CheckUserLogin(JsonElement request)
+        {
+            if (request.TryGetProperty("email", out JsonElement emailElement) &&
+                request.TryGetProperty("password", out JsonElement passwordElement))
+            {
+                var email = emailElement.GetString();
+                var password = passwordElement.GetString();
+
+                var user = GetUserByEmail(email);
+                return (user == null || user.Password != password);
+            }
+            return false;
+        }
+
+        public bool CheckUserRegister(User user)
+        {
+            var existingUser = GetUserByEmail(user.Email);
+            if (existingUser != null)
+            {
+                return false;
+            }
+            return InsertItem(user);
         }
     }
 }

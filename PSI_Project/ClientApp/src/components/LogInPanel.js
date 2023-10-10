@@ -95,13 +95,13 @@ export const LogInPanel = () => {
             <h1 className="edu">EduPal</h1>
             <span className="buttons">
         <button onClick={() => showLoginDialog('/Subjects')}>START LEARNING!</button>
-      </span>
+            </span>
             {showDialog &&
                 <div className="dialog">
                     <div className="dialog-content">
                         <div className="form-section">
                             <h1 className="form-name">Log In</h1>
-                            <form onSubmit={handleLoginSubmit}>
+                            <form onSubmit={handleLoginSubmit} autoComplete={"on"}>
                                 <input type="email" placeholder="Email" required onChange={e => setEmail(e.target.value)} />
                                 <input type="password" placeholder="Password" required onChange={e => setPassword(e.target.value)} />
                                 <button type="submit">Log In</button>
@@ -109,7 +109,7 @@ export const LogInPanel = () => {
                         </div>
                         <div className="form-section">
                             <h1 className="form-name">Register</h1>
-                            <form onSubmit={handleRegisterSubmit}>
+                            <form onSubmit={handleRegisterSubmit} autoComplete={"on"}>
                                 <input type="text" placeholder="Name" required onChange={e => setName(e.target.value)} />
                                 <input type="text" placeholder="Surname" required onChange={e => setSurname(e.target.value)} />
                                 <input type="email" placeholder="Email" required onChange={e => setEmail(e.target.value)} />
