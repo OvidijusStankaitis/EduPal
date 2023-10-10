@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import './Topics.css';
+import {UserComponent} from "./UserComponent";
 
 export const Topics = () => {
     const { subjectName } = useParams();
@@ -51,7 +52,10 @@ export const Topics = () => {
     return (
         <div className="topics-page-container">
             <div className="topics-container">
-                <h1>{subjectName}</h1>
+                <div className="headert">
+                    <h1>{subjectName}</h1>
+                    <UserComponent />
+                </div>
                 <div className="topics-grid">
                     {topics.map((topic, index) => (
                         <Link to={`/Subjects/${subjectName}-Topics/${topic}-Conspectus`} key={index} className="topic-grid-item">

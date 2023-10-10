@@ -26,7 +26,7 @@ h1 {
     justify-content: center;
     grid-template-columns: 25vh 25vh 25vh 25vh;
     gap: 10vh;
-    margin-top: 5rem;
+    margin-top: 2rem;
 }
 
 .subject-grid-item {
@@ -127,4 +127,14 @@ h1 {
         box-shadow: 0 0 0.5vw rgba(80, 80, 160, 0.5); /* Add a subtle shadow on focus */
         outline: none; /* Remove default browser outline */
     }
+}
+
+.headersub {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* This will vertically center the children */
+    margin-left: 5rem;
+    margin-right: 2.5rem;
+    padding-left: 10.5rem;
+    padding-right: 11rem;
 }

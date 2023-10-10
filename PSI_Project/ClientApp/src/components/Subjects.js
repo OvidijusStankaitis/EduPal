@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Subjects.css';
+import {UserComponent} from "./UserComponent";
 
 export const Subjects = () => {
     const [subjects, setSubjects] = useState([]);
@@ -49,7 +50,10 @@ export const Subjects = () => {
     return (
         <div className="subjects-page-container">
             <div className="subjects-container">
-                <h1>Subjects</h1>
+                <div className="headersub">
+                    <h1>Subjects</h1>
+                    <UserComponent />
+                </div>
                 <div className="subjects-grid">
                     {subjects.map((subject, index) => (
                         <Link to={`/Subjects/${subject}-Topics`} key={index} className="subject-grid-item">

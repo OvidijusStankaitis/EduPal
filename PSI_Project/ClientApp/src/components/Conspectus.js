@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import './Conspectus.css';
 import {useParams} from "react-router-dom";
+import {UserComponent} from "./UserComponent";
 
 export const Conspectus = () => {
     const { topicName } = useParams();
@@ -99,7 +100,10 @@ export const Conspectus = () => {
 
     return (
         <div className="user-panel">
-            <h1>{topicName}</h1>
+            <div className="header">
+                <h1>{topicName}</h1>
+                <UserComponent />
+            </div>
             <div className="main-content">
                 <div className="file-section">
                     <button onClick={() => document.getElementById('fileInput').click()}>Upload</button>
