@@ -12,8 +12,8 @@ function App() {
             <Routes>
                 <Route path="/" element={<LogInPanel />} />
                 <Route path="/Subjects" element={<Subjects />} />
-                <Route path="/Subjects/:subjectName-Topics" element={<Topics />} />
-                <Route path="/Subjects/:subjectName-Topics/:topicName-Conspectus" element={<Conspectus />} />
+                <Route path="/Subjects/:subjectId-Topics" element={<Topics />} />
+                <Route path="/Subjects/:subjectId-Topics/:topicId-Conspectus" element={<Conspectus />} />
             </Routes>
         </BrowserRouter>
     );

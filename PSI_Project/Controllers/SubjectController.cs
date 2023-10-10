@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using PSI_Project.Models;
 using PSI_Project.Repositories;
 
 namespace PSI_Project.Controllers;
@@ -10,31 +11,35 @@ public class SubjectController : ControllerBase
 {
     private readonly SubjectRepository _subjectRepository = new SubjectRepository();
 
+    [HttpGet("get/{subjectId}")]
+    public IActionResult GetSubject(string subjectId)
+    {
+        Subject? subject = _subjectRepository.GetItemById(subjectId);
+        return subject == null
+            ? NotFound(new { error = "Subject not found." })
+            : Ok(subject);
+    }
+    
     [HttpGet("list")]
     public IActionResult ListSubjects()
     {
-        return Ok(_subjectRepository.Items);
+        return Ok(_subjectRepository.GetSubjectList());
     }
     
     [HttpPost("upload")]
     public IActionResult UploadSubject([FromBody] JsonElement request)
     {
-        if (request.TryGetProperty("subjectName", out var subjectNameProperty))
-        {
-            string subjectName = subjectNameProperty.GetString();
-            _subjectRepository.InsertItem(new Subject(subjectName));
-            return Ok(_subjectRepository.Items);
-        }
-        return BadRequest("Invalid request body");
+        Subject? addedSubject = _subjectRepository.CreateSubject(request);
+        return addedSubject == null
+            ? BadRequest("Invalid request body")
+            : Ok(addedSubject);
     }
     
-    [HttpDelete("{subjectName}/delete")]
-    public void RemoveSubject(string subjectName)
-    {
-        Subject? subjectToRemove = _subjectRepository.GetItemByName(subjectName);
-        if (subjectToRemove != null)
-        {
-            _subjectRepository.RemoveItem(subjectToRemove.Id);
-        }
+    [HttpDelete("{subjectId}/delete")]
+    public IActionResult RemoveSubject(string subjectId)
+    { 
+        return _subjectRepository.RemoveItemById(subjectId) 
+            ? Ok("Subject has been successfully deleted") 
+            : BadRequest("An error occured while deleting the subject");
     }
 }

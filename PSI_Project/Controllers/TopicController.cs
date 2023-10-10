@@ -1,5 +1,7 @@
 ﻿using System.Text.Json;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using PSI_Project.Models;
 using PSI_Project.Repositories;
 
 namespace PSI_Project.Controllers;
@@ -10,35 +12,35 @@ public class TopicController : ControllerBase
 {
     private readonly TopicRepository _topicRepository = new TopicRepository();
     
-    [HttpGet("list/{subjectName}")]
-    public IActionResult ListTopics(string subjectName)
+    [HttpGet("get/{topicId}")]
+    public IActionResult GetSubject(string topicId)
     {
-        List<Topic> subjectTopics = _topicRepository.GetTopicsBySubjectName(subjectName);
-        return Ok(subjectTopics); 
+        Topic? topic = _topicRepository.GetItemById(topicId);
+        return topic == null
+            ? NotFound(new { error = "Topic not found." })
+            : Ok(topic);
+    }
+    
+    [HttpGet("list/{subjectId}")]
+    public IActionResult ListTopics(string subjectId)
+    {
+        return Ok(_topicRepository.GetTopicsBySubjectId(subjectId)); 
     }
     
     [HttpPost("upload")]
     public IActionResult UploadTopic([FromBody] JsonElement request)
     {
-        if (request.TryGetProperty("topicName", out var topicNameProperty) &&
-            request.TryGetProperty("subjectName", out var subjectNameProperty))
-        {
-            string topicName = topicNameProperty.GetString();
-            string subjectName = subjectNameProperty.GetString();
-
-            _topicRepository.InsertItem(new Topic(topicName, subjectName));
-            return Ok(_topicRepository.Items);
-        }
-        return BadRequest("Invalid request body");
+        Topic? topic = _topicRepository.CreateTopic(request);
+        return topic == null
+            ? BadRequest("Invalid request body")
+            : Ok(topic);
     }
     
-    [HttpDelete("{topicName}/delete")]
-    public void RemoveTopic(string topicName)
+    [HttpDelete("{topicId}/delete")]
+    public IActionResult RemoveTopic(string topicId)
     {
-        Topic? topicToRemove = _topicRepository.GetItemByName(topicName);
-        if (topicToRemove != null)
-        {
-            _topicRepository.RemoveItem(topicToRemove.Id);
-        }
+        return _topicRepository.RemoveItemById(topicId) 
+            ? Ok("Topic has been successfully deleted")
+            : BadRequest("An error occured while deleting the topic");
     }
 }
