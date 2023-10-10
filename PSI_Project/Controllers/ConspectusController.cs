@@ -60,6 +60,7 @@ public class ConspectusController : ControllerBase
 
         return Ok(_conspectusRepository.GetItemById(conspectusId));
     }
+    
     [HttpPost("rateDown/{conspectusId}")]
     public IActionResult RateConspectusDown(string conspectusId)
     {

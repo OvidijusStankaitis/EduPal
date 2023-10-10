@@ -64,6 +64,27 @@ public abstract class BaseRepository<T> where T : BaseEntity    // 7: using gene
             return false;
         }
     }
+    
+    protected bool UpdateDB()
+    {
+        bool updated = false;
+        try
+        {
+            using (StreamWriter sw = new StreamWriter(DbFilePath))
+            {
+                foreach (var item in Items)
+                {
+                    sw.WriteLine(ItemToDbString(item));
+                }
+            }
+            updated = true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        return updated;
+    }
 
     public virtual bool RemoveItemById(string itemId)
     {
