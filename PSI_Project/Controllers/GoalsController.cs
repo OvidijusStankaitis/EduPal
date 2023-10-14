@@ -15,26 +15,23 @@ namespace PSI_Project.Controllers
             _goalService = goalService;
         }
 
-        [HttpPost("add")]
-        public IActionResult AddGoal([FromBody] Goal goal)
+        [HttpPost("create")]
+        public IActionResult CreateDailyGoal([FromBody] Goal goalRequest)
         {
-            // Implementation: Use the GoalService to save the Goal object.
-            if (_goalService.AddGoal(goal))
+            // Check if the user already has a goal for today
+            var existingGoal = _goalService.GetTodaysGoalForUser(goalRequest.UserId);
+            if (existingGoal != null)
             {
-                return Ok(new { success = true, message = "Goal added successfully." });
+                return BadRequest(new { success = false, message = "Goal for today already exists." });
             }
-            return BadRequest(new { success = false, message = "Failed to add goal." });
-        }
 
-        [HttpPost("add-subject-goal")]
-        public IActionResult AddSubjectGoalToGoal(string goalId, [FromBody] SubjectGoal subjectGoal)
-        {
-            // Implementation: Use the GoalService to add a SubjectGoal to the specified Goal.
-            if (_goalService.AddSubjectGoalToGoal(goalId, subjectGoal))
+            // If no existing goal for today, create the new goal
+            if (_goalService.AddGoal(goalRequest))
             {
-                return Ok(new { success = true, message = "SubjectGoal added to Goal." });
+                return Ok(new { success = true, message = "Goal created successfully." });
             }
-            return BadRequest(new { success = false, message = "Failed to add SubjectGoal to Goal." });
+
+            return BadRequest(new { success = false, message = "Failed to create goal." });
         }
 
         [HttpGet("today/{userId}")]
@@ -46,6 +43,7 @@ namespace PSI_Project.Controllers
             {
                 return Ok(goal);
             }
+
             return NotFound(new { message = "Today's goal not found for the user." });
         }
 

@@ -14,6 +14,13 @@ namespace PSI_Project.Services
 
         public bool AddGoal(Goal goal)
         {
+            var todaysGoal = _goalsRepository.GetTodaysGoalForUser(goal.UserId);
+            if (todaysGoal != null)
+            {
+                // A goal for today already exists for this user (only 1 daily goal allowed)
+                return false;
+            }
+
             return _goalsRepository.InsertItem(goal);
         }
 
@@ -25,19 +32,6 @@ namespace PSI_Project.Services
         public List<Goal> GetAllGoalsForUser(string userId)
         {
             return _goalsRepository.GetAllGoalsForUser(userId);
-        }
-
-        public bool AddSubjectGoalToGoal(string goalId, SubjectGoal subjectGoal)
-        {
-            var goal = _goalsRepository.GetItemById(goalId);
-            if (goal != null)
-            {
-                goal.SubjectGoals.Add(subjectGoal);
-                _goalsRepository.UpdateItem(goal);
-                return true; // successfully added
-            }
-
-            return false; // goal not found
         }
     }
 }
