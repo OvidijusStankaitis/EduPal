@@ -3,13 +3,13 @@ using System;
 
 namespace PSI_Project.Models
 {
-    public class Goal
+    public class Goal : BaseEntity
     {
-        public string Id { get; init; }
+        public DateTime GoalDate { get; set; } = DateTime.Now.Date; 
         public string UserId { get; set; }
         public List<SubjectGoal> SubjectGoals { get; set; }
 
-        public Goal(string userId)
+        public Goal(string userId) : base(userId + DateTime.Now.Date.ToString())
         {
             Id = Guid.NewGuid().ToString();
             UserId = userId;
