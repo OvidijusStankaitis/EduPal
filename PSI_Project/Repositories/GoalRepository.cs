@@ -6,6 +6,42 @@ namespace PSI_Project.Repositories
     public class GoalsRepository : BaseRepository<Goal>
     {
         protected override string DbFilePath => "..//PSI_Project//DB//goals.txt";
+        
+        public bool InsertItem(Goal goal)
+        {
+            try
+            {
+                var goalString = ItemToDbString(goal);
+                File.AppendAllText(DbFilePath, goalString + Environment.NewLine);
+                return true;
+            }
+            catch
+            {
+                // Log error here
+                return false;
+            }
+        }
+
+        public bool UpdateItem(Goal goalToUpdate)
+        {
+            try
+            {
+                var allGoals = File.ReadAllLines(DbFilePath).ToList();
+                var goalIndex = allGoals.FindIndex(line => line.StartsWith(goalToUpdate.Id + ";"));
+
+                if (goalIndex == -1) return false; // Goal not found
+
+                allGoals[goalIndex] = ItemToDbString(goalToUpdate);
+                File.WriteAllLines(DbFilePath, allGoals);
+                
+                return true;
+            }
+            catch
+            {
+                // Log error here
+                return false;
+            }
+        }
 
         // Given a user ID, retrieve the goal for today.
         public Goal? GetTodaysGoalForUser(string userId)
