@@ -1,0 +1,186 @@
+﻿.openai-dialog {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 80vh;
+    width: 70vw;
+    background: radial-gradient(circle at center, rgba(45, 45, 90, 0.95) 0%, rgba(30, 30, 60, 0.95) 70%, rgba(15, 15, 30, 0.95) 100%);
+    padding: 2vh;
+    border-radius: 1vw;
+    box-shadow: 0 0.5vw 2vw rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    animation: slideCenter 0.5s forwards;
+}
+
+.openai-dialog-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 3vh;
+}
+
+.openai-dialog-content h3 {
+    color: #E0E0FF;
+    font-size: 3vh;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.openai-dialog-content button {
+    margin-top: 5vh;
+    margin-bottom: 0;
+    padding: 2vh 4vw;
+    font-size: 1.8vh;
+    border: none;
+    cursor: pointer;
+    background-color: rgba(70, 70, 140, 0.9);
+    color: #E0E0FF;
+    border-radius: 0.5vw;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    box-shadow: 0 0.5vw 1vw rgba(34, 34, 85, 0.6);
+    width: 62vw;
+}
+
+.openai-dialog-content button:hover {
+    background-color: rgba(100, 100, 180, 0.9);
+    box-shadow: 0 0 0.5vw rgba(100, 100, 180, 0.5);
+}
+
+.time-desc{
+    text-align: justify;
+    color: #E0E0FF;
+    font-size: 1vw;
+    margin-top: 7vh;
+}
+
+.gpt-logo2{
+    width: 8vh;
+    height: 8vh;
+    margin-right: 2vw;
+    transition: box-shadow 0.3s;
+    border-radius: 50%;
+    box-shadow: 0 0 1vw 0.2vw rgba(0, 255, 0, 0.9); /* Stronger Neon Green glow effect on hover */
+}
+
+.greetingGPT{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 2vh;
+}
+
+.gpt-chat-content {
+    width: 60vw;
+    height: 45vh;
+    flex: 1;
+    overflow-y: auto;
+    margin-top: 2vh;
+    border: 1px solid rgba(58, 58, 128, 0.8);
+    padding: 1vh 1vw;
+    border-radius: 0.5vw;
+    background: rgba(30, 30, 60, 0.95);
+}
+
+.gpt-chat-content {
+    display: block; /* Resets the container to block display */
+    width: 60vw;
+    height: 45vh;
+    margin-top: 2vh;
+    border: 1px solid rgba(58, 58, 128, 0.8);
+    padding: 1vh 1vw;
+    border-radius: 0.5vw;
+    background: rgba(30, 30, 60, 0.95);
+    overflow-y: auto;
+}
+
+.gpt-chat-content .user, .gpt-chat-content .chatgpt {
+    display: block;
+    width: max-content;      /* Make it as wide as the content */
+    max-width: 30%;          /* Restrict max width */
+    word-wrap: break-word;   /* Basic word wrap */
+    overflow-wrap: break-word; /* Wrap long words */
+    hyphens: auto;           /* Auto-hyphenate words */
+    margin: 1.5vh 0;
+    padding: 1vh 1vw;
+    color: #E0E0FF;
+}
+
+.gpt-chat-content .user {
+    background: rgba(58, 58, 128, 0.8);
+    border-radius: 1vw 0 1vw 1vw;
+    margin-right: 0;  /* No margin on the right */
+    margin-left: auto; /* Pushes the element to the right */
+}
+
+.gpt-chat-content .chatgpt {
+    background: rgba(40, 40, 80, 0.8);
+    border-radius: 0 1vw 1vw 1vw;
+    margin-left: 0;   /* No margin on the left */
+    margin-right: auto; /* Pushes the element to the left */
+}
+
+.gpt-chat-input {
+    display: flex;
+    margin-top: 1vh;
+    width: 100%;
+}
+
+.gpt-chat-input input {
+    flex: 1;
+    padding: 1vh 1vw;
+    font-size: 1.8vh;
+    border-radius: 0.5vw ;
+    border: none;
+    outline: none;
+    margin-bottom: 0;
+    margin-right: 1vw;
+}
+
+.gpt-chat-input button {
+    margin-top: 0;
+    padding: 1vh 2vw;
+    font-size: 1.8vh;
+    border: none;
+    cursor: pointer;
+    background-color: rgba(70, 70, 140, 0.9);
+    color: #E0E0FF;
+    border-radius: 0.5vw;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    box-shadow: 0 0.5vw 1vw rgba(34, 34, 85, 0.6);
+    width: 20%;
+}
+
+.gpt-chat-input button:hover {
+    background-color: rgba(100, 100, 180, 0.9);
+    box-shadow: 0 0 0.5vw rgba(100, 100, 180, 0.5);
+}
+
+/* Style the scrollbar for Webkit browsers (Chrome, Safari) */
+.gpt-chat-content::-webkit-scrollbar {
+    width: 0.5vw;    /* Width of the scrollbar */
+}
+
+.gpt-chat-content::-webkit-scrollbar-track {
+    background: transparent;   
+}
+
+.gpt-chat-content::-webkit-scrollbar-thumb {
+    background: rgba(58, 58, 128, 0.8);    /* Color of the draggable scrolling handle */
+    border-radius: 0.25vw;   /* Reduced the rounded edges for the thumb */
+}
+
+.gpt-chat-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 100, 180, 0.9);  /* Color when hovering over the draggable scrolling handle */
+}
+
+/* Style the scrollbar for Firefox */
+.gpt-chat-content {
+    scrollbar-width: thin;   /* Make it thinner than the default */
+    scrollbar-color: rgba(58, 58, 128, 0.8) rgba(30, 30, 60, 0.95);    /* Define the thumb and track colors */
+}
+
