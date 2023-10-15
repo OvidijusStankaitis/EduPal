@@ -4,7 +4,7 @@
 public  class BaseEntity
 {
     public string Id { get; init; } // 2: property usage in class (get, init, set)
-    public string Name { get; set; }
+    public string Name { get; set; } // do we really need Name after all?
     
     public BaseEntity(string name)
     {

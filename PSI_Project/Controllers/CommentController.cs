@@ -37,11 +37,11 @@ public class CommentController : ControllerBase
             : Ok(comment);
     }
     
-    [HttpDelete("{commentId}/delete")]
+    [HttpDelete("delete/{commentId}")]
     public IActionResult RemoveTopic(string commentId)
     {
         return _commentRepository.RemoveItemById(commentId) 
-            ? Ok("Topic has been successfully deleted")
+            ? Ok("Comment has been successfully deleted")
             : BadRequest("An error occured while deleting the topic");
     }
 }
