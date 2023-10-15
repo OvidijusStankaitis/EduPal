@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
+using PSI_Project.DTO;
 using PSI_Project.Models;
 
 namespace PSI_Project.Repositories;
@@ -42,22 +43,21 @@ public class ConspectusRepository : BaseRepository<Conspectus>
         }
     }
 
-    public FileContentResult? DownloadConspectus(string itemId)
+    public ConspectusFileContentDTO? DownloadConspectus(string itemId)
     {
         Conspectus? conspectus = GetItemById(itemId);
         if (conspectus == null)
             return null;
         
-        string filePath = conspectus.Path;
-        if (File.Exists(filePath))
+        if (File.Exists(conspectus.Path))
         {
-            var fileBytes = File.ReadAllBytes(filePath);
-            var response = new FileContentResult(fileBytes, "application/pdf")
+            var fileBytes = File.ReadAllBytes(conspectus.Path);
+            var fileContent = new FileContentResult(fileBytes, "application/pdf")
             {
                 FileDownloadName = Path.GetFileName(conspectus.Name) 
             };
             
-            return response;
+            return new ConspectusFileContentDTO(conspectus.Name, fileContent);  // 1: using record
         }
 
         return null;

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PSI_Project.DTO;
 using PSI_Project.Repositories;
 
 namespace PSI_Project.Controllers;
@@ -29,18 +30,16 @@ public class ConspectusController : ControllerBase
     {
         return Ok(_conspectusRepository.UploadConspectus(topicId, files));
     }
-
+    
     [HttpGet("download/{conspectusId}")]
     public IActionResult DownloadFile(string conspectusId)
     {
-        FileContentResult? fileContent = _conspectusRepository.DownloadConspectus(conspectusId);
-        if (fileContent == null)
+        ConspectusFileContentDTO? response = _conspectusRepository.DownloadConspectus(conspectusId);
+        if (response == null)
             return NotFound();
         
-        string? conspectusPath = _conspectusRepository.GetConspectusPath(conspectusId);
-        Response.Headers.Add("Content-Disposition", "attachment; filename=" + Path.GetFileName(conspectusPath));
-        
-        return fileContent;
+        Response.Headers.Add("Content-Disposition", "attachment; filename=" + response.Name);
+        return response.FileContent;
     }
 
     [HttpDelete("{conspectusId}/delete")]
