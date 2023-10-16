@@ -10,7 +10,12 @@ namespace PSI_Project.Controllers;
 [Route("[controller]")]
 public class CommentController : ControllerBase
 {
-    private readonly CommentRepository _commentRepository = new CommentRepository();
+    private readonly CommentRepository _commentRepository;
+
+    public CommentController(CommentRepository commentRepository)
+    {
+        _commentRepository = commentRepository;
+    }
     
     [HttpGet("getOne/{commentId}")]
     public IActionResult GetComment(string commentId)

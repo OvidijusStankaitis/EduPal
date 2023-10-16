@@ -22,6 +22,7 @@ builder.Services.AddTransient<SubjectRepository>();
 builder.Services.AddTransient<TopicRepository>();
 builder.Services.AddTransient<UserRepository>();
 builder.Services.AddTransient<ConspectusRepository>();
+builder.Services.AddTransient<CommentRepository>();
 
 var app = builder.Build();
 
