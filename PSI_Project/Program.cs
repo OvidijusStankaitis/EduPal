@@ -1,3 +1,6 @@
+using PSI_Project.Repositories;
+using PSI_Project.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -11,6 +14,14 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowAnyHeader());
 });
+
+// Repositories and Services for DI
+builder.Services.AddTransient<GoalService>();
+builder.Services.AddTransient<GoalsRepository>();
+builder.Services.AddTransient<SubjectRepository>();
+builder.Services.AddTransient<TopicRepository>();
+builder.Services.AddTransient<UserRepository>();
+builder.Services.AddTransient<ConspectusRepository>();
 
 var app = builder.Build();
 

@@ -7,7 +7,12 @@ namespace PSI_Project.Controllers;
 [Route("[controller]")]
 public class ConspectusController : ControllerBase
 {
-    private readonly ConspectusRepository _conspectusRepository = new ConspectusRepository();
+    private readonly ConspectusRepository _conspectusRepository;
+
+    public ConspectusController(ConspectusRepository conspectusRepository)
+    {
+        _conspectusRepository = conspectusRepository;
+    }
 
     [HttpGet("get/{conspectusId}")]
     public IActionResult GetConspectus(string conspectusId)
@@ -20,7 +25,7 @@ public class ConspectusController : ControllerBase
 
     [HttpGet("list/{topicId}")]
     public IActionResult GetTopicFiles(string topicId)
-    {   
+    {
         return Ok(_conspectusRepository.GetConspectusByTopicId(topicId));
     }
 
@@ -36,18 +41,18 @@ public class ConspectusController : ControllerBase
         FileContentResult? fileContent = _conspectusRepository.DownloadConspectus(conspectusId);
         if (fileContent == null)
             return NotFound();
-        
+
         string? conspectusPath = _conspectusRepository.GetConspectusPath(conspectusId);
         Response.Headers.Add("Content-Disposition", "attachment; filename=" + Path.GetFileName(conspectusPath));
-        
+
         return fileContent;
     }
 
     [HttpDelete("{conspectusId}/delete")]
     public IActionResult DeleteFile(string conspectusId)
     {
-        return _conspectusRepository.RemoveItemById(conspectusId) 
-            ? Ok("File has been successfully deleted") 
+        return _conspectusRepository.RemoveItemById(conspectusId)
+            ? Ok("File has been successfully deleted")
             : BadRequest("An error occured while deleting file");
     }
 }
