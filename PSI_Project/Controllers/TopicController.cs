@@ -13,7 +13,7 @@ public class TopicController : ControllerBase
     private readonly TopicRepository _topicRepository = new TopicRepository();
     
     [HttpGet("get/{topicId}")]
-    public IActionResult GetSubject(string topicId)
+    public IActionResult GetTopic(string topicId)
     {
         Topic? topic = _topicRepository.GetItemById(topicId);
         return topic == null

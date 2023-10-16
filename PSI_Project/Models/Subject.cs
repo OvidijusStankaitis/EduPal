@@ -2,8 +2,10 @@
 
 public class Subject : BaseEntity, IComparable<Subject>, IEquatable<Subject>
 {
-    public Subject(string name = "untitled subject") : base(name)
+    public string Name { get; init; }
+    public Subject(string name = "untitled subject") : base()
     {
+        Name = name;
     }
 
     public int CompareTo(Subject other) // 10: IComparable used to sort items alphabetically in SubjectRepo.cs class
