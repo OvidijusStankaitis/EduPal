@@ -21,10 +21,10 @@ public class CommentController : ControllerBase
             : Ok(comment);
     }
     
-    [HttpGet("get/{conspectusId}")]
-    public IActionResult GetAllCommentsFromConspectus(string conspectusId)
+    [HttpGet("get/{topicId}")]
+    public IActionResult GetAllCommentsFromTopic(string topicId)
     {
-        List<Comment> comment = _commentRepository.GetAllCommentsOfConspectus(conspectusId);
+        List<Comment> comment = _commentRepository.GetAllCommentsOfTopic(topicId);
         return Ok(comment);
     }
     

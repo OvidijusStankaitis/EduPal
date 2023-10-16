@@ -2,12 +2,12 @@
 
 public class Comment : BaseEntity 
 {
-    public string ConspectusId { get; init; }
+    public string TopicId { get; init; }
     public string CommentText { get; init; } 
 
-    public Comment(string conspectusId, string commentText) : base()
+    public Comment(string topicId, string commentText) : base()
     {
-        ConspectusId = conspectusId;
+        TopicId = topicId;
         CommentText = commentText;
     }
 }
