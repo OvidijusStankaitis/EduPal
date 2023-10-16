@@ -69,7 +69,7 @@ public class ConspectusRepository : BaseRepository<Conspectus>
         {
             string fileName = formFile.FileName;
             
-            if (!fileName.IsValidPdfName()) // 4. Extension method usage
+            if (!fileName.IsValidFileName()) // 4. Extension method usage
             {
                 Console.WriteLine($"The file {fileName} is not a valid PDF format.");
                 continue;
