@@ -9,7 +9,7 @@ namespace PSI_Project.Models
         public string UserId { get; set; }
         public List<SubjectGoal> SubjectGoals { get; set; }
 
-        public Goal(string userId) : base(userId + DateTime.Now.Date.ToString())
+        public Goal(string userId)
         {
             Id = Guid.NewGuid().ToString();
             UserId = userId;
