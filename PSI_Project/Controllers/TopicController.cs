@@ -18,7 +18,7 @@ public class TopicController : ControllerBase
     }
 
     [HttpGet("get/{topicId}")]
-    public IActionResult GetSubject(string topicId)
+    public IActionResult GetTopic(string topicId)
     {
         Topic? topic = _topicRepository.GetItemById(topicId);
         return topic == null
