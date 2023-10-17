@@ -1,8 +1,8 @@
 ﻿namespace PSI_Project.Models;
 
-public struct Duration // 1. Struct used, not implemented yet TODO: view goals implementation which uses this struct
+public struct Duration // 1: Struct used, not implemented yet TODO: view goals implementation which uses this struct
 {
-    public int Hours { get; set; }
+    public int Hours { get; set; }  // 2: property usage in struct
     public int Minutes { get; set; }
 
     public static Duration ToReadableTime(double totalHours)
