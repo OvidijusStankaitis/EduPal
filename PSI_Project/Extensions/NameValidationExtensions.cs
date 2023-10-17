@@ -6,13 +6,13 @@ public static class NameValidationExtensions
 {
     public static bool IsValidPersonName(this string name)
     {
-        string nameValidationPattern = @"[.a-zA-Z]+";
+        string nameValidationPattern = @"^[\.a-zA-Z]+$";
         return Regex.IsMatch(name, nameValidationPattern);
     }
 
     public static bool IsValidContainerName(this string name)
     {
-        string nameValidationPattern = @"[.a-zA-Z\s0-9]+";
+        string nameValidationPattern = @"^[\.\sa-zA-Z0-9]+$";
         return Regex.IsMatch(name, nameValidationPattern);
     }
 
