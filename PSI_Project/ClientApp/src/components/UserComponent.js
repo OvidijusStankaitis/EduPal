@@ -11,7 +11,7 @@ const DURATIONS = {
     High: { study: 7, shortBreak: 4, longBreak: 5 },
 };
 
-export const UserComponent = ({ setShowPomodoroDialog }) => {
+export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) => {
     const { userEmail, setUsername, username, setUserEmail } = useUserContext();
     const [remainingTime, setRemainingTime] = useState(
         parseInt(localStorage.getItem('remainingTime'), 10) || 0
@@ -137,6 +137,10 @@ export const UserComponent = ({ setShowPomodoroDialog }) => {
         setShowPomodoroDialog(true);
     };
 
+    const handleStartOpenAI = () => {
+        setShowOpenAIDialog(true);
+    };
+    
     const formatTime = (time) => {
         const minutes = Math.floor(time / 60);
         const seconds = time % 60;
@@ -149,7 +153,7 @@ export const UserComponent = ({ setShowPomodoroDialog }) => {
             <img src={user} alt="User" className="user-picture" />
             <span className="pomodoro-time">{formatTime(remainingTime)}</span>
             <img src={tomato} alt="Start Pomodoro" className="tomato" onClick={handleStartPomodoro} />
-            <img src={gpt} alt="GPT Logo" className="gpt-logo" />
+            <img src={gpt} alt="GPT Logo" className="gpt-logo" onClick={handleStartOpenAI}/>
         </div>
     );
 };
