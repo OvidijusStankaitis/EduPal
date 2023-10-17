@@ -18,6 +18,15 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader());
 });
 
+// Repositories and Services for DI
+builder.Services.AddTransient<GoalService>();
+builder.Services.AddTransient<GoalsRepository>();
+builder.Services.AddTransient<SubjectRepository>();
+builder.Services.AddTransient<TopicRepository>();
+builder.Services.AddTransient<UserRepository>();
+builder.Services.AddTransient<ConspectusRepository>();
+builder.Services.AddTransient<CommentRepository>();
+
 builder.Services.AddScoped<OpenAIService>();
 builder.Services.AddScoped<OpenAIRepository>();
 

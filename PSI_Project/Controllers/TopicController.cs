@@ -10,8 +10,13 @@ namespace PSI_Project.Controllers;
 [Route("[controller]")]
 public class TopicController : ControllerBase
 {
-    private readonly TopicRepository _topicRepository = new TopicRepository();
-    
+    private readonly TopicRepository _topicRepository;
+
+    public TopicController(TopicRepository topicRepository)
+    {
+        _topicRepository = topicRepository;
+    }
+
     [HttpGet("get/{topicId}")]
     public IActionResult GetTopic(string topicId)
     {
@@ -20,13 +25,13 @@ public class TopicController : ControllerBase
             ? NotFound(new { error = "Topic not found." })
             : Ok(topic);
     }
-    
+
     [HttpGet("list/{subjectId}")]
     public IActionResult ListTopics(string subjectId)
     {
-        return Ok(_topicRepository.GetTopicsBySubjectId(subjectId)); 
+        return Ok(_topicRepository.GetTopicsBySubjectId(subjectId));
     }
-    
+
     [HttpPost("upload")]
     public IActionResult UploadTopic([FromBody] JsonElement request)
     {
@@ -35,11 +40,11 @@ public class TopicController : ControllerBase
             ? BadRequest("Invalid request body")
             : Ok(topic);
     }
-    
+
     [HttpDelete("{topicId}/delete")]
     public IActionResult RemoveTopic(string topicId)
     {
-        return _topicRepository.RemoveItemById(topicId) 
+        return _topicRepository.RemoveItemById(topicId)
             ? Ok("Topic has been successfully deleted")
             : BadRequest("An error occured while deleting the topic");
     }

@@ -9,7 +9,11 @@ namespace PSI_Project.Controllers;
 [Route("[controller]")]
 public class SubjectController : ControllerBase
 {
-    private readonly SubjectRepository _subjectRepository = new SubjectRepository();
+    private readonly SubjectRepository _subjectRepository;
+    public SubjectController(SubjectRepository subjectRepository)
+    {
+        _subjectRepository = subjectRepository;
+    }
 
     [HttpGet("get/{subjectId}")]
     public IActionResult GetSubject(string subjectId)
