@@ -1,4 +1,5 @@
-﻿using PSI_Project.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using PSI_Project.Models;
 
 namespace PSI_Project
 {
@@ -9,14 +10,14 @@ namespace PSI_Project
         public string Email { get; set; }
         public string Password { get; set; }
 
-        public string Name
+        public string Name  // 2: property usage in class (get, set)
         {
             get => _name;
             set
             {
-                if (!_name.IsValidPersonName())
-                    throw new Exception("invalid first name");
-
+                if (!value.IsValidPersonName())
+                    throw new ValidationException($"Invalid data: \"{value}\". Name should consist only of alphabetic characters");
+                
                 _name = value;
             }
         }
@@ -26,14 +27,14 @@ namespace PSI_Project
             get => _surname;
             set
             {
-                if (_surname.IsValidPersonName())
-                    throw new Exception("invalid last name");
-            
+                if (!value.IsValidPersonName())
+                    throw new ValidationException($"Invalid data: \"{value}\". Surname should consist only of alphabetic characters");
+                
                 _surname = value;
             }
         }
 
-        public User(string email, string password, string name, string surname): base()
+        public User(string email, string password, string name, string surname)
         {
             Email = email;
             Password = password;

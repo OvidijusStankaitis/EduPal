@@ -6,7 +6,7 @@ public static class NameValidationExtensions
 {
     public static bool IsValidPersonName(this string name)
     {
-        string nameValidationPattern = @"^[\.a-zA-Z]+$";
+        string nameValidationPattern = @"^[a-zA-Z]+$";
         return Regex.IsMatch(name, nameValidationPattern);
     }
 
