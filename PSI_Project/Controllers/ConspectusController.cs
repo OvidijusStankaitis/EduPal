@@ -75,5 +75,4 @@ public class ConspectusController : ControllerBase
 
         return Ok(_conspectusRepository.GetItemById(conspectusId));
     }
-
 }
