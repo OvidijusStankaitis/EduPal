@@ -8,7 +8,12 @@ namespace PSI_Project.Controllers
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly UserRepository _userRepository = new UserRepository();
+        private readonly UserRepository _userRepository;
+
+        public UserController(UserRepository userRepository)
+        {
+            _userRepository = userRepository;
+        }
 
         [HttpPost("register")]
         public IActionResult Register(User user)
@@ -34,6 +39,7 @@ namespace PSI_Project.Controllers
             {
                 return Ok(new { name = user.Name });
             }
+
             return NotFound(new { message = "User not found." });
         }
     }
