@@ -7,8 +7,9 @@ namespace PSI_Project
         public string Email { get; set; }
         public string Password { get; set; }
         public string Surname { get; set; }
+        public string Name { get; set; }
 
-        public User(string email, string password, string name, string surname): base(name)
+        public User(string email, string password, string name, string surname): base()
         {
             Email = email;
             Password = password;

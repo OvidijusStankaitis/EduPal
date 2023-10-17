@@ -87,6 +87,19 @@ public class ConspectusRepository : BaseRepository<Conspectus>
 
         return GetConspectusByTopicId(topicId);
     }
+    
+    public bool ChangeRating(string conspectusId, bool toIncrease)
+    {
+        Conspectus? conspectus = GetItemById(conspectusId);
+        if (conspectus != null)
+        {
+            int conspectusIndex = Items.IndexOf(conspectus);
+            Items[conspectusIndex].Rating = toIncrease ? ++Items[conspectusIndex].Rating : --Items[conspectusIndex].Rating;
+            UpdateDB(); // should it be here?
+            return true;
+        }
+        return false;
+    }
 
     public override bool RemoveItemById(string itemId)
     {
@@ -120,16 +133,17 @@ public class ConspectusRepository : BaseRepository<Conspectus>
     
     protected override string ItemToDbString(Conspectus item)
     {
-        return $"{item.Id};{item.Name};{item.TopicId};{item.Path};";
+        return $"{item.Id};{item.Name};{item.TopicId};{item.Path};{item.Rating};";
     }
     
     protected override Conspectus StringToItem(string dbString)
     {
         String[] fields = dbString.Split(";");
-        Conspectus newConspectus = new Conspectus(name: fields[1], topicId: fields[2], path: fields[3]) // 3: named argument usage
+        Conspectus newConspectus = new Conspectus(name: fields[1], topicId: fields[2], path: fields[3], rating:int.Parse(fields[4])) // 3: named argument usage
         {
             Id = fields[0]
         };
+        
         return newConspectus;
     }
 }

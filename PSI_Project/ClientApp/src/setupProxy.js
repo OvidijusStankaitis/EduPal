@@ -9,6 +9,7 @@ const context = [
   "/subject",
   "/topic",
   "/filehandling",
+  "/comment",
 ];
 
 const onError = (err, req, resp, target) => {
