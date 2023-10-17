@@ -5,9 +5,9 @@ public class Conspectus : BaseEntity
     public string TopicId { get; }
     public string Path { get; }
     public int Rating { get; set; }
-    public string Name { get; } // full name of a .pdf file
+    public string Name { get; }
 
-    public Conspectus(string topicId, string path, string name, int rating = 0) : base()
+    public Conspectus(string topicId, string path, string name, int rating = 0)
     {
         TopicId = topicId;
         Path = path;
