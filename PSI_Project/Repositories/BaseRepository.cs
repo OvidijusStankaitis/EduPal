@@ -2,7 +2,7 @@
 
 namespace PSI_Project.Repositories;
 
-public abstract class BaseRepository<T> where T : BaseEntity    // 7: using generic type
+public abstract class BaseRepository<T> // 7: using generic type
 {
     protected abstract string DbFilePath { get; }
     protected List<T> Items { get; private set; }
@@ -17,7 +17,7 @@ public abstract class BaseRepository<T> where T : BaseEntity    // 7: using gene
 
     public T? GetItemById(string itemId)
     {
-        return Items.FirstOrDefault(item => item.Id.Equals(itemId));
+        return Items.FirstOrDefault(item => (item as BaseEntity).Id.Equals(itemId));
     }
 
     protected List<T> ReadAllItemsFromDB() // 6: Reading from a file using a stream;
@@ -37,7 +37,7 @@ public abstract class BaseRepository<T> where T : BaseEntity    // 7: using gene
         return items;
     }
     
-    public bool InsertItem(T item)
+    public bool InsertItem(T item)  // 7: using generic 
     {
         Items.Add(item);
         bool isInserted = InsertItemToDB(item);
@@ -91,7 +91,7 @@ public abstract class BaseRepository<T> where T : BaseEntity    // 7: using gene
         bool removed = RemoveItemFromDB(itemId);
         if (removed)
         {
-            Items.RemoveAll(i => i.Id == itemId);
+            Items.RemoveAll(i => (i as BaseEntity).Id == itemId);
             AfterOperation();
         }
         return removed;
@@ -115,7 +115,7 @@ public abstract class BaseRepository<T> where T : BaseEntity    // 7: using gene
                 while ((line = sr.ReadLine()) != null)
                 {
                     T item = StringToItem(line);
-                    if (item.Id.Equals(itemId))
+                    if ((item as BaseEntity).Id.Equals(itemId))
                     {
                         removed = true;
                         continue;
