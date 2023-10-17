@@ -55,4 +55,25 @@ public class ConspectusController : ControllerBase
             ? Ok("File has been successfully deleted")
             : BadRequest("An error occured while deleting file");
     }
+    
+    [HttpPost("rateUp/{conspectusId}")]
+    public IActionResult RateConspectusUp(string conspectusId)
+    {
+        bool isError = _conspectusRepository.ChangeRating(conspectusId, true);
+        if (!isError)
+           return NotFound(new { error = "File not found in database." });
+
+        return Ok(_conspectusRepository.GetItemById(conspectusId));
+    }
+    
+    [HttpPost("rateDown/{conspectusId}")]
+    public IActionResult RateConspectusDown(string conspectusId)
+    {
+        bool isError = _conspectusRepository.ChangeRating(conspectusId, false);
+        if (!isError)
+            return NotFound(new { error = "File not found in database." });
+
+        return Ok(_conspectusRepository.GetItemById(conspectusId));
+    }
+
 }

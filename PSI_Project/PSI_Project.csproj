@@ -20,10 +20,16 @@
     <ItemGroup>
         <!-- Don't publish the SPA source files, but do show them in the project files list -->
         <Content Remove="$(SpaRoot)**"/>
+        <Content Include="DB\conspectus.txt" />
+        <Content Include="DB\subject.txt" />
+        <Content Include="DB\topic.txt" />
+        <Content Include="DB\users.txt" />
         <None Remove="$(SpaRoot)**"/>
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**"/>
         <Content Remove="DatabaseOperations\**" />
         <None Remove="DatabaseOperations\**" />
+        <Content Remove="Files\**" />
+        <None Remove="Files\**" />
     </ItemGroup>
 
 
@@ -32,6 +38,7 @@
 
 
     <ItemGroup>
+      <Folder Include="FIles\" />
       <Folder Include="wwwroot\" />
     </ItemGroup>
 
@@ -42,6 +49,7 @@
 
     <ItemGroup>
       <Compile Remove="DatabaseOperations\**" />
+      <Compile Remove="Files\**" />
     </ItemGroup>
 
 
@@ -51,6 +59,7 @@
 
     <ItemGroup>
       <EmbeddedResource Remove="DatabaseOperations\**" />
+      <EmbeddedResource Remove="Files\**" />
     </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
