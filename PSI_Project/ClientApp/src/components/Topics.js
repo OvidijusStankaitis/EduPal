@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import './Topics.css';
 import {UserComponent} from "./UserComponent";
 import { PomodoroDialog } from './PomodoroDialog';
+import {OpenAIDialogue} from "./OpenAIDialogue";
 
 export const Topics = () => {
     const { subjectId } = useParams();
@@ -11,9 +12,9 @@ export const Topics = () => {
     const [showDialog, setShowDialog] = useState(false);
     const [refreshTopics, setRefreshTopics] = useState(false);
     const [newTopicName, setNewTopicName] = useState('');
-    const [showPomodoroDialog, setShowPomodoroDialog] = useState(false);
+    const [showPomodoroDialog, setShowPomodoroDialog] = useState(false)
+    const [showOpenAIDialog, setShowOpenAIDialog] = useState(false);
 
-    
     useEffect(() => {
         fetch(`https://localhost:7283/Subject/get/${subjectId}`)
             .then(response => response.json())
@@ -82,7 +83,10 @@ export const Topics = () => {
             <div className="topics-container">
                 <div className="headert">
                     <h1>{subjectName}</h1>
-                    <UserComponent setShowPomodoroDialog={setShowPomodoroDialog} />
+                    <UserComponent
+                        setShowPomodoroDialog={setShowPomodoroDialog}
+                        setShowOpenAIDialog={setShowOpenAIDialog}
+                    />
                 </div>
                 <div className="topics-grid">
                     {topics.map((topic, index) => (
@@ -109,6 +113,10 @@ export const Topics = () => {
                 <PomodoroDialog
                     show={showPomodoroDialog}
                     onClose={() => setShowPomodoroDialog(false)}
+                />
+                <OpenAIDialogue
+                    show={showOpenAIDialog}
+                    onClose={() => setShowOpenAIDialog(false)}
                 />
             </div>
         </div>

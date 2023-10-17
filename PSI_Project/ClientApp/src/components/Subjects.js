@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import './Subjects.css';
 import { UserComponent } from "./UserComponent";
 import { PomodoroDialog } from './PomodoroDialog';
+import {OpenAIDialogue} from "./OpenAIDialogue";
 
 export const Subjects = () => {
     const [subjects, setSubjects] = useState([]);
@@ -12,6 +13,7 @@ export const Subjects = () => {
     const [refreshSubjects, setRefreshSubjects] = useState(false);
     const [newSubjectName, setNewSubjectName] = useState('');
     const [showPomodoroDialog, setShowPomodoroDialog] = useState(false);
+    const [showOpenAIDialog, setShowOpenAIDialog] = useState(false);
 
     useEffect(() => {
         const fetchSubjects = async () => {
@@ -73,7 +75,10 @@ export const Subjects = () => {
             <div className="subjects-container">
                 <div className="headersub">
                     <h1>Subjects</h1>
-                    <UserComponent setShowPomodoroDialog={setShowPomodoroDialog} />
+                    <UserComponent 
+                        setShowPomodoroDialog={setShowPomodoroDialog}
+                        setShowOpenAIDialog={setShowOpenAIDialog}
+                    />
                 </div>
                 <div className="subjects-grid">
                     {subjects.map((subject, index) => (
@@ -100,6 +105,10 @@ export const Subjects = () => {
                 <PomodoroDialog
                     show={showPomodoroDialog}
                     onClose={() => setShowPomodoroDialog(false)}
+                />
+                <OpenAIDialogue
+                    show={showOpenAIDialog}
+                    onClose={() => setShowOpenAIDialog(false)}
                 />
             </div>
         </div>

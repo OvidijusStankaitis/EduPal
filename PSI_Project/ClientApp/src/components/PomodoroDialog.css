@@ -50,11 +50,16 @@
     font-size: 1.8vh;
     border: none;
     cursor: pointer;
-    background-color: rgba(58, 58, 128, 0.8);
+    background-color: rgba(70, 70, 140, 0.9);
     color: #E0E0FF;
     border-radius: 0.5vw;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, box-shadow 0.3s;
     box-shadow: 0 0.5vw 1vw rgba(34, 34, 85, 0.6);
+}
+
+.pomodoro-dialog-content button:hover {
+    background-color: rgba(100, 100, 180, 0.9);
+    box-shadow: 0 0 0.5vw rgba(100, 100, 180, 0.5);
 }
 
 .time-desc{

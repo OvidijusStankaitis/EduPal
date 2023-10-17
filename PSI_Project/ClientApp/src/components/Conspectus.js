@@ -3,6 +3,7 @@ import './Conspectus.css';
 import {useParams} from "react-router-dom";
 import {UserComponent} from "./UserComponent";
 import { PomodoroDialog } from './PomodoroDialog';
+import { OpenAIDialogue } from './OpenAIDialogue';
 
 export const Conspectus = () => {
     const { topicId } = useParams();
@@ -10,6 +11,7 @@ export const Conspectus = () => {
     const [files, setFiles] = useState([]);
     const iframeRef = useRef(null);
     const [showPomodoroDialog, setShowPomodoroDialog] = useState(false);
+    const [showOpenAIDialog, setShowOpenAIDialog] = useState(false);
 
     useEffect(() => {
         fetch(`https://localhost:7283/Topic/get/${topicId}`)
@@ -112,7 +114,10 @@ export const Conspectus = () => {
         <div className="user-panel">
             <div className="header">
                 <h1>{topicName}</h1>
-                <UserComponent setShowPomodoroDialog={setShowPomodoroDialog} />
+                <UserComponent 
+                    setShowPomodoroDialog={setShowPomodoroDialog}
+                    setShowOpenAIDialog={setShowOpenAIDialog}
+                />
             </div>
             <div className="main-content">
                 <div className="file-section">
@@ -144,6 +149,10 @@ export const Conspectus = () => {
                 <PomodoroDialog
                     show={showPomodoroDialog}
                     onClose={() => setShowPomodoroDialog(false)}
+                />
+                <OpenAIDialogue 
+                    show={showOpenAIDialog} 
+                    onClose={() => setShowOpenAIDialog(false)}
                 />
             </div>
         </div>

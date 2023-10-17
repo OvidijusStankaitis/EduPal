@@ -6,6 +6,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Register the IHttpClientFactory service
+builder.Services.AddHttpClient();
+
 // Add CORS services to the container.
 builder.Services.AddCors(options =>
 {
@@ -23,6 +26,9 @@ builder.Services.AddTransient<TopicRepository>();
 builder.Services.AddTransient<UserRepository>();
 builder.Services.AddTransient<ConspectusRepository>();
 builder.Services.AddTransient<CommentRepository>();
+
+builder.Services.AddScoped<OpenAIService>();
+builder.Services.AddScoped<OpenAIRepository>();
 
 var app = builder.Build();
 
