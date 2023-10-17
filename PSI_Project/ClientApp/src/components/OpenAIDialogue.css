@@ -184,3 +184,18 @@
     scrollbar-color: rgba(58, 58, 128, 0.8) rgba(30, 30, 60, 0.95);    /* Define the thumb and track colors */
 }
 
+.spinner {
+    margin: 0 auto;
+    width: 2vw;
+    height: 2vw;
+    border: 0.4vw solid rgba(50, 50, 100, 0.95); /* Brightened base color */
+    border-radius: 50%;
+    border-top-color: rgba(110, 110, 220, 0.9); /* Brightened and more neon color for the spinner top */
+    animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+

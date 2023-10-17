@@ -1,7 +1,13 @@
+using PSI_Project.Repositories;
+using PSI_Project.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Register the IHttpClientFactory service
+builder.Services.AddHttpClient();
 
 // Add CORS services to the container.
 builder.Services.AddCors(options =>
@@ -11,6 +17,9 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowAnyHeader());
 });
+
+builder.Services.AddScoped<OpenAIService>();
+builder.Services.AddScoped<OpenAIRepository>();
 
 var app = builder.Build();
 
