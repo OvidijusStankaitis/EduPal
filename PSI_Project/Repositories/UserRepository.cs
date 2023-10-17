@@ -8,7 +8,7 @@ namespace PSI_Project.Repositories
 
         protected override string ItemToDbString(User user)
         {
-            return $"{user.Id};{user.Name};{user.Surname};{user.Email};{user.Password}";
+            return $"{user.Id};{user.Name};{user.Surname};{user.Email};{user.Password};";
         }
 
         protected override User StringToItem(string dbString)
