@@ -5,7 +5,7 @@ public class Comment : BaseEntity
     public string TopicId { get; init; }
     public string CommentText { get; init; } 
 
-    public Comment(string topicId, string commentText) : base()
+    public Comment(string topicId, string commentText)
     {
         TopicId = topicId;
         CommentText = commentText;
