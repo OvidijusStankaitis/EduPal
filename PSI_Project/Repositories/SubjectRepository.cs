@@ -1,49 +1,46 @@
 ﻿using System.Text.Json;
+using PSI_Project.Data;
 using PSI_Project.Models;
 
 namespace PSI_Project.Repositories;
-public class SubjectRepository : BaseRepository<Subject>
+public class SubjectRepository : Repository<Subject>
 {
-    protected override string DbFilePath => "..//PSI_Project//DB//subject.txt";
-
-    public List<Subject> GetSubjectList()
+    public EduPalDatabaseContext EduPalContext => Context as EduPalDatabaseContext;
+    
+    public SubjectRepository(EduPalDatabaseContext context) : base(context)
     {
-        return Items.ToList();
+    }
+
+    public List<Subject> GetSubjectsList()
+    {
+        return EduPalContext.Subjects.ToList();
     }
 
     public Subject? CreateSubject(JsonElement request)
     {
-        if (request.TryGetProperty("subjectName", out var subjectNameProperty))
-        {
-            string? subjectName = subjectNameProperty.GetString();
-            if (subjectName != null)
-            {
-                Subject newSubject = new Subject(subjectName);
-                if(InsertItem(newSubject));
-                    return newSubject;
-            }
-        }
+        if (!request.TryGetProperty("subjectName", out var subjectNameProperty))
+            return null;
+        
+        string? subjectName = subjectNameProperty.GetString();
+        if (!subjectName.IsValidContainerName())
+            return null;
+        
+        Subject newSubject = new Subject(subjectName);
+        Add(newSubject);
+        int changes = EduPalContext.SaveChanges();
+       
+        return changes > 0 ? newSubject : null;
+    }
+    
+    public bool RemoveSubject(string subjectId)
+    {
+        Subject? subject = Get(subjectId);
+        if (subject is null)
+            return false;
+        
+        Remove(subject);
+        int changes = EduPalContext.SaveChanges();
 
-        return null;
-    }
-    
-    protected override void AfterOperation() // 10: Sort method with IComparable interface used
-    {
-        Items.Sort((subject1, subject2) => String.Compare(subject1.Name, subject2.Name, StringComparison.Ordinal));
-    }
-    
-    protected override string ItemToDbString(Subject item)
-    {
-        return $"{item.Id};{item.Name};";
-    }
-    
-    protected override Subject StringToItem(string dbString)
-    {
-        String[] subjectFields = dbString.Split(";");
-        Subject newSubject = new Subject(name: subjectFields[1])
-        {
-            Id = subjectFields[0]
-        };
-        return newSubject;
-    }
+        return changes > 0;
+    } 
 }

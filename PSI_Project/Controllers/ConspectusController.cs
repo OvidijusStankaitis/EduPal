@@ -18,7 +18,7 @@ public class ConspectusController : ControllerBase
     [HttpGet("get/{conspectusId}")]
     public IActionResult GetConspectus(string conspectusId)
     {
-        Stream? pdfStream = _conspectusRepository.GetConspectusPdfStream(conspectusId);
+        Stream? pdfStream = _conspectusRepository.GetPdfStream(conspectusId);
         return pdfStream != null
             ? File(pdfStream, "application/pdf")
             : NotFound(new { error = "File not found." });
@@ -27,19 +27,19 @@ public class ConspectusController : ControllerBase
     [HttpGet("list/{topicId}")]
     public IActionResult GetTopicFiles(string topicId)
     {
-        return Ok(_conspectusRepository.GetConspectusByTopicId(topicId));
+        return Ok(_conspectusRepository.GetConspectusListByTopicId(topicId));
     }
 
     [HttpPost("upload/{topicId}")]
     public IActionResult UploadFiles(string topicId, List<IFormFile> files)
     {
-        return Ok(_conspectusRepository.UploadConspectus(topicId, files));
+        return Ok(_conspectusRepository.Upload(topicId, files).ToList());
     }
     
     [HttpGet("download/{conspectusId}")]
     public IActionResult DownloadFile(string conspectusId)
     {
-        ConspectusFileContentDTO? response = _conspectusRepository.DownloadConspectus(conspectusId);
+        ConspectusFileContentDTO? response = _conspectusRepository.Download(conspectusId);
         if (response == null)
             return NotFound();
         
@@ -50,7 +50,7 @@ public class ConspectusController : ControllerBase
     [HttpDelete("{conspectusId}/delete")]
     public IActionResult DeleteFile(string conspectusId)
     {
-        return _conspectusRepository.RemoveItemById(conspectusId)
+        return _conspectusRepository.Remove(conspectusId)
             ? Ok("File has been successfully deleted")
             : BadRequest("An error occured while deleting file");
     }
@@ -62,7 +62,7 @@ public class ConspectusController : ControllerBase
         if (!isError)
            return NotFound(new { error = "File not found in database." });
 
-        return Ok(_conspectusRepository.GetItemById(conspectusId));
+        return Ok(_conspectusRepository.Get(conspectusId));
     }
     
     [HttpPost("rateDown/{conspectusId}")]
@@ -72,7 +72,7 @@ public class ConspectusController : ControllerBase
         if (!isError)
             return NotFound(new { error = "File not found in database." });
 
-        return Ok(_conspectusRepository.GetItemById(conspectusId));
+        return Ok(_conspectusRepository.Get(conspectusId));
     }
 
 }

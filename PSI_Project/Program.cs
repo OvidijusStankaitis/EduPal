@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using PSI_Project.Data;
 using PSI_Project.Repositories;
 using PSI_Project.Services;
 
@@ -16,6 +18,11 @@ builder.Services.AddCors(options =>
         builder.WithOrigins("https://localhost:44402") // Updated with your React app's URL
             .AllowAnyMethod()
             .AllowAnyHeader());
+});
+
+builder.Services.AddDbContext<EduPalDatabaseContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration["DatabaseConnectionString"]);
 });
 
 // Repositories and Services for DI

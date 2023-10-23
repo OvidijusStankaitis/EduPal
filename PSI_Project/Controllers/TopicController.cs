@@ -18,9 +18,9 @@ public class TopicController : ControllerBase
     }
 
     [HttpGet("get/{topicId}")]
-    public IActionResult GetTopic(string topicId)
+    public IActionResult GetTopicById(string topicId)
     {
-        Topic? topic = _topicRepository.GetItemById(topicId);
+        Topic? topic = _topicRepository.Get(topicId);
         return topic == null
             ? NotFound(new { error = "Topic not found." })
             : Ok(topic);
@@ -29,13 +29,13 @@ public class TopicController : ControllerBase
     [HttpGet("list/{subjectId}")]
     public IActionResult ListTopics(string subjectId)
     {
-        return Ok(_topicRepository.GetTopicsBySubjectId(subjectId));
+        return Ok(_topicRepository.GetTopicsListBySubjectId(subjectId));
     }
 
     [HttpPost("upload")]
     public IActionResult UploadTopic([FromBody] JsonElement request)
     {
-        Topic? topic = _topicRepository.CreateTopic(request);
+        Topic? topic = _topicRepository.Create(request);
         return topic == null
             ? BadRequest("Invalid request body")
             : Ok(topic);
@@ -44,7 +44,7 @@ public class TopicController : ControllerBase
     [HttpDelete("{topicId}/delete")]
     public IActionResult RemoveTopic(string topicId)
     {
-        return _topicRepository.RemoveItemById(topicId)
+        return _topicRepository.Remove(topicId)
             ? Ok("Topic has been successfully deleted")
             : BadRequest("An error occured while deleting the topic");
     }

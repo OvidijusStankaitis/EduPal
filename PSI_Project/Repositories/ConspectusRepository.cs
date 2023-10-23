@@ -1,32 +1,33 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.FileProviders;
+using PSI_Project.Data;
 using PSI_Project.DTO;
 using PSI_Project.Models;
 
 namespace PSI_Project.Repositories;
-public class ConspectusRepository : BaseRepository<Conspectus>
+public class ConspectusRepository : Repository<Conspectus>
 {
-    protected override string DbFilePath => "..//PSI_Project//DB//conspectus.txt";
-    
-    public List<Conspectus> GetConspectusByTopicId(string topicId)
+    public EduPalDatabaseContext EduPalContext => Context as EduPalDatabaseContext;
+
+    public ConspectusRepository(EduPalDatabaseContext context) : base(context)
     {
-        return Items.Where(conspectus => conspectus.TopicId == topicId).ToList();
-    }
-    
-    public string? GetConspectusPath(string conspectusId)
-    {
-        return GetItemById(conspectusId)?.Path;
     }
 
-    public Stream? GetConspectusPdfStream(string conspectusId)
+    public IEnumerable<Conspectus> GetConspectusListByTopicId(string topicId)
+    {
+        return 
+            EduPalContext.Conspectuses.Where(conspectus => conspectus.Topic.Id == topicId);
+    }
+
+    public Stream? GetPdfStream(string conspectusId)
     {
         try
         {
-            Conspectus? conspectus = GetItemById(conspectusId);
+            Conspectus? conspectus = Get(conspectusId);
             if (conspectus == null)
                 return null;
         
-            string dirPath = Path.GetDirectoryName(conspectus.Path);
+            string? dirPath = Path.GetDirectoryName(conspectus.Path);
             string filename = Path.GetFileName(conspectus.Path);
         
             IFileProvider provider = new PhysicalFileProvider(dirPath);
@@ -43,9 +44,9 @@ public class ConspectusRepository : BaseRepository<Conspectus>
         }
     }
 
-    public ConspectusFileContentDTO? DownloadConspectus(string itemId)
+    public ConspectusFileContentDTO? Download(string conspectusId)
     {
-        Conspectus? conspectus = GetItemById(itemId);
+        Conspectus? conspectus = Get(conspectusId);
         if (conspectus == null)
             return null;
         
@@ -62,13 +63,12 @@ public class ConspectusRepository : BaseRepository<Conspectus>
 
         return null;
     }
-    
-    public List<Conspectus> UploadConspectus(string topicId, List<IFormFile> files)
+
+    public IEnumerable<Conspectus> Upload(string topicId, List<IFormFile> files)
     {
         foreach (var formFile in files) // 5: iterating through collection the right way
         {
             string fileName = formFile.FileName;
-            
             if (!fileName.IsValidFileName()) // 4. Extension method usage
             {
                 Console.WriteLine($"The file {fileName} is not a valid PDF format.");
@@ -76,74 +76,66 @@ public class ConspectusRepository : BaseRepository<Conspectus>
             }
 
             string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Files", fileName);
-            
             using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
             {
                 formFile.CopyTo(fileStream);
             }
-
-            InsertItem(new Conspectus(topicId, filePath, fileName));
+            
+            Conspectus conspectus = new()
+            {
+                Name = fileName,
+                Path = filePath,
+                Topic = EduPalContext.Topics.Find(topicId)
+            };
+            
+            Add(conspectus);
+            EduPalContext.SaveChanges();
         }
 
-        return GetConspectusByTopicId(topicId);
+        return GetConspectusListByTopicId(topicId);
     }
     
     public bool ChangeRating(string conspectusId, bool toIncrease)
     {
-        Conspectus? conspectus = GetItemById(conspectusId);
-        if (conspectus != null)
-        {
-            int conspectusIndex = Items.IndexOf(conspectus);
-            Items[conspectusIndex].Rating = toIncrease ? ++Items[conspectusIndex].Rating : --Items[conspectusIndex].Rating;
-            UpdateDB(); // should it be here?
-            return true;
-        }
-        return false;
+        Conspectus? conspectus = Get(conspectusId);
+        if (conspectus is null)
+            return false;
+
+        conspectus.Rating += toIncrease ? +1 : -1;
+        int changes = EduPalContext.SaveChanges();
+        return changes > 0;
     }
 
-    public override bool RemoveItemById(string itemId)
+    public bool Remove(string conspectusId)
     {
-        Conspectus? conspectus = GetItemById(itemId);
-        if (conspectus == null)
+        Conspectus? conspectus = Get(conspectusId);
+        if (conspectus is null)
             return false;
         
+        Remove(conspectus);
+        int changes = EduPalContext.SaveChanges();
+
         string filePath = conspectus.Path;
+        DeleteFile(filePath);
+
+        return changes > 0;
+    }
+
+    public void DeleteFile(string filePath)
+    {
         try
         {
-            RemoveItemFromDB(conspectus.Id);
-            
-            if (!IsFileUsedInOtherTopics(filePath))
-            {
+            if (!IsFileUsed(filePath))
                 File.Delete(filePath);
-            }
-            
-            return true;
         }
         catch (IOException ex)
         {
             Console.WriteLine(ex.Message);
-            return false;
         }
     }
     
-    private bool IsFileUsedInOtherTopics(string filePath)
+    public bool IsFileUsed(string filePath)
     {
-        return Items.Any(conspectus => conspectus.Path == filePath);
-    }
-    
-    protected override string ItemToDbString(Conspectus item)
-    {
-        return $"{item.Id};{item.Name};{item.TopicId};{item.Path};{item.Rating};";
-    }
-    
-    protected override Conspectus StringToItem(string dbString)
-    {
-        String[] fields = dbString.Split(";");
-        Conspectus newConspectus = new Conspectus(name: fields[1], topicId: fields[2], path: fields[3], rating:int.Parse(fields[4])) // 3: named argument usage
-        {
-            Id = fields[0]
-        };
-        
-        return newConspectus;
+        return EduPalContext.Conspectuses.Any(item => item.Path == filePath);
     }
 }
