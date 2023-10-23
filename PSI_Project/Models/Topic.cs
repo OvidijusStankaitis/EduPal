@@ -1,10 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace PSI_Project.Models;
+﻿namespace PSI_Project.Models;
 
 public class Topic : BaseEntity
 {   
-    public String Name { get; set; }
+    public string Name { get; set; }
     public KnowledgeLevel KnowledgeRating { get; set; }
     
     public Subject Subject { get; init; }
