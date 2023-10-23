@@ -1,28 +1,30 @@
-﻿using PSI_Project.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using PSI_Project.Data;
+using PSI_Project.Models;
 
 namespace PSI_Project.Repositories;
 
-public abstract class BaseRepository<T> // 7: using generic type
+public abstract class BaseRepository<TEntity> where TEntity : BaseEntity
 {
     protected abstract string DbFilePath { get; }
-    protected List<T> Items { get; private set; }
-    protected abstract string ItemToDbString(T item);
-    protected abstract T StringToItem(string dbString);
-
-    protected BaseRepository()
+    protected List<TEntity> Items { get; private set; }
+    protected abstract string ItemToDbString(TEntity item);  
+    protected abstract TEntity StringToItem(string dbString);
+    
+    protected BaseRepository()  
     {
         Items = ReadAllItemsFromDB();
         AfterOperation();   // 10: IComparable used to sort items alphabetically in SubjectRepo.cs class
     }
 
-    public T? GetItemById(string itemId)
+    public TEntity? GetItemById(string itemId)  
     {
         return Items.FirstOrDefault(item => (item as BaseEntity).Id.Equals(itemId));
     }
 
-    protected List<T> ReadAllItemsFromDB() // 6: Reading from a file using a stream;
+    protected List<TEntity> ReadAllItemsFromDB() 
     {
-        List<T> items = new List<T>();
+        List<TEntity> items = new List<TEntity>();
 
         using (var sr = new StreamReader(DbFilePath))
         {
@@ -37,7 +39,7 @@ public abstract class BaseRepository<T> // 7: using generic type
         return items;
     }
     
-    public bool InsertItem(T item)  // 7: using generic 
+    public bool InsertItem(TEntity item) 
     {
         Items.Add(item);
         bool isInserted = InsertItemToDB(item);
@@ -47,7 +49,7 @@ public abstract class BaseRepository<T> // 7: using generic type
         return isInserted;
     }
     
-    protected bool InsertItemToDB(T item)
+    protected bool InsertItemToDB(TEntity item) 
     {
         try
         {
@@ -65,7 +67,7 @@ public abstract class BaseRepository<T> // 7: using generic type
         }
     }
     
-    protected bool UpdateDB()
+    protected bool UpdateDB()  
     {
         bool updated = false;
         try
@@ -86,7 +88,7 @@ public abstract class BaseRepository<T> // 7: using generic type
         return updated;
     }
 
-    public virtual bool RemoveItemById(string itemId)
+    public virtual bool RemoveItemById(string itemId)  
     {
         bool removed = RemoveItemFromDB(itemId);
         if (removed)
@@ -97,7 +99,7 @@ public abstract class BaseRepository<T> // 7: using generic type
         return removed;
     }
 
-    protected bool RemoveItemFromDB(string itemId)
+    protected bool RemoveItemFromDB(string itemId) 
     {
         bool removed = false;
 
@@ -114,7 +116,7 @@ public abstract class BaseRepository<T> // 7: using generic type
                 string? line;
                 while ((line = sr.ReadLine()) != null)
                 {
-                    T item = StringToItem(line);
+                    TEntity item = StringToItem(line);
                     if ((item as BaseEntity).Id.Equals(itemId))
                     {
                         removed = true;

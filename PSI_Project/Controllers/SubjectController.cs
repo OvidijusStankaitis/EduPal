@@ -18,7 +18,7 @@ public class SubjectController : ControllerBase
     [HttpGet("get/{subjectId}")]
     public IActionResult GetSubject(string subjectId)
     {
-        Subject? subject = _subjectRepository.GetItemById(subjectId);
+        Subject? subject = _subjectRepository.Get(subjectId);
         return subject == null
             ? NotFound(new { error = "Subject not found." })
             : Ok(subject);
@@ -27,7 +27,7 @@ public class SubjectController : ControllerBase
     [HttpGet("list")]
     public IActionResult ListSubjects()
     {
-        return Ok(_subjectRepository.GetSubjectList());
+        return Ok(_subjectRepository.GetSubjectsList());
     }
     
     [HttpPost("upload")]
@@ -42,7 +42,7 @@ public class SubjectController : ControllerBase
     [HttpDelete("{subjectId}/delete")]
     public IActionResult RemoveSubject(string subjectId)
     { 
-        return _subjectRepository.RemoveItemById(subjectId) 
+        return _subjectRepository.RemoveSubject(subjectId) 
             ? Ok("Subject has been successfully deleted") 
             : BadRequest("An error occured while deleting the subject");
     }

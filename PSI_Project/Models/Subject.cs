@@ -3,7 +3,8 @@
 public class Subject : BaseEntity, IComparable<Subject>, IEquatable<Subject>
 {
     public string Name { get; init; }
-    public Subject(string name = "untitled subject")
+    
+    public Subject(string name)
     {
         Name = name;
     }
