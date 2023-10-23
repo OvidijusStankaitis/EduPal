@@ -4,6 +4,7 @@ import {useParams} from "react-router-dom";
 import {UserComponent} from "./UserComponent";
 import { PomodoroDialog } from './PomodoroDialog';
 import { OpenAIDialogue } from './OpenAIDialogue';
+import { Comments } from "./Comments";
 
 export const Conspectus = () => {
     const { topicId } = useParams();
@@ -12,6 +13,7 @@ export const Conspectus = () => {
     const iframeRef = useRef(null);
     const [showPomodoroDialog, setShowPomodoroDialog] = useState(false);
     const [showOpenAIDialog, setShowOpenAIDialog] = useState(false);
+    const [showComments, setShowComments] = useState(false);
 
     useEffect(() => {
         fetch(`https://localhost:7283/Topic/get/${topicId}`)
@@ -121,7 +123,10 @@ export const Conspectus = () => {
             </div>
             <div className="main-content">
                 <div className="file-section">
-                    <button onClick={() => document.getElementById('fileInput').click()}>Upload</button>
+                    <div className="button-group">
+                        <button onClick={() => document.getElementById('fileInput').click()}>Upload</button>
+                        <button onClick={() => setShowComments(true)}>Comments</button>
+                    </div>
                     <input type="file" id="fileInput" accept=".pdf" style={{display: 'none'}} onChange={handleFileChange} multiple />
                     <ul className="files-list">
                         {files.length > 0 ? (
@@ -153,6 +158,11 @@ export const Conspectus = () => {
                 <OpenAIDialogue 
                     show={showOpenAIDialog} 
                     onClose={() => setShowOpenAIDialog(false)}
+                />
+                <Comments
+                    show={showComments}
+                    onClose={() => setShowComments(false)}
+                    topicId={topicId}
                 />
             </div>
         </div>

@@ -155,8 +155,13 @@ button:hover {
     display: flex;
     justify-content: space-between;
     align-items: center; /* This will vertically center the children */
-    margin-left: 5rem;
-    margin-right: 2.5rem;
-    margin-top: -3vh;
-    margin-bottom: 1vh;
+    margin: -3vh 2.5rem 1vh 5rem;
+}
+
+.button-group {
+    display: flex;  /* This makes children layout horizontally */
+    justify-content: space-between;  /* This spaces out the buttons evenly */
+    width: 100%;  /* Take up the full width */
+    gap: 1rem;  /* Gives space between the buttons */
+    margin-bottom: -1rem;
 }
