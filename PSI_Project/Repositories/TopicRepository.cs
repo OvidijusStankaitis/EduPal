@@ -26,12 +26,9 @@ public class TopicRepository : Repository<Topic>
         string? subjectId = subjectNameProperty.GetString();
         if (subjectId is null || topicName is null)
             return null;
-        
-        Topic newTopic = new()
-        {
-            Name = topicName,
-            Subject = EduPalContext.Subjects.Find(subjectId)
-        };
+
+        Subject subject = EduPalContext.Subjects.Find(subjectId);
+        Topic newTopic = new Topic(topicName, subject);
         Add(newTopic);
         int changes = EduPalContext.SaveChanges();
         

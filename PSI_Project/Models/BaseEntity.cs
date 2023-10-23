@@ -2,7 +2,6 @@
 
 namespace PSI_Project.Models;
 
-// 1: using our own class
 public class BaseEntity
 {
     [Key]

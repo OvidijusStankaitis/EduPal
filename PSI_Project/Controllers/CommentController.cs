@@ -36,7 +36,7 @@ public class CommentController : ControllerBase
     [HttpPost("upload")]
     public IActionResult UploadComment([FromBody] object request)
     {
-        if (request is not JsonElement requestJson) // 8: unboxing
+        if (request is not JsonElement requestJson)
             return BadRequest("Invalid request body");
             
         Comment? comment = _commentRepository.CreateComment(requestJson);

@@ -58,7 +58,7 @@ public class ConspectusRepository : Repository<Conspectus>
                 FileDownloadName = Path.GetFileName(conspectus.Name) 
             };
             
-            return new ConspectusFileContentDTO(conspectus.Name, fileContent);  // 1: using record
+            return new ConspectusFileContentDTO(conspectus.Name, fileContent);  
         }
 
         return null;
@@ -66,10 +66,10 @@ public class ConspectusRepository : Repository<Conspectus>
 
     public IEnumerable<Conspectus> Upload(string topicId, List<IFormFile> files)
     {
-        foreach (var formFile in files) // 5: iterating through collection the right way
+        foreach (var formFile in files)
         {
             string fileName = formFile.FileName;
-            if (!fileName.IsValidFileName()) // 4. Extension method usage
+            if (!fileName.IsValidFileName())
             {
                 Console.WriteLine($"The file {fileName} is not a valid PDF format.");
                 continue;

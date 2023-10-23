@@ -9,7 +9,7 @@ public class Subject : BaseEntity, IComparable<Subject>, IEquatable<Subject>
         Name = name;
     }
 
-    public int CompareTo(Subject other) // 10: IComparable used to sort items alphabetically in SubjectRepo.cs class
+    public int CompareTo(Subject other)
     {
         return Name.CompareTo(other.Name);
     }

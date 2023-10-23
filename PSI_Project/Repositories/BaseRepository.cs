@@ -14,7 +14,7 @@ public abstract class BaseRepository<TEntity> where TEntity : BaseEntity
     protected BaseRepository()  
     {
         Items = ReadAllItemsFromDB();
-        AfterOperation();   // 10: IComparable used to sort items alphabetically in SubjectRepo.cs class
+        AfterOperation();
     }
 
     public TEntity? GetItemById(string itemId)  
