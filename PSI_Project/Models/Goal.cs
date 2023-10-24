@@ -10,6 +10,10 @@ namespace PSI_Project.Models
         public User User { get; set; }
         public List<SubjectGoal> SubjectGoals { get; set; }
 
+        public Goal()
+        {
+        }
+
         public Goal(User user)
         {
             Id = Guid.NewGuid().ToString(); // do we need it here if there is such code in BaseEntity?
