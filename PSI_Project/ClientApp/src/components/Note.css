@@ -1,0 +1,72 @@
+﻿.note {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 80vh;
+    width: 80vw;
+    background: radial-gradient(circle at center, rgba(45, 45, 90, 0.95) 0%, rgba(30, 30, 60, 0.95) 70%, rgba(15, 15, 30, 0.95) 100%);
+    padding: 2vh;
+    border-radius: 1vw;
+    box-shadow: 0 0.5vw 2vw rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    animation: slideCenter 0.5s forwards;
+}
+
+.note-name {
+    width: 68.5vw;
+    height: 5vh;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #E0E0FF;
+    margin: -2vh 5vw 2vh;
+}
+
+.note-content {
+    width: 70vw;
+    height: 50vh;
+    font-size: 1.2rem;
+    color: #E0E0FF;
+    margin: 0 5vw 2vh;
+    overflow: auto;
+    border: 1px solid rgba(58, 58, 128, 0.8); 
+    border-radius: 0.5vw; 
+    background-color: rgba(45, 45, 90, 0.95); 
+    transition: border-color 0.3s, box-shadow 0.3s; 
+}
+
+/* Style the scrollbar for Webkit browsers (Chrome, Safari) */
+.note-content::-webkit-scrollbar {
+    width: 0.5vw;    /* Width of the scrollbar */
+}
+
+.note-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.note-content::-webkit-scrollbar-thumb {
+    background: rgba(58, 58, 128, 0.8);    /* Color of the draggable scrolling handle */
+    border-radius: 0.25vw;   /* Reduced the rounded edges for the thumb */
+}
+
+.note-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 100, 180, 0.9);  /* Color when hovering over the draggable scrolling handle */
+}
+
+.no-resize {
+    resize: none;
+}
+
+.button-group1 {
+    display: flex;
+    justify-content: space-between;
+    padding-left: 5vw;
+    padding-right: 4.5vw;
+}
+
+.modify-note {
+    width: 30vw;
+}

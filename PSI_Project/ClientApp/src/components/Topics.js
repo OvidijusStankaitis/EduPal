@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import './Topics.css';
 import {UserComponent} from "./UserComponent";
 import { PomodoroDialog } from './PomodoroDialog';
@@ -9,11 +9,13 @@ export const Topics = () => {
     const { subjectId } = useParams();
     const [subjectName, setSubjectName] = useState("");
     const [topics, setTopics] = useState([]);
+    const [topicsDisplayNames, setTopicsDisplayNames] = useState([]);
     const [showDialog, setShowDialog] = useState(false);
     const [refreshTopics, setRefreshTopics] = useState(false);
     const [newTopicName, setNewTopicName] = useState('');
     const [showPomodoroDialog, setShowPomodoroDialog] = useState(false)
     const [showOpenAIDialog, setShowOpenAIDialog] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch(`https://localhost:7283/Subject/get/${subjectId}`)
@@ -21,27 +23,37 @@ export const Topics = () => {
             .then(data => setSubjectName(data.name))
             .catch(error => console.error('Error getting subject name:', error))
     }, []);
-    
+
     useEffect(() => {
         const fetchTopics = async () => {
             const response = await fetch(`https://localhost:7283/Topic/list/${subjectId}`);
-            
+
             if(response.ok) {
                 const data = await response.json();
                 console.log("Fetched topics:", data);
-                
-                setTopics(data.map(topic => {
+
+                const topicsData = data.map(topic => {
                     return {
                         id: topic.id,
                         name: topic.name
                     };
-                }));
+                });
+
+                setTopics(topicsData);
+
+                const displayNames = topicsData.map(topic => {
+                    return topic.name.length > 9
+                        ? topic.name.substring(0, 9) + "..."
+                        : topic.name;
+                });
+
+                setTopicsDisplayNames(displayNames);
             }
             else {
                 console.error("Error fetching topics: ", await response.text());
             }
         };
-        
+
         fetchTopics();
     }, [refreshTopics, subjectId]);
 
@@ -78,6 +90,10 @@ export const Topics = () => {
         }
     };
 
+    const handleTopicClick = (topicId) => {
+        navigate(`/Subjects/${subjectId}-Topics/${topicId}-Conspectus`);
+    };
+
     return (
         <div className="topics-page-container">
             <div className="topics-container">
@@ -90,9 +106,14 @@ export const Topics = () => {
                 </div>
                 <div className="topics-grid">
                     {topics.map((topic, index) => (
-                        <Link to={`/Subjects/${subjectId}-Topics/${topic.id}-Conspectus`} key={index} className="topic-grid-item">
-                            <h2>{topic.name}</h2>
-                        </Link>
+                        <div
+                            key={index}
+                            className="topic-grid-item"
+                            onClick={() => handleTopicClick(topic.id)}
+                            title={topic.name} // Tooltip with full topic name
+                        >
+                            <h2>{topicsDisplayNames[index]}</h2>
+                        </div>
                     ))}
                     <div className="topic-grid-item add-topic" onClick={() => setShowDialog(true)}>
                         <span className="plus-icon">+</span>

@@ -1,6 +1,8 @@
 using PSI_Project.Repositories;
 using PSI_Project.Services;
+using System.Text;
 
+Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -26,9 +28,10 @@ builder.Services.AddTransient<TopicRepository>();
 builder.Services.AddTransient<UserRepository>();
 builder.Services.AddTransient<ConspectusRepository>();
 builder.Services.AddTransient<CommentRepository>();
+builder.Services.AddTransient<OpenAIService>();
+builder.Services.AddTransient<OpenAIRepository>();
+builder.Services.AddTransient<NoteService>();
 
-builder.Services.AddScoped<OpenAIService>();
-builder.Services.AddScoped<OpenAIRepository>();
 
 var app = builder.Build();
 
