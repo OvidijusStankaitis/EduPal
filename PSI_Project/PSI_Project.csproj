@@ -31,10 +31,6 @@
     <ItemGroup>
         <!-- Don't publish the SPA source files, but do show them in the project files list -->
         <Content Remove="$(SpaRoot)**" />
-        <Content Include="DB\conspectus.txt" />
-        <Content Include="DB\subject.txt" />
-        <Content Include="DB\topic.txt" />
-        <Content Include="DB\users.txt" />
         <None Remove="$(SpaRoot)**" />
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
         <Content Remove="DatabaseOperations\**" />
@@ -49,7 +45,6 @@
 
 
     <ItemGroup>
-      <Folder Include="Files\" />
       <Folder Include="wwwroot\" />
     </ItemGroup>
 
