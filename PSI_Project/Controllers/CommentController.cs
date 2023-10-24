@@ -48,7 +48,7 @@ public class CommentController : ControllerBase
     [HttpDelete("delete/{commentId}")]
     public IActionResult RemoveTopic(string commentId)
     {
-        return _commentRepository.RemoveItemById(commentId) 
+        return _commentRepository.Remove(commentId) 
             ? Ok("Comment has been successfully deleted")
             : BadRequest("An error occured while deleting the topic");
     }

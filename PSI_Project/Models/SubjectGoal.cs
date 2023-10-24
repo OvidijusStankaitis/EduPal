@@ -2,13 +2,14 @@
 {
     public class SubjectGoal
     {
-        public string SubjectId { get; set; }
+        //public string SubjectId { get; set; }
+        public Subject Subject { get; set; }
         public double TargetHours { get; set; }
         public double ActualHoursStudied { get; set; }
         
-        public SubjectGoal(string subjectId, double targetHours)
+        public SubjectGoal(Subject subject, double targetHours)
         {
-            SubjectId = subjectId;
+            Subject = subject;
             TargetHours = targetHours;
             ActualHoursStudied = 0; // 0 hours studied on initialization
         }

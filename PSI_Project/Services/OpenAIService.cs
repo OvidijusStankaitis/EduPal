@@ -20,7 +20,9 @@ public class OpenAIService
 
     public async Task<string?> SendMessageAsync(string userMessage, string userEmail)
     {
-        _openAIRepository.InsertItem(new Message(userMessage, userEmail, true));
+        //_openAIRepository.InsertItem(new Message(userMessage, userEmail, true));
+        _openAIRepository.Add(new Message(userMessage, userEmail, true));
+        _openAIRepository.EduPalContext.SaveChanges();
 
         var request = new HttpRequestMessage(HttpMethod.Post, "https://api.openai.com/v1/chat/completions");
 
@@ -53,7 +55,9 @@ public class OpenAIService
             .GetProperty("content")
             .GetString();
 
-        _openAIRepository.InsertItem(new Message(generatedMessage, userEmail, false));  // corrected line
+       // _openAIRepository.InsertItem(new Message(generatedMessage, userEmail, false));  // corrected line
+       _openAIRepository.Add(new Message(generatedMessage, userEmail, false));  // corrected line
+       _openAIRepository.EduPalContext.SaveChanges();
 
         return generatedMessage;
     }
