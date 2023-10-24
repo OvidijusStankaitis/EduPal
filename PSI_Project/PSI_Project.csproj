@@ -15,7 +15,6 @@
   </PropertyGroup>
 
     <ItemGroup>
-<<<<<<< HEAD
         <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="7.0.7" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.12" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.12">
@@ -27,12 +26,10 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.11" />
-=======
         <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="7.0.7"/>
         <PackageReference Include="PDFsharp" Version="1.50.5147" />
         <PackageReference Include="System.Drawing.Common" Version="8.0.0-rc.2.23479.14" />
         <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0-rc.2.23479.6" />
->>>>>>> master
     </ItemGroup>
 
     <ItemGroup>
@@ -42,37 +39,19 @@
         <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
         <Content Remove="DatabaseOperations\**" />
         <None Remove="DatabaseOperations\**" />
-        <Content Remove="Files\**" />
-        <None Remove="Files\**" />
     </ItemGroup>
-
-
-
-
-
-
+    
     <ItemGroup>
+      <Folder Include="Files\" />
       <Folder Include="wwwroot\" />
     </ItemGroup>
 
-
-
-
-
-
     <ItemGroup>
       <Compile Remove="DatabaseOperations\**" />
-      <Compile Remove="Files\**" />
     </ItemGroup>
-
-
-
-
-
 
     <ItemGroup>
       <EmbeddedResource Remove="DatabaseOperations\**" />
-      <EmbeddedResource Remove="Files\**" />
     </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
@@ -100,4 +79,5 @@
             </ResolvedFileToPublish>
         </ItemGroup>
     </Target>
+    
 </Project>
