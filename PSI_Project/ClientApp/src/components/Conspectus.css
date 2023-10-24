@@ -155,7 +155,7 @@ button:hover {
     display: flex;
     justify-content: space-between;
     align-items: center; /* This will vertically center the children */
-    margin: -3vh 2.5rem 1vh 5rem;
+    margin: -3vh 2.5rem 1vh 1.5rem;
 }
 
 .button-group {
@@ -164,4 +164,16 @@ button:hover {
     width: 100%;  /* Take up the full width */
     gap: 1rem;  /* Gives space between the buttons */
     margin-bottom: -1rem;
+}
+
+.notes {
+    width: 4rem;
+    height: 4rem;
+    position: absolute;
+    margin-left: 27.5vw;
+    transition: transform 0.2s;
+}
+
+.notes:hover {
+    transform: scale(1.1); /* Slightly enlarge the component on hover */
 }

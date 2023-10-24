@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './Subjects.css';
 import { UserComponent } from "./UserComponent";
 import { PomodoroDialog } from './PomodoroDialog';
@@ -7,29 +7,39 @@ import {OpenAIDialogue} from "./OpenAIDialogue";
 
 export const Subjects = () => {
     const [subjects, setSubjects] = useState([]);
-    const [subjectIds, setSubjectIds] = useState([]);
-    const [subjectNames, setSubjectNames] = useState([]);
+    const [subjectsDisplayNames, setSubjectsDisplayNames] = useState([]);
     const [showDialog, setShowDialog] = useState(false);
     const [refreshSubjects, setRefreshSubjects] = useState(false);
     const [newSubjectName, setNewSubjectName] = useState('');
     const [showPomodoroDialog, setShowPomodoroDialog] = useState(false);
     const [showOpenAIDialog, setShowOpenAIDialog] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchSubjects = async () => {
             const response = await fetch('https://localhost:7283/Subject/list');
-            
+
             if(response.ok) {
                 const data = await response.json();
                 console.log("Fetched subjects:", data);
-                
-                setSubjects(data.map(subject => {
+
+                const subjectsData = data.map(subject => {
                     return {
                         id: subject.id,
                         name: subject.name
                     };
-                }));
-            } 
+                });
+
+                setSubjects(subjectsData);
+
+                const displayNames = subjectsData.map(subject => {
+                    return subject.name.length > 9
+                        ? subject.name.substring(0, 9) + "..."
+                        : subject.name;
+                });
+
+                setSubjectsDisplayNames(displayNames);
+            }
             else {
                 console.error("Error fetching subjects: ", await response.text());
             }
@@ -82,9 +92,14 @@ export const Subjects = () => {
                 </div>
                 <div className="subjects-grid">
                     {subjects.map((subject, index) => (
-                        <Link to={`/Subjects/${subject.id}-Topics`} key={index} className="subject-grid-item">
-                            <h2>{subject.name}</h2>
-                        </Link>
+                        <div
+                            key={index}
+                            className="subject-grid-item"
+                            title={subject.name}
+                            onClick={() => navigate(`/Subjects/${subject.id}-Topics`)}
+                        >
+                            <h2>{subjectsDisplayNames[index]}</h2>
+                        </div>
                     ))}
                     <div className="subject-grid-item add-subject" onClick={() => setShowDialog(true)}>
                         <span className="plus-icon">+</span>
