@@ -29,11 +29,10 @@ h1 {
     margin-top: 2rem;
 }
 
-.topic-grid-item {
-    border: 1px solid #ccc;
+.topic-grid-item, .add-topic {
+    border: 0.1rem solid rgba(58, 58, 128, 0.8); /* Adjusted border color to match the scheme */
     padding: 1rem;
     border-radius: 0.5rem;
-    background-color: rgba(58, 58, 128, 0.8);
     color: white;
     position: relative;
     aspect-ratio: 1;
@@ -42,32 +41,24 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: rgba(70, 70, 140, 0.9);
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-.add-topic {
-    cursor: pointer;
-    transition: background-color 0.3s, box-shadow 0.3s;
-}
-
-.add-topic:hover {
-    background-color: rgba(80, 80, 160, 0.9);
-    box-shadow: 0 0 0.5rem rgba(255, 255, 255, 0.5);
+.topic-grid-item:hover, .add-topic:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 0.5vw rgba(100, 100, 180, 0.5);
 }
 
 .plus-icon {
-    font-size: 2rem;
-    border: 0.125rem solid white;
+    font-size: 4rem;
     border-radius: 50%;
     width: 2.5rem;
     height: 2.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: color 0.3s;
-}
-
-.add-topic:hover .plus-icon {
-    color: rgba(58, 58, 128, 0.8);
 }
 
 .dialog-t {

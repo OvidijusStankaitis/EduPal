@@ -1,35 +1,44 @@
 ﻿import React, { useState, useEffect, useRef} from 'react';
 import './Conspectus.css';
-import {useParams} from "react-router-dom";
-import {UserComponent} from "./UserComponent";
+import { useParams } from "react-router-dom";
+import { UserComponent } from "./UserComponent";
 import { PomodoroDialog } from './PomodoroDialog';
 import { OpenAIDialogue } from './OpenAIDialogue';
+import { Comments } from "./Comments";
+import { Note } from "./Note";
+import Notes from "../assets/Notes.webp";
 
 export const Conspectus = () => {
     const { topicId } = useParams();
     const [topicName, setTopicName] = useState("");
+    const [truncatedTopicName, setTruncatedTopicName] = useState("");
     const [files, setFiles] = useState([]);
     const iframeRef = useRef(null);
     const [showPomodoroDialog, setShowPomodoroDialog] = useState(false);
     const [showOpenAIDialog, setShowOpenAIDialog] = useState(false);
+    const [showComments, setShowComments] = useState(false);
+    const [showNote, setShowNote] = useState(false);
 
     useEffect(() => {
         fetch(`https://localhost:7283/Topic/get/${topicId}`)
             .then(response => response.json())
-            .then(data => setTopicName(data.name))
+            .then(data => {
+                setTopicName(data.name);
+                setTruncatedTopicName(data.name.length > 11 ? data.name.substring(0, 11) + "..." : data.name);
+            })
             .catch(error => console.error('Error getting topic name:', error));
-    }, []); 
-    
-    useEffect(() => {        
+    }, []);
+
+    useEffect(() => {
         fetch(`https://localhost:7283/Conspectus/list/${topicId}`)
             .then(response => response.json())
             .then(data => {
                 const fileList = data.map(fileObj => {
                     let fileName = fileObj.path.split('\\').pop();
-                    fileName = fileName.length > 10 ? fileName.substring(0, 10) + "..." : fileName;
                     return {
                         id: fileObj.id,
                         name: fileName,
+                        truncatedName: fileName.length > 11 ? fileName.substring(0, 11) + "..." : fileName,
                         isSelected: false
                     };
                 });
@@ -62,6 +71,7 @@ export const Conspectus = () => {
                     return {
                         id: fileObj.id,
                         name: fileName,
+                        truncatedName: fileName.length > 11 ? fileName.substring(0, 11) + "..." : fileName, // add truncatedName here
                         isSelected: false
                     };
                 });
@@ -113,7 +123,8 @@ export const Conspectus = () => {
     return (
         <div className="user-panel">
             <div className="header">
-                <h1>{topicName}</h1>
+                <h1 title={topicName} className="truncated-text">{truncatedTopicName}</h1>
+                <img className="notes" src={Notes} alt="notes" onClick={() => setShowNote(true)}/>
                 <UserComponent 
                     setShowPomodoroDialog={setShowPomodoroDialog}
                     setShowOpenAIDialog={setShowOpenAIDialog}
@@ -121,14 +132,21 @@ export const Conspectus = () => {
             </div>
             <div className="main-content">
                 <div className="file-section">
-                    <button onClick={() => document.getElementById('fileInput').click()}>Upload</button>
+                    <div className="button-group">
+                        <button onClick={() => document.getElementById('fileInput').click()}>Upload</button>
+                        <button onClick={() => setShowComments(true)}>Comments</button>
+                    </div>
                     <input type="file" id="fileInput" accept=".pdf" style={{display: 'none'}} onChange={handleFileChange} multiple />
                     <ul className="files-list">
                         {files.length > 0 ? (
                             files.map((file, index) => (
                                 <li key={index}>
-                                    <button className="small-button file-name" onClickCapture={() => handleFileClick(file.id)}>
-                                        {file.name}
+                                    <button
+                                        className="small-button file-name"
+                                        onClickCapture={() => handleFileClick(file.id)}
+                                        title={file.name}
+                                    >
+                                        {file.truncatedName}
                                     </button>
                                     <button className="small-button download-button" onClick={() => handleFileDownload(file.id)}>
                                         Download
@@ -153,6 +171,16 @@ export const Conspectus = () => {
                 <OpenAIDialogue 
                     show={showOpenAIDialog} 
                     onClose={() => setShowOpenAIDialog(false)}
+                />
+                <Comments
+                    show={showComments}
+                    onClose={() => setShowComments(false)}
+                    topicId={topicId}
+                />
+                <Note
+                    show={showNote}
+                    onClose={() => setShowNote(false)}
+                    topicId={topicId}
                 />
             </div>
         </div>
