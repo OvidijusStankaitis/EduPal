@@ -1,14 +1,19 @@
 ﻿namespace PSI_Project.Models
 {
-    public class SubjectGoal
+    public class SubjectGoal : BaseEntity
     {
-        public string SubjectId { get; set; }
+        //public string SubjectId { get; set; }
+        public Subject Subject { get; set; }
         public double TargetHours { get; set; }
         public double ActualHoursStudied { get; set; }
-        
-        public SubjectGoal(string subjectId, double targetHours)
+
+        public SubjectGoal()
         {
-            SubjectId = subjectId;
+        }
+
+        public SubjectGoal(Subject subject, double targetHours)
+        {
+            Subject = subject;
             TargetHours = targetHours;
             ActualHoursStudied = 0; // 0 hours studied on initialization
         }

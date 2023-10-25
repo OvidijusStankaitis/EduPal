@@ -19,7 +19,7 @@ namespace PSI_Project.Controllers
         public IActionResult CreateDailyGoal([FromBody] Goal goalRequest)
         {
             // Check if the user already has a goal for today
-            var existingGoal = _goalService.GetTodaysGoalForUser(goalRequest.UserId);
+            var existingGoal = _goalService.GetTodaysGoalForUser(goalRequest.User.Id);
             if (existingGoal != null)
             {
                 return BadRequest(new { success = false, message = "Goal for today already exists." });

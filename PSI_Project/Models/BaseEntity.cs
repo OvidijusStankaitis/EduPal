@@ -1,7 +1,9 @@
-﻿namespace PSI_Project.Models;
+﻿using System.ComponentModel.DataAnnotations;
 
-// 1: using our own class
+namespace PSI_Project.Models;
+
 public class BaseEntity
 {
+    [Key]
     public string Id { get; init; } = Guid.NewGuid().ToString();
 }

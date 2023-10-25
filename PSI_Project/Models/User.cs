@@ -10,7 +10,7 @@ namespace PSI_Project
         public string Email { get; set; }
         public string Password { get; set; }
 
-        public string Name  // 2: property usage in class (get, set)
+        public string Name
         {
             get => _name;
             set

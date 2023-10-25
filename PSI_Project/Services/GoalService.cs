@@ -14,7 +14,7 @@ namespace PSI_Project.Services
 
         public bool AddGoal(Goal goal)
         {
-            var todaysGoal = _goalsRepository.GetTodaysGoalForUser(goal.UserId);
+            var todaysGoal = _goalsRepository.GetTodaysGoalForUser(goal.User.Id);
             if (todaysGoal != null)
             {
                 // A goal for today already exists for this user (only 1 daily goal allowed)

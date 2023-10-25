@@ -36,7 +36,7 @@ public class CommentController : ControllerBase
     [HttpPost("upload")]
     public IActionResult UploadComment([FromBody] object request)
     {
-        if (request is not JsonElement requestJson) // 8: unboxing
+        if (request is not JsonElement requestJson)
             return BadRequest("Invalid request body");
             
         Comment? comment = _commentRepository.CreateComment(requestJson);
@@ -48,7 +48,7 @@ public class CommentController : ControllerBase
     [HttpDelete("delete/{commentId}")]
     public IActionResult RemoveTopic(string commentId)
     {
-        return _commentRepository.RemoveItemById(commentId) 
+        return _commentRepository.Remove(commentId) 
             ? Ok("Comment has been successfully deleted")
             : BadRequest("An error occured while deleting the topic");
     }

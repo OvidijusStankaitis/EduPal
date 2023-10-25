@@ -10,10 +10,10 @@ public static class NameValidationExtensions
         return Regex.IsMatch(name, nameValidationPattern);
     }
 
-    public static bool IsValidContainerName(this string name)
+    public static bool IsValidContainerName(this string? name)
     {
         string nameValidationPattern = @"^[\.\sa-zA-Z0-9]+$";
-        return Regex.IsMatch(name, nameValidationPattern);
+        return name is not null && Regex.IsMatch(name, nameValidationPattern);
     }
 
     public static bool IsValidFileName(this string name)

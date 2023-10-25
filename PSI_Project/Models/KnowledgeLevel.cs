@@ -1,6 +1,6 @@
 ﻿namespace PSI_Project.Models;
 
-public enum KnowledgeLevel // 1: using enum
+public enum KnowledgeLevel
 {
     Good, 
     Average,

@@ -1,15 +1,25 @@
 ﻿using System.Text.Json;
+using PSI_Project.Data;
 using PSI_Project.Models;
 
 namespace PSI_Project.Repositories;
 
-public class CommentRepository : BaseRepository<Comment>
+public class CommentRepository : Repository<Comment>
 {
-    protected override string DbFilePath => "..//PSI_Project//DB//comment.txt";
+    public EduPalDatabaseContext EduPalContext => Context as EduPalDatabaseContext;
 
+    public CommentRepository(EduPalDatabaseContext context) : base(context)
+    {
+    }
+    
     public List<Comment> GetAllCommentsOfTopic(string topicId)
     {
-        return Items.Where(comment => comment.TopicId.Equals(topicId)).ToList();
+        return EduPalContext.Comments.Select(comment => comment).Where(comment => comment.Topic.Id.Equals(topicId)).ToList();
+    }
+    
+    public Comment? GetItemById(string itemId)  
+    {
+        return EduPalContext.Comments.FirstOrDefault(comment => comment.Id.Equals(itemId));
     }
     
     public Comment? CreateComment(JsonElement request)
@@ -22,26 +32,27 @@ public class CommentRepository : BaseRepository<Comment>
             
             if (topicId != null && commentText != null)
             {
-                Comment newComment = new Comment(topicId:topicId, commentText:commentText);
-                if(InsertItem(newComment));
-                return newComment;
+                Topic topic = EduPalContext.Topics.Find(topicId);
+                Comment newComment = new Comment(topic, commentText);
+                Add(newComment);
+                int changes = EduPalContext.SaveChanges();
+                
+                return changes > 0 ? newComment : null;
             }
         }
         return null;
     }
-    
-    protected override string ItemToDbString(Comment item)
-    {
-        return $"{item.Id};{item.TopicId};{item.CommentText};";
-    }
 
-    protected override Comment StringToItem(string dbString)
+    public bool Remove(string commentId)
     {
-        String[] commentFields = dbString.Split(";");
-        Comment newComment = new Comment(topicId: commentFields[1], commentText: commentFields[2])
-        {
-            Id = commentFields[0]
-        };
-        return newComment;
+        Comment? comment = Get(commentId);
+        if (comment is null)
+            return false;
+
+        Remove(comment);
+        int changes = EduPalContext.SaveChanges();
+
+        return changes > 0;
     }
+    
 }

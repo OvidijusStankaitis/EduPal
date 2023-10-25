@@ -1,47 +1,49 @@
 ﻿using System.Text.Json;
+using PSI_Project.Data;
 using PSI_Project.Models;
 
 namespace PSI_Project.Repositories;
-public class TopicRepository : BaseRepository<Topic>
+public class TopicRepository : Repository<Topic>
 {
-    protected override string DbFilePath => "..//PSI_Project//DB//topic.txt";
+    public EduPalDatabaseContext EduPalContext => Context as EduPalDatabaseContext;
     
-    public List<Topic> GetTopicsBySubjectId(string subjectId)
+    public TopicRepository(EduPalDatabaseContext context) : base(context)
     {
-        return Items.Where(topic => topic.SubjectId.Equals(subjectId)).ToList();    // 9: using LINQ
+    }
+    
+    public IEnumerable<Topic> GetTopicsListBySubjectId(string subjectId)
+    {
+        return EduPalContext.Topics.Select(topic => topic).Where(topic => topic.Subject.Id == subjectId).ToList();
     }
 
-    public Topic? CreateTopic(JsonElement request)
+    public Topic? Create(JsonElement request)
     {
-        if (request.TryGetProperty("topicName", out var topicNameProperty) &&
-            request.TryGetProperty("subjectId", out var subjectNameProperty))
-        {
-            string? topicName = topicNameProperty.GetString();
-            string? subjectId = subjectNameProperty.GetString();
+        if (!request.TryGetProperty("topicName", out var topicNameProperty) ||
+            !request.TryGetProperty("subjectId", out var subjectNameProperty))
+            return null;
             
-            if (subjectId != null && topicName != null)
-            {
-                Topic newTopic = new Topic(topicName, subjectId);
-                if(InsertItem(newTopic));
-                    return newTopic;
-            }
-        }
+        string? topicName = topicNameProperty.GetString();
+        string? subjectId = subjectNameProperty.GetString();
+        if (subjectId is null || topicName is null)
+            return null;
 
-        return null;
+        Subject subject = EduPalContext.Subjects.Find(subjectId);
+        Topic newTopic = new Topic(topicName, subject);
+        Add(newTopic);
+        int changes = EduPalContext.SaveChanges();
+        
+        return changes > 0 ? newTopic : null;
     }
-
-    protected override string ItemToDbString(Topic item)
+    
+    public bool Remove(string topicId)
     {
-        return $"{item.Id};{item.SubjectId};{item.Name};";
-    }
+        Topic? topic = Get(topicId);
+        if (topic is null)
+            return false;
+        
+        Remove(topic);
+        int changes = EduPalContext.SaveChanges();
 
-    protected override Topic StringToItem(string dbString)
-    {
-        String[] topicFields = dbString.Split(";");
-        Topic newTopic = new Topic(name: topicFields[2], subjectId: topicFields[1])
-        {
-            Id = topicFields[0]
-        };
-        return newTopic;
-    }
+        return changes > 0;
+    } 
 }
