@@ -28,10 +28,6 @@ public class ChatService
             return;
         }
         
-        Console.WriteLine($"message: {message}");
-        Console.WriteLine($"user: {sender.Name}");
-        Console.WriteLine($"topic: {currentTopic.Name}");
-        
         Comment newComment = new Comment(sender, currentTopic, message);
         _commentRepository.Add(newComment);
     }

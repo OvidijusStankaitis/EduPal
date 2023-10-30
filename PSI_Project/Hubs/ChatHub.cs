@@ -15,7 +15,7 @@ public class ChatHub : Hub
     public async Task SendMessage(string userId, string topicId, string message)
     {
         _chatService.SaveSentMessage(userId, topicId, message);
-        await Clients.OthersInGroup(topicId).SendAsync("ReceiveMessage", message);    // invokes response in client
+        await Clients.OthersInGroup(topicId).SendAsync("ReceiveMessage", message); 
     }
 
     public async Task AddToBroadcastGroup(string topicId)

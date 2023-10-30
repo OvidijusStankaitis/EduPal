@@ -25,6 +25,7 @@ namespace PSI_Project.Migrations
             modelBuilder.Entity("PSI_Project.Models.Comment", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("text");
 
                     b.Property<string>("CommentText")
@@ -49,6 +50,7 @@ namespace PSI_Project.Migrations
             modelBuilder.Entity("PSI_Project.Models.Conspectus", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
@@ -75,6 +77,7 @@ namespace PSI_Project.Migrations
             modelBuilder.Entity("PSI_Project.Models.Goal", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("GoalDate")
@@ -93,6 +96,7 @@ namespace PSI_Project.Migrations
             modelBuilder.Entity("PSI_Project.Models.Message", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
@@ -119,6 +123,7 @@ namespace PSI_Project.Migrations
             modelBuilder.Entity("PSI_Project.Models.Subject", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
@@ -133,6 +138,7 @@ namespace PSI_Project.Migrations
             modelBuilder.Entity("PSI_Project.Models.SubjectGoal", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("text");
 
                     b.Property<double>("ActualHoursStudied")
@@ -160,6 +166,7 @@ namespace PSI_Project.Migrations
             modelBuilder.Entity("PSI_Project.Models.Topic", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("text");
 
                     b.Property<int>("KnowledgeRating")
@@ -183,6 +190,7 @@ namespace PSI_Project.Migrations
             modelBuilder.Entity("PSI_Project.User", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
