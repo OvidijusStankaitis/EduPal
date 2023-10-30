@@ -121,14 +121,17 @@ public class ConspectusRepository : Repository<Conspectus>
         if (conspectus is null)
             return false;
     
+        string filePath = conspectus.Path; // Store the path before removing conspectus
+    
         Remove(conspectus);
-
-        string filePath = conspectus.Path;
-        DeleteFile(filePath);
     
         int changes = await EduPalContext.SaveChangesAsync();
+
+        DeleteFile(filePath); // Call DeleteFile after Remove but before SaveChangesAsync
+
         return changes > 0;
     }
+
 
     public void DeleteFile(string filePath)
     {
