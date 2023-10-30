@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using PSI_Project.Data;
 using PSI_Project.Models;
 
@@ -10,13 +11,18 @@ public class SubjectRepository : Repository<Subject>
     public SubjectRepository(EduPalDatabaseContext context) : base(context)
     {
     }
-
-    public List<Subject> GetSubjectsList()
+    
+    public async Task<Subject?> GetAsync(string subjectId)
     {
-        return EduPalContext.Subjects.ToList();
+        return await EduPalContext.Subjects.FindAsync(subjectId);
     }
 
-    public Subject? CreateSubject(JsonElement request)
+    public async Task<List<Subject>> GetSubjectsListAsync()
+    {
+        return await EduPalContext.Subjects.ToListAsync();
+    }
+
+    public async Task<Subject?> CreateSubjectAsync(JsonElement request)
     {
         if (!request.TryGetProperty("subjectName", out var subjectNameProperty))
             return null;
@@ -27,19 +33,19 @@ public class SubjectRepository : Repository<Subject>
         
         Subject newSubject = new Subject(subjectName);
         Add(newSubject);
-        int changes = EduPalContext.SaveChanges();
+        int changes = await EduPalContext.SaveChangesAsync();
        
         return changes > 0 ? newSubject : null;
     }
     
-    public bool RemoveSubject(string subjectId)
+    public async Task<bool> RemoveSubjectAsync(string subjectId)
     {
         Subject? subject = Get(subjectId);
         if (subject is null)
             return false;
         
         Remove(subject);
-        int changes = EduPalContext.SaveChanges();
+        int changes = await EduPalContext.SaveChangesAsync();
 
         return changes > 0;
     } 

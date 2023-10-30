@@ -16,34 +16,34 @@ public class SubjectController : ControllerBase
     }
 
     [HttpGet("get/{subjectId}")]
-    public IActionResult GetSubject(string subjectId)
+    public async Task<IActionResult> GetSubjectAsync(string subjectId)
     {
-        Subject? subject = _subjectRepository.Get(subjectId);
+        Subject? subject = await _subjectRepository.GetAsync(subjectId);
         return subject == null
             ? NotFound(new { error = "Subject not found." })
             : Ok(subject);
     }
     
     [HttpGet("list")]
-    public IActionResult ListSubjects()
+    public async Task<IActionResult> ListSubjectsAsync()
     {
-        return Ok(_subjectRepository.GetSubjectsList());
+        return Ok(await _subjectRepository.GetSubjectsListAsync());
     }
     
     [HttpPost("upload")]
-    public IActionResult UploadSubject([FromBody] JsonElement request)
+    public async Task<IActionResult> UploadSubjectAsync([FromBody] JsonElement request)
     {
-        Subject? addedSubject = _subjectRepository.CreateSubject(request);
+        Subject? addedSubject = await _subjectRepository.CreateSubjectAsync(request);
         return addedSubject == null
             ? BadRequest("Invalid request body")
             : Ok(addedSubject);
     }
     
     [HttpDelete("{subjectId}/delete")]
-    public IActionResult RemoveSubject(string subjectId)
+    public async Task<IActionResult> RemoveSubjectAsync(string subjectId)
     { 
-        return _subjectRepository.RemoveSubject(subjectId) 
+        return (await _subjectRepository.RemoveSubjectAsync(subjectId))
             ? Ok("Subject has been successfully deleted") 
-            : BadRequest("An error occured while deleting the subject");
+            : BadRequest("An error occurred while deleting the subject");
     }
 }

@@ -1,11 +1,10 @@
 ﻿using System.Text.Json;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
+using System.Threading.Tasks;
 
 namespace PSI_Project.Controllers;
-
 [ApiController]
 [Route("[controller]")]
 public class CommentController : ControllerBase
@@ -18,38 +17,38 @@ public class CommentController : ControllerBase
     }
     
     [HttpGet("getOne/{commentId}")]
-    public IActionResult GetComment(string commentId)
+    public async Task<IActionResult> GetComment(string commentId)
     {
-        Comment? comment = _commentRepository.GetItemById(commentId);
+        Comment? comment = await _commentRepository.GetItemByIdAsync(commentId);
         return comment == null
             ? NotFound(new { error = "Comment not found." })
             : Ok(comment);
     }
     
     [HttpGet("get/{topicId}")]
-    public IActionResult GetAllCommentsFromTopic(string topicId)
+    public async Task<IActionResult> GetAllCommentsFromTopic(string topicId)
     {
-        List<Comment> comment = _commentRepository.GetAllCommentsOfTopic(topicId);
-        return Ok(comment);
+        List<Comment> comments = await _commentRepository.GetAllCommentsOfTopicAsync(topicId);
+        return Ok(comments);
     }
     
     [HttpPost("upload")]
-    public IActionResult UploadComment([FromBody] object request)
+    public async Task<IActionResult> UploadComment([FromBody] object request)
     {
         if (request is not JsonElement requestJson)
             return BadRequest("Invalid request body");
             
-        Comment? comment = _commentRepository.CreateComment(requestJson);
+        Comment? comment = await _commentRepository.CreateCommentAsync(requestJson);
         return comment == null
             ? BadRequest("Invalid request body")
             : Ok(comment);
     }
     
     [HttpDelete("delete/{commentId}")]
-    public IActionResult RemoveTopic(string commentId)
+    public async Task<IActionResult> RemoveTopic(string commentId)
     {
-        return _commentRepository.Remove(commentId) 
+        return (await _commentRepository.RemoveAsync(commentId))
             ? Ok("Comment has been successfully deleted")
-            : BadRequest("An error occured while deleting the topic");
+            : BadRequest("An error occured while deleting the comment");
     }
 }

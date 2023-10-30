@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using PSI_Project.Data;
 using PSI_Project.Models;
 
@@ -11,12 +12,17 @@ public class TopicRepository : Repository<Topic>
     {
     }
     
-    public IEnumerable<Topic> GetTopicsListBySubjectId(string subjectId)
+    public async Task<Topic?> GetAsync(string topicId)
     {
-        return EduPalContext.Topics.Select(topic => topic).Where(topic => topic.Subject.Id == subjectId).ToList();
+        return await EduPalContext.Topics.FindAsync(topicId);
+    }
+    
+    public async Task<IEnumerable<Topic>> GetTopicsListBySubjectIdAsync(string subjectId)
+    {
+        return await EduPalContext.Topics.Where(topic => topic.Subject.Id == subjectId).ToListAsync();
     }
 
-    public Topic? Create(JsonElement request)
+    public async Task<Topic?> CreateAsync(JsonElement request)
     {
         if (!request.TryGetProperty("topicName", out var topicNameProperty) ||
             !request.TryGetProperty("subjectId", out var subjectNameProperty))
@@ -30,20 +36,19 @@ public class TopicRepository : Repository<Topic>
         Subject subject = EduPalContext.Subjects.Find(subjectId);
         Topic newTopic = new Topic(topicName, subject);
         Add(newTopic);
-        int changes = EduPalContext.SaveChanges();
         
+        int changes = await EduPalContext.SaveChangesAsync();
         return changes > 0 ? newTopic : null;
     }
     
-    public bool Remove(string topicId)
+    public async Task<bool> RemoveAsync(string topicId)
     {
         Topic? topic = Get(topicId);
         if (topic is null)
             return false;
-        
         Remove(topic);
-        int changes = EduPalContext.SaveChanges();
-
+        
+        int changes = await EduPalContext.SaveChangesAsync();
         return changes > 0;
     } 
 }

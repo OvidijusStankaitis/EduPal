@@ -28,7 +28,7 @@ namespace PSI_Project.Services
             return _goalsRepository.GetAllGoalsForUser(userId);
         }
 
-        // TODO: All the time time tracking logic for subjects will go here, thus we need to service layer for the business logic
+        // TODO: All the time time tracking logic for subjects will go here, thus we need to have service layer for the business logic
 
         public bool UpdateHoursStudied(string userId, string subjectId, double elapsedHours)
         {

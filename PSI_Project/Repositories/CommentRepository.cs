@@ -1,9 +1,10 @@
 ﻿using System.Text.Json;
 using PSI_Project.Data;
 using PSI_Project.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace PSI_Project.Repositories;
-
 public class CommentRepository : Repository<Comment>
 {
     public EduPalDatabaseContext EduPalContext => Context as EduPalDatabaseContext;
@@ -12,17 +13,22 @@ public class CommentRepository : Repository<Comment>
     {
     }
     
-    public List<Comment> GetAllCommentsOfTopic(string topicId)
+    public async Task<Comment?> GetAsync(string commentId)
     {
-        return EduPalContext.Comments.Select(comment => comment).Where(comment => comment.Topic.Id.Equals(topicId)).ToList();
+        return await EduPalContext.Comments.FindAsync(commentId);
     }
     
-    public Comment? GetItemById(string itemId)  
+    public async Task<List<Comment>> GetAllCommentsOfTopicAsync(string topicId)
     {
-        return EduPalContext.Comments.FirstOrDefault(comment => comment.Id.Equals(itemId));
+        return await EduPalContext.Comments.Where(comment => comment.Topic.Id.Equals(topicId)).ToListAsync();
     }
     
-    public Comment? CreateComment(JsonElement request)
+    public async Task<Comment?> GetItemByIdAsync(string itemId)
+    {
+        return await EduPalContext.Comments.FirstOrDefaultAsync(comment => comment.Id.Equals(itemId));
+    }
+    
+    public async Task<Comment?> CreateCommentAsync(JsonElement request)
     {
         if (request.TryGetProperty("commentText", out var commentTextProperty) &&
             request.TryGetProperty("topicId", out var topicIdProperty))
@@ -32,10 +38,10 @@ public class CommentRepository : Repository<Comment>
             
             if (topicId != null && commentText != null)
             {
-                Topic topic = EduPalContext.Topics.Find(topicId);
+                Topic topic = await EduPalContext.Topics.FindAsync(topicId);
                 Comment newComment = new Comment(topic, commentText);
                 Add(newComment);
-                int changes = EduPalContext.SaveChanges();
+                int changes = await EduPalContext.SaveChangesAsync();
                 
                 return changes > 0 ? newComment : null;
             }
@@ -43,16 +49,15 @@ public class CommentRepository : Repository<Comment>
         return null;
     }
 
-    public bool Remove(string commentId)
+    public async Task<bool> RemoveAsync(string commentId)
     {
-        Comment? comment = Get(commentId);
+        Comment? comment = await GetAsync(commentId);
         if (comment is null)
             return false;
 
         Remove(comment);
-        int changes = EduPalContext.SaveChanges();
+        int changes = await EduPalContext.SaveChangesAsync();
 
         return changes > 0;
     }
-    
 }
