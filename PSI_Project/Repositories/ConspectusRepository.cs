@@ -9,7 +9,9 @@ namespace PSI_Project.Repositories;
 public class ConspectusRepository : Repository<Conspectus>
 {
     public EduPalDatabaseContext EduPalContext => Context as EduPalDatabaseContext;
-
+    
+    private static readonly object _deleteLock = new object();
+    
     public ConspectusRepository(EduPalDatabaseContext context) : base(context)
     {
     }
@@ -130,6 +132,7 @@ public class ConspectusRepository : Repository<Conspectus>
 
     public void DeleteFile(string filePath)
     {
+        Monitor.Enter(_deleteLock); // Task 8. Monitor class used
         try
         {
             if (!IsFileUsed(filePath))
@@ -138,6 +141,10 @@ public class ConspectusRepository : Repository<Conspectus>
         catch (IOException ex)
         {
             Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            Monitor.Exit(_deleteLock);
         }
     }
     
