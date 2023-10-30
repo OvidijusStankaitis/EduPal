@@ -34,9 +34,14 @@ namespace PSI_Project.Migrations
                     b.Property<string>("TopicId")
                         .HasColumnType("text");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("TopicId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Comments");
                 });
@@ -207,7 +212,13 @@ namespace PSI_Project.Migrations
                         .WithMany()
                         .HasForeignKey("TopicId");
 
+                    b.HasOne("PSI_Project.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
                     b.Navigation("Topic");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("PSI_Project.Models.Conspectus", b =>
