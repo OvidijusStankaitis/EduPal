@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading;
 
 namespace PSI_Project.Controllers
 {
@@ -10,12 +8,14 @@ namespace PSI_Project.Controllers
     {
         private static Dictionary<string, Thread> userTimers = new Dictionary<string, Thread>();
 
-        private void RunTimer(string userId, int duration)
+        private void RunTimer(string userId, int duration) // duration from front-end should be passed as milliseconds!!!
         {
             try
             {
                 Thread.Sleep(duration);
                 
+                // When the timer finishes, send notifications, stop the website etc.
+                // code for it goes here.
                 Console.WriteLine($"Timer for user {userId} completed!");
                 
                 if (userTimers.ContainsKey(userId))
@@ -29,7 +29,7 @@ namespace PSI_Project.Controllers
             }
             catch
             {
-                // Logging here
+                //TODO: Logging for other errors goes here
             }
         }
 
