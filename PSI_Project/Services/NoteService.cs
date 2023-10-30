@@ -11,6 +11,7 @@ public class NoteService
 {
     public async Task<MemoryStream> CreatePdfAsync(Note note)
     {
+        Console.WriteLine($"Received note: {note.Content}");
         if (string.IsNullOrEmpty(note.Content))
         {
             throw new NoteCreationException("Note content cannot be null or empty.");
