@@ -30,7 +30,7 @@ namespace PSI_Project.Repositories
             return false;
         }
 
-        public bool CheckUserRegister(User user) //test it
+        public bool CheckUserRegister(User user)
         {
             var existingUser = GetUserByEmail(user.Email);
             if (existingUser != null)
