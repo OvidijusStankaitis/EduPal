@@ -22,13 +22,12 @@ public class ChatService
     {
         User? sender = _userRepository.Get(userId);
         Topic? currentTopic = _topicRepository.Get(topicId);
-        
         if (sender is null || currentTopic is null)
         {
             return null;
         }
-        
-        Comment newComment = new Comment(sender, currentTopic, message);
+            
+        Comment newComment = new Comment(userId, topicId, message); // TODO: check if such user exists
         _commentRepository.Add(newComment);
         _commentRepository.EduPalContext.SaveChanges();
         

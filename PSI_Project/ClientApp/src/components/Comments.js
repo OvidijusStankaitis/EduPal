@@ -35,9 +35,10 @@ export const Comments = ({ show, onClose, topicId }) => {
             .withAutomaticReconnect()
             .build();
 
-        newConnection.on("ReceiveMessage", (id, messageContent) => {
+        newConnection.on("ReceiveMessage", (id, senderId, messageContent) => {
             const newComment = {
                 id: id,
+                userId: senderId,
                 commentText: messageContent
             }
             setComments(prevComments => [...prevComments,newComment])
@@ -94,11 +95,14 @@ export const Comments = ({ show, onClose, topicId }) => {
                                     {comment.commentText}
                                 </div>
                                 
-                                <button
-                                    className="delete-button1"
-                                    onClick={() => handleDelete(comment.id)}>
-                                    🗑️
-                                </button>
+                                {comment.userId === userId 
+                                    ? (<button
+                                        className="delete-button1"
+                                        onClick={() => handleDelete(comment.id)}>
+                                        🗑️
+                                    </button>) 
+                                    : (<div></div>)
+                                }
                             </div>
                         ))}
 

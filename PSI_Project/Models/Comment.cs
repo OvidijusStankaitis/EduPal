@@ -4,26 +4,18 @@ namespace PSI_Project.Models;
 
 public class Comment : BaseEntity
 {
-    [ForeignKey("Topic")]
+    [ForeignKey("TopicId")]
     public string TopicId { get; set; }
     public Topic Topic { get; init; }
+    [ForeignKey("UserId")]
+    public string UserId { get; set; }
     public User User { get; init; }
     public string CommentText { get; init; }
-
-    private Comment()   // used by EF
-    {
-    }
     
-    public Comment(Topic topic, string commentText) // TODO: should be deleted, comment must have a user
+    public Comment(string userId, string topicId, string commentText)
     {
-        Topic = topic;
-        CommentText = commentText;
-    }
-
-    public Comment(User user, Topic topic, string commentText)
-    {
-        User = user;
-        Topic = topic;
+        UserId = userId;
+        TopicId = topicId;
         CommentText = commentText;
     }
 }

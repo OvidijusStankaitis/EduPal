@@ -21,7 +21,7 @@ public class ChatHub : Hub
             return;
         }
         
-        await Clients.Group(addedComment.TopicId).SendAsync("ReceiveMessage", addedComment.Id, addedComment.CommentText);
+        await Clients.Group(addedComment.TopicId).SendAsync("ReceiveMessage", addedComment.Id, userId, addedComment.CommentText);
     }
 
     public async Task DeleteMessage(string messageId)
