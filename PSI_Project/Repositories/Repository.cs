@@ -32,12 +32,10 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseEnti
     public void Add(TEntity entity)
     {
         Context.Set<TEntity>().Add(entity);
-        Context.SaveChanges();
     }
 
     public void Remove(TEntity entity)
     {
         Context.Set<TEntity>().Remove(entity);
-        Context.SaveChanges();
     }
 }

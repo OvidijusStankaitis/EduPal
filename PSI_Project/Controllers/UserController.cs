@@ -17,19 +17,21 @@ namespace PSI_Project.Controllers
         }
 
         [HttpPost("register")]
-        public IActionResult Register(User user)
+        public IActionResult Register([FromBody] JsonElement request)
         {
-            return _userRepository.CheckUserRegister(user)
-                ? Ok(new { success = true, message = "Registration successful." })
-                : BadRequest(new { success = false, message = "Invalid payload." });
+            string? userId = _userRepository.CheckUserRegister(request);
+            return userId == null
+                ? BadRequest(new { success = false, message = "Invalid payload."})
+                : Ok(new { success = true, message = "Registration successful.", userId});
         }
 
         [HttpPost("login")]
         public IActionResult Login([FromBody] JsonElement payload)
         {
-            return _userRepository.CheckUserLogin(payload)
+            string? userId = _userRepository.CheckUserLogin(payload);
+            return userId == null
                 ? BadRequest(new { success = false, message = "Invalid payload." })
-                : Ok(new { success = true, message = "Login successful." });
+                : Ok(new { success = true, message = "Login successful.", userId});
         }
 
         [HttpGet("get-name")]

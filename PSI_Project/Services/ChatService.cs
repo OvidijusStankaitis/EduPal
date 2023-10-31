@@ -30,6 +30,8 @@ public class ChatService
         
         Comment newComment = new Comment(sender, currentTopic, message);
         _commentRepository.Add(newComment);
+        _commentRepository.EduPalContext.SaveChanges();
+        
         return newComment;
     }
 
@@ -42,6 +44,8 @@ public class ChatService
         }
 
         _commentRepository.Remove(message);
+        _commentRepository.EduPalContext.SaveChanges();
+        
         return message;
     }
 }

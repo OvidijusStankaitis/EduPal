@@ -16,32 +16,61 @@ namespace PSI_Project.Repositories
             return EduPalContext.Users.FirstOrDefault(user => user.Email == email);
         }
         
-        public bool CheckUserLogin(JsonElement request)
+        public string? CheckUserLogin(JsonElement request)
         {
             if (request.TryGetProperty("email", out JsonElement emailElement) &&
                 request.TryGetProperty("password", out JsonElement passwordElement))
             {
-                var email = emailElement.GetString();
-                var password = passwordElement.GetString();
-
-                var user = GetUserByEmail(email);
-                return (user == null || user.Password != password);
-            }
-            return false;
-        }
-
-        public bool CheckUserRegister(User user) //test it
-        {
-            var existingUser = GetUserByEmail(user.Email);
-            if (existingUser != null)
-            {
-                return false;
+                string? email = emailElement.GetString();
+                string? password = passwordElement.GetString();
+                
+                if (email == null || password == null)
+                {
+                    return null;
+                }
+                
+                User? user = GetUserByEmail(email);
+                if (user != null && user.Password == password)
+                {
+                    return user.Id;
+                }
             }
             
-            Add(user);
-            int changes = EduPalContext.SaveChanges();
+            return null;
+        }
 
-            return changes > 0;
+        public string? CheckUserRegister(JsonElement request)
+        {
+            if (request.TryGetProperty("name", out JsonElement nameElement) &&
+                request.TryGetProperty("surname", out JsonElement surnameElement) &&
+                request.TryGetProperty("email", out JsonElement emailElement) &&
+                request.TryGetProperty("password", out JsonElement passwordElement))
+            {
+                string? email = emailElement.GetString();
+                if (email == null || GetUserByEmail(email) != null)
+                {
+                    return null;
+                }
+
+                string? name = nameElement.GetString();
+                string? surname = surnameElement.GetString();
+                string? password = passwordElement.GetString();
+                if (name == null || surname == null || password == null)
+                {
+                    return null;
+                }
+                
+                User newUser = new User(email, password, name, surname);
+                
+                Add(newUser);
+                int changes = EduPalContext.SaveChanges();
+                if (changes > 0)
+                {
+                    return newUser.Id;
+                }
+            }
+
+            return null;
         }
     }
 }

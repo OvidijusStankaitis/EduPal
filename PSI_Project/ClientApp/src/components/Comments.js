@@ -1,8 +1,11 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import './Comments.css';
 import {HttpTransportType, HubConnectionBuilder} from "@microsoft/signalr";
+import {useUserContext} from "../UserContext";
+import {User} from "oidc-client";
 
 export const Comments = ({ show, onClose, topicId }) => {
+    const { userId } = useUserContext()
     const [comments, setComments] = useState([]);
     const [currentComment, setCurrentComment] = useState('');
     const chatContentRef = React.createRef();
@@ -53,7 +56,7 @@ export const Comments = ({ show, onClose, topicId }) => {
     
     const handleSend = async () => {
         if (currentComment.trim() !== '') {            
-            await connection.invoke("SendMessage", "27d9bf74-21aa-40ca-9790-43ae1d602e43", topicId, currentComment);
+            await connection.invoke("SendMessage", userId, topicId, currentComment);
             setCurrentComment('');
         }
         if (chatContentRef.current) {
@@ -90,10 +93,10 @@ export const Comments = ({ show, onClose, topicId }) => {
                                 <div className="comment-text-content">
                                     {comment.commentText}
                                 </div>
+                                
                                 <button
                                     className="delete-button1"
-                                    onClick={() => handleDelete(comment.id)}
-                                >
+                                    onClick={() => handleDelete(comment.id)}>
                                     🗑️
                                 </button>
                             </div>

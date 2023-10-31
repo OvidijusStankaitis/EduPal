@@ -45,7 +45,7 @@ namespace PSI_Project.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("PSI_Project.Models.Conspectus", b =>
@@ -72,7 +72,7 @@ namespace PSI_Project.Migrations
 
                     b.HasIndex("TopicId");
 
-                    b.ToTable("Conspectuses");
+                    b.ToTable("Conspectuses", (string)null);
                 });
 
             modelBuilder.Entity("PSI_Project.Models.Goal", b =>
@@ -91,7 +91,7 @@ namespace PSI_Project.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Goals");
+                    b.ToTable("Goals", (string)null);
                 });
 
             modelBuilder.Entity("PSI_Project.Models.Message", b =>
@@ -118,7 +118,7 @@ namespace PSI_Project.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Messages");
+                    b.ToTable("Messages", (string)null);
                 });
 
             modelBuilder.Entity("PSI_Project.Models.Subject", b =>
@@ -133,7 +133,7 @@ namespace PSI_Project.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subjects");
+                    b.ToTable("Subjects", (string)null);
                 });
 
             modelBuilder.Entity("PSI_Project.Models.SubjectGoal", b =>
@@ -161,7 +161,7 @@ namespace PSI_Project.Migrations
 
                     b.HasIndex("SubjectId");
 
-                    b.ToTable("SubjectGoal");
+                    b.ToTable("SubjectGoal", (string)null);
                 });
 
             modelBuilder.Entity("PSI_Project.Models.Topic", b =>
@@ -185,7 +185,7 @@ namespace PSI_Project.Migrations
 
                     b.HasIndex("SubjectId");
 
-                    b.ToTable("Topics");
+                    b.ToTable("Topics", (string)null);
                 });
 
             modelBuilder.Entity("PSI_Project.User", b =>
@@ -212,7 +212,7 @@ namespace PSI_Project.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("PSI_Project.Models.Comment", b =>
