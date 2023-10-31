@@ -33,18 +33,6 @@ public class CommentController : ControllerBase
         return Ok(comment);
     }
     
-    [HttpPost("upload")]
-    public IActionResult UploadComment([FromBody] object request)
-    {
-        if (request is not JsonElement requestJson)
-            return BadRequest("Invalid request body");
-            
-        Comment? comment = _commentRepository.CreateComment(requestJson);
-        return comment == null
-            ? BadRequest("Invalid request body")
-            : Ok(comment);
-    }
-    
     [HttpDelete("delete/{commentId}")]
     public IActionResult RemoveTopic(string commentId)
     {

@@ -3,7 +3,6 @@ using PSI_Project.Data;
 using PSI_Project.Repositories;
 using PSI_Project.Services;
 using System.Text;
-using Microsoft.AspNetCore.SignalR;
 using PSI_Project.Hubs;
 
 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);

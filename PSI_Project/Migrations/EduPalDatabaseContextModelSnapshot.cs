@@ -33,6 +33,7 @@ namespace PSI_Project.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("TopicId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("UserId")
@@ -218,7 +219,9 @@ namespace PSI_Project.Migrations
                 {
                     b.HasOne("PSI_Project.Models.Topic", "Topic")
                         .WithMany()
-                        .HasForeignKey("TopicId");
+                        .HasForeignKey("TopicId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("PSI_Project.User", "User")
                         .WithMany()

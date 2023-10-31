@@ -7,8 +7,6 @@ import { OpenAIDialogue } from './OpenAIDialogue';
 import { Comments } from "./Comments";
 import { Note } from "./Note";
 import Notes from "../assets/Notes.webp";
-import {HttpTransportType, HubConnectionBuilder} from "@microsoft/signalr";
-
 export const Conspectus = () => {
     const { topicId } = useParams();
     const [topicName, setTopicName] = useState("");
@@ -20,22 +18,6 @@ export const Conspectus = () => {
     const [showComments, setShowComments] = useState(false);
     const [showNote, setShowNote] = useState(false);
 
-    const joinTopicBroadcastGroup = async () => {
-        try {
-            const connection = new HubConnectionBuilder()
-                .withUrl("https://localhost:7283/chat-hub", {
-                    skipNegotiation: true,
-                    transport: HttpTransportType.WebSockets
-                })
-                .build();
-            
-            await connection.start();
-            await connection.invoke("AddToBroadcastGroup", topicId)
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
     useEffect(() => {
         fetch(`https://localhost:7283/Topic/get/${topicId}`)
             .then(response => response.json())
@@ -46,9 +28,7 @@ export const Conspectus = () => {
             .catch(error => console.error('Error getting topic name:', error));
     }, []);
 
-    useEffect(() => {
-        joinTopicBroadcastGroup();
-        
+    useEffect(() => {        
         fetch(`https://localhost:7283/Conspectus/list/${topicId}`)
             .then(response => response.json())
             .then(data => {

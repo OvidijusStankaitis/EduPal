@@ -18,17 +18,30 @@ public class ChatService
         _topicRepository = topicRepository;
     }
     
-    public void SaveSentMessage(string userId, string topicId, string message)
+    public Comment? SaveSentMessage(string userId, string topicId, string message)
     {
         User? sender = _userRepository.Get(userId);
         Topic? currentTopic = _topicRepository.Get(topicId);
         
         if (sender is null || currentTopic is null)
         {
-            return;
+            return null;
         }
         
         Comment newComment = new Comment(sender, currentTopic, message);
         _commentRepository.Add(newComment);
+        return newComment;
+    }
+
+    public Comment? DeleteMessage(string messageId)
+    {
+        Comment? message = _commentRepository.Get(messageId);
+        if (message is null)
+        {
+            return null;
+        }
+
+        _commentRepository.Remove(message);
+        return message;
     }
 }
