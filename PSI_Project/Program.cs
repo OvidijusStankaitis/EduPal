@@ -38,7 +38,7 @@ builder.Services.AddTransient<CommentRepository>();
 builder.Services.AddTransient<OpenAIService>();
 builder.Services.AddTransient<OpenAIRepository>();
 builder.Services.AddTransient<NoteService>();
-
+builder.Services.AddTransient<NoteRepository>();
 
 var app = builder.Build();
 

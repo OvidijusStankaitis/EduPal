@@ -13,6 +13,7 @@ public class EduPalDatabaseContext : DbContext
     public DbSet<Goal> Goals { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Note> Notes { get; set; }
 
     public EduPalDatabaseContext(DbContextOptions options) : base(options)
     {
