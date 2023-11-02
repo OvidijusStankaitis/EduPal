@@ -16,5 +16,12 @@
       <jdbc-url>jdbc:postgresql://localhost/EduPal?password=bred1&amp;user=postgres</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="EduPal@localhost [2]" uuid="2d8ecbf6-52ab-450b-b6d5-451ff06f48a6">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5432/EduPal</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
