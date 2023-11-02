@@ -68,5 +68,68 @@
 }
 
 .modify-note {
-    width: 30vw;
+    margin-top: 3vh;
+    width: 20vw;
 }
+
+.header2 {
+    padding-left: 5vw;
+    padding-right: 4.3vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1vh;
+}
+
+.close-note {
+    width: 20vw;
+    position: absolute;
+    bottom: 6vh;
+}
+
+/* Note.css */
+.notes-list {
+    overflow-y: auto; /* scroll if list gets too long */
+    max-height: 45vh; /* limit height of the list */
+    width: 100%; /* use the full width of the container */
+    list-style-type: none; /* remove the bullet points from the list */
+    padding-left: 0; /* remove default padding from ul */
+    margin-top: -8vh;
+}
+
+.notes-list li {
+    color: #E0E0FF;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1.2rem;
+    border: 1px solid rgba(58, 58, 128, 0.8); /* Adjusted border color to match the scheme */
+    border-radius: 0.5rem;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+    margin-bottom: 0.5rem;
+    background-color: rgba(45, 45, 90, 0.7); /* Base color */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Slightly darker shadow for depth */
+    cursor: pointer;
+}
+
+.notes-list li:nth-child(even) {
+    background-color: rgba(30, 30, 60, 0.7); /* Slightly different shade for even items */
+}
+
+.notes-list li:hover {
+    background-color: rgba(15, 15, 30, 0.8); /* Darker shade on hover */
+}
+
+.notes-empty {
+    color: #888;
+    cursor: default;
+    text-align: center;
+    padding: 1rem;
+}
+
+.notes-list li.notes-empty:hover {
+    background-color: initial; /* No background change on hover */
+    cursor: default;
+    box-shadow: none; /* No shadow effect on hover */
+}
+

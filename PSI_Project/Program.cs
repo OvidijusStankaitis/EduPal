@@ -35,6 +35,7 @@ builder.Services.AddTransient<GoalService>();
 builder.Services.AddTransient<OpenAIService>();
 builder.Services.AddTransient<NoteService>();
 builder.Services.AddTransient<ChatService>();
+builder.Services.AddTransient<NoteService>();
 
 // repositories dependency injections
 builder.Services.AddTransient<GoalsRepository>();
@@ -44,6 +45,7 @@ builder.Services.AddTransient<UserRepository>();
 builder.Services.AddTransient<ConspectusRepository>();
 builder.Services.AddTransient<CommentRepository>();
 builder.Services.AddTransient<OpenAIRepository>();
+builder.Services.AddTransient<NoteRepository>();
 
 var app = builder.Build();
 
