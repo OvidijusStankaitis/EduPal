@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PSI_Project.Repositories;
 using System.Text.Json;
+using PSI_Project.DTO;
 using PSI_Project.Models;
 
 namespace PSI_Project.Controllers
@@ -17,9 +18,9 @@ namespace PSI_Project.Controllers
         }
 
         [HttpPost("register")]
-        public IActionResult Register([FromBody] JsonElement request)
+        public IActionResult Register([FromBody] UserCreationDTO newUser)
         {
-            string? userId = _userRepository.CheckUserRegister(request);
+            string? userId = _userRepository.CheckUserRegister(newUser);
             return userId == null
                 ? BadRequest(new { success = false, message = "Invalid payload."})
                 : Ok(new { success = true, message = "Registration successful.", userId});
