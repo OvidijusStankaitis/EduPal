@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using PSI_Project.Data;
+using PSI_Project.DTO;
 using PSI_Project.Models;
 
 namespace PSI_Project.Repositories
@@ -39,35 +40,34 @@ namespace PSI_Project.Repositories
             return null;
         }
 
-        public string? CheckUserRegister(JsonElement request)
+        public string? CheckUserRegister(UserCreationDTO? newUserData)
         {
-            if (request.TryGetProperty("name", out JsonElement nameElement) &&
-                request.TryGetProperty("surname", out JsonElement surnameElement) &&
-                request.TryGetProperty("email", out JsonElement emailElement) &&
-                request.TryGetProperty("password", out JsonElement passwordElement))
+            if (newUserData is null)
             {
-                string? email = emailElement.GetString();
-                if (email == null || GetUserByEmail(email) != null)
-                {
-                    return null;
-                }
+                return null;
+            }
+            
+            string? email = newUserData.Email;
+            if (email == null || GetUserByEmail(email) != null)
+            {
+                return null;
+            }
 
-                string? name = nameElement.GetString();
-                string? surname = surnameElement.GetString();
-                string? password = passwordElement.GetString();
-                if (name == null || surname == null || password == null)
-                {
-                    return null;
-                }
-                
-                User newUser = new User(email, password, name, surname);
-                
-                Add(newUser);
-                int changes = EduPalContext.SaveChanges();
-                if (changes > 0)
-                {
-                    return newUser.Id;
-                }
+            string? name = newUserData.Name;
+            string? surname = newUserData.Surname;
+            string? password = newUserData.Password;
+            if (name == null || surname == null || password == null)
+            {
+                return null;
+            }
+            
+            User newUser = new User(email, password, name, surname);
+            
+            Add(newUser);
+            int changes = EduPalContext.SaveChanges();
+            if (changes > 0)
+            {
+                return newUser.Id;
             }
 
             return null;

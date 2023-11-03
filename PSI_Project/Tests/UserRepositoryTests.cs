@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using PSI_Project.Data;
+using PSI_Project.DTO;
 using PSI_Project.Repositories;
 using Xunit;
 namespace PSI_Project.Tests;
@@ -30,10 +32,10 @@ public class UserRepositoryTests
     }
     
     [Fact]
-    public void CheckUserRegister_UserDoesNotExist_ReturnsTrue()
+    public void CheckUserRegister_UserDoesNotExist_ReturnsNotNull()
     {
         // Arrange
-        var user = new User("nonexistentTest@test.test", "nonexistentTestPassword", "nonexistentTestName", "nonexistentTestSurname");
+        var user = new UserCreationDTO("nonexistentTestName", "nonexistentTestSurname", "nonexistentTest@test.test", "nonexistentTestPassword");
 
         // Act
         var result = _userRepository.CheckUserRegister(user);
@@ -42,21 +44,22 @@ public class UserRepositoryTests
         {
             Console.WriteLine(u);
         }
+        
         // Assert
-        Assert.True(result);
+        Assert.NotNull(result);
     }
     
     [Fact]
-    public void CheckUserRegister_UserExists_ReturnsFalse()
+    public void CheckUserRegister_UserExists_ReturnsNull()
     {
         // Arrange
+        var userExisting = new UserCreationDTO("testName", "testSurname", "test@test.test", "testPassword");
         
-        var userExisting = new User("test@test.test", "testPassword", "testName", "testSurname");
         // Act
         var result = _userRepository.CheckUserRegister(userExisting);
-
+        
         // Assert
-        Assert.False(result);
+        Assert.Null(result);
     }
     
     [Fact]
@@ -76,7 +79,6 @@ public class UserRepositoryTests
         Assert.Equal("testPassword", result.Password);
         Assert.Equal("testName", result.Name);
         Assert.Equal("testSurname", result.Surname);
-        
     }
 
     [Fact]
