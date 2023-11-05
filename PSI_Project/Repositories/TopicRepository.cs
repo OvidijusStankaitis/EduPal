@@ -41,14 +41,15 @@ public class TopicRepository : Repository<Topic>
         return changes > 0 ? newTopic : null;
     }
     
-    public async Task<bool> RemoveAsync(string topicId)
+    public bool Remove(string topicId)
     {
         Topic? topic = Get(topicId);
         if (topic is null)
             return false;
-        Remove(topic);
         
-        int changes = await EduPalContext.SaveChangesAsync();
+        Remove(topic);
+        int changes = EduPalContext.SaveChanges();
+
         return changes > 0;
     } 
 }

@@ -49,14 +49,14 @@ public class CommentRepository : Repository<Comment>
         return null;
     }
 
-    public async Task<bool> RemoveAsync(string commentId)
+    public bool Remove(string commentId)
     {
-        Comment? comment = await GetAsync(commentId);
+        Comment? comment = Get(commentId);
         if (comment is null)
             return false;
 
         Remove(comment);
-        int changes = await EduPalContext.SaveChangesAsync();
+        int changes = EduPalContext.SaveChanges();
 
         return changes > 0;
     }

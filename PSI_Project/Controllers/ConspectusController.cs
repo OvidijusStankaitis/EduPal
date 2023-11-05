@@ -50,9 +50,9 @@ namespace PSI_Project.Controllers
         }
 
         [HttpDelete("{conspectusId}/delete")]
-        public async Task<IActionResult> DeleteFile(string conspectusId)
+        public IActionResult DeleteFile(string conspectusId)
         {
-            return (await _conspectusRepository.RemoveAsync(conspectusId))
+            return _conspectusRepository.Remove(conspectusId)
                 ? Ok("File has been successfully deleted")
                 : BadRequest("An error occured while deleting file");
         }

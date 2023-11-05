@@ -115,24 +115,21 @@ public class ConspectusRepository : Repository<Conspectus>
         return changes > 0;
     }
 
-    public async Task<bool> RemoveAsync(string conspectusId)
+    public bool Remove(string conspectusId)
     {
-        Conspectus? conspectus = await GetAsync(conspectusId);  // Use GetAsync here
+        Conspectus? conspectus = Get(conspectusId);
         if (conspectus is null)
             return false;
-    
-        string filePath = conspectus.Path; // Store the path before removing conspectus
-    
+        
         Remove(conspectus);
-    
-        int changes = await EduPalContext.SaveChangesAsync();
+        int changes = EduPalContext.SaveChanges();
 
-        DeleteFile(filePath); // Call DeleteFile after Remove but before SaveChangesAsync
+        string filePath = conspectus.Path;
+        DeleteFile(filePath);
 
         return changes > 0;
     }
-
-
+    
     public void DeleteFile(string filePath)
     {
         Monitor.Enter(_deleteLock); // Task 8. Monitor class used

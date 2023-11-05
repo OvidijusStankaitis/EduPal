@@ -38,14 +38,14 @@ public class SubjectRepository : Repository<Subject>
         return changes > 0 ? newSubject : null;
     }
     
-    public async Task<bool> RemoveSubjectAsync(string subjectId)
+    public bool RemoveSubject(string subjectId)
     {
         Subject? subject = Get(subjectId);
         if (subject is null)
             return false;
         
         Remove(subject);
-        int changes = await EduPalContext.SaveChangesAsync();
+        int changes = EduPalContext.SaveChanges();
 
         return changes > 0;
     } 

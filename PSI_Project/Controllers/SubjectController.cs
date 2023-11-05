@@ -40,10 +40,10 @@ public class SubjectController : ControllerBase
     }
     
     [HttpDelete("{subjectId}/delete")]
-    public async Task<IActionResult> RemoveSubjectAsync(string subjectId)
+    public IActionResult RemoveSubject(string subjectId)
     { 
-        return (await _subjectRepository.RemoveSubjectAsync(subjectId))
+        return _subjectRepository.RemoveSubject(subjectId) 
             ? Ok("Subject has been successfully deleted") 
-            : BadRequest("An error occurred while deleting the subject");
+            : BadRequest("An error occured while deleting the subject");
     }
 }

@@ -43,11 +43,10 @@ public class TopicController : ControllerBase
     }
 
     [HttpDelete("{topicId}/delete")]
-    public async Task<IActionResult> RemoveTopicAsync(string topicId)
+    public IActionResult RemoveTopic(string topicId)
     {
-        bool result = await _topicRepository.RemoveAsync(topicId);
-        return result
+        return _topicRepository.Remove(topicId)
             ? Ok("Topic has been successfully deleted")
-            : BadRequest("An error occurred while deleting the topic");
+            : BadRequest("An error occured while deleting the topic");
     }
 }
