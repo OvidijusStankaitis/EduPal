@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using PSI_Project.Exceptions;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
 
@@ -18,32 +19,80 @@ public class SubjectController : ControllerBase
     [HttpGet("get/{subjectId}")]
     public IActionResult GetSubject(string subjectId)
     {
-        Subject? subject = _subjectRepository.Get(subjectId);
-        return subject == null
-            ? NotFound(new { error = "Subject not found." })
-            : Ok(subject);
+        try
+        {
+            Subject subject = _subjectRepository.Get(subjectId);
+            return Ok(subject);
+        }
+        catch (ObjectNotFoundException)
+        {
+            return NotFound("There is no subject with such id");
+        }
+        catch (Exception ex)
+        {
+            // TODO: log errors
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
+
+            return BadRequest("An error occured while getting the subject");
+        }
     }
     
     [HttpGet("list")]
     public IActionResult ListSubjects()
     {
-        return Ok(_subjectRepository.GetSubjectsList());
+        try
+        {
+            return Ok(_subjectRepository.GetSubjectsList());
+        }
+        catch (Exception ex)
+        {
+            // TODO: log errors
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
+            
+            return BadRequest("An error occured while listing the subjects");
+        }
     }
     
     [HttpPost("upload")]
     public IActionResult UploadSubject([FromBody] JsonElement request)
     {
-        Subject? addedSubject = _subjectRepository.CreateSubject(request);
-        return addedSubject == null
-            ? BadRequest("Invalid request body")
-            : Ok(addedSubject);
+        try
+        {
+            Subject? addedSubject = _subjectRepository.CreateSubject(request);  // TODO: add validation
+            if (addedSubject != null)
+            {
+                return Ok(addedSubject);
+            }
+
+            return BadRequest("Invalid subject name");
+        }
+        catch (Exception ex)
+        {
+            // TODO: log errors
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
+            
+            return BadRequest("An error occured while uploading the subject");
+        }
     }
     
     [HttpDelete("{subjectId}/delete")]
     public IActionResult RemoveSubject(string subjectId)
-    { 
-        return _subjectRepository.RemoveSubject(subjectId) 
-            ? Ok("Subject has been successfully deleted") 
-            : BadRequest("An error occured while deleting the subject");
+    {
+        try
+        {
+            _subjectRepository.RemoveSubject(subjectId);
+            return Ok("Subject has been successfully deleted");
+        }
+        catch (Exception ex)
+        {
+            // TODO: log errors
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
+            
+            return BadRequest("An error occured while deleting the subject");
+        }
     }
 }

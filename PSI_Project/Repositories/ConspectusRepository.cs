@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Runtime.InteropServices.JavaScript;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using PSI_Project.Data;
 using PSI_Project.DTO;
+using PSI_Project.Exceptions;
 using PSI_Project.Models;
 
 namespace PSI_Project.Repositories;
@@ -15,122 +18,100 @@ public class ConspectusRepository : Repository<Conspectus>
 
     public IEnumerable<Conspectus> GetConspectusListByTopicId(string topicId)
     {
-        return 
-            EduPalContext.Conspectuses.Where(conspectus => conspectus.Topic.Id == topicId);
+        return EduPalContext.Conspectuses.Where(conspectus => conspectus.Topic.Id == topicId);
     }
 
-    public Stream? GetPdfStream(string conspectusId)
+    public Stream GetPdfStream(string conspectusId)
     {
-        try
-        {
-            Conspectus? conspectus = Get(conspectusId);
-            if (conspectus == null)
-                return null;
+        Conspectus conspectus = Get(conspectusId);
+        string dirPath = Path.GetDirectoryName(conspectus.Path)!;
+        string filename = Path.GetFileName(conspectus.Path);
         
-            string? dirPath = Path.GetDirectoryName(conspectus.Path);
-            string filename = Path.GetFileName(conspectus.Path);
+        IFileProvider provider = new PhysicalFileProvider(dirPath);
+        IFileInfo fileInfo = provider.GetFileInfo(filename);
         
-            IFileProvider provider = new PhysicalFileProvider(dirPath);
-            IFileInfo fileInfo = provider.GetFileInfo(filename);
-            if (!fileInfo.Exists)
-                return null;
-
-            return fileInfo.CreateReadStream();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            return null;
-        }
+        return fileInfo.CreateReadStream();
     }
 
-    public ConspectusFileContentDTO? Download(string conspectusId)
+    public ConspectusFileContentDTO Download(string conspectusId)
     {
-        Conspectus? conspectus = Get(conspectusId);
-        if (conspectus == null)
-            return null;
-        
-        if (File.Exists(conspectus.Path))
+        Conspectus conspectus = Get(conspectusId);
+        byte[] fileBytes = File.ReadAllBytes(conspectus.Path);
+        FileContentResult fileContent = new FileContentResult(fileBytes, "application/pdf")
         {
-            var fileBytes = File.ReadAllBytes(conspectus.Path);
-            var fileContent = new FileContentResult(fileBytes, "application/pdf")
-            {
-                FileDownloadName = Path.GetFileName(conspectus.Name) 
-            };
-            
-            return new ConspectusFileContentDTO(conspectus.Name, fileContent);  
-        }
-
-        return null;
+            FileDownloadName = Path.GetFileName(conspectus.Name) 
+        };
+    
+        return new ConspectusFileContentDTO(conspectus.Name, fileContent);
     }
 
     public IEnumerable<Conspectus> Upload(string topicId, List<IFormFile> files)
     {
         foreach (var formFile in files)
         {
-            string fileName = formFile.FileName;
-            if (!fileName.IsValidFileName())
+            try
             {
-                Console.WriteLine($"The file {fileName} is not a valid PDF format.");
-                continue;
-            }
+                string fileName = formFile.FileName;
+                if (!fileName.IsValidFileName()) // TODO: make useful validation
+                {
+                    Console.WriteLine($"The file {fileName} is not a valid PDF format.");
+                    continue;
+                }
 
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Files", fileName);
-            using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                formFile.CopyTo(fileStream);
+                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Files", fileName);
+                using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    formFile.CopyTo(fileStream);
+                }
+
+                Conspectus conspectus = new()
+                {
+                    Name = fileName,
+                    Path = filePath,
+                    Topic = EduPalContext.Topics.Find(topicId)
+                };
+
+                Add(conspectus);
+                EduPalContext.SaveChanges();
             }
-            
-            Conspectus conspectus = new()
+            catch (Exception ex)
             {
-                Name = fileName,
-                Path = filePath,
-                Topic = EduPalContext.Topics.Find(topicId)
-            };
-            
-            Add(conspectus);
-            EduPalContext.SaveChanges();
+                // TODO: log errors
+                // TODO: mb do something with un-uploaded file
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                throw new EntityCreationException("Error occured while uploading one of the files", ex);
+            }
         }
 
-        return GetConspectusListByTopicId(topicId);
+        return GetConspectusListByTopicId(topicId); // TODO: mb other return type is better?
     }
     
-    public bool ChangeRating(string conspectusId, bool toIncrease)
+    public Conspectus ChangeRating(string conspectusId, bool toIncrease)
     {
-        Conspectus? conspectus = Get(conspectusId);
-        if (conspectus is null)
-            return false;
-
+        Conspectus conspectus = Get(conspectusId);
         conspectus.Rating += toIncrease ? +1 : -1;
-        int changes = EduPalContext.SaveChanges();
-        return changes > 0;
-    }
-
-    public bool Remove(string conspectusId)
-    {
-        Conspectus? conspectus = Get(conspectusId);
-        if (conspectus is null)
-            return false;
         
-        Remove(conspectus);
-        int changes = EduPalContext.SaveChanges();
-
-        string filePath = conspectus.Path;
-        DeleteFile(filePath);
-
-        return changes > 0;
+        EduPalContext.SaveChanges();
+        return conspectus;
     }
-
-    public void DeleteFile(string filePath)
+    
+    public void Remove(string conspectusId)
     {
+        Conspectus conspectus = Get(conspectusId);
+        Remove(conspectus);
+        EduPalContext.SaveChanges();
+
         try
         {
+            string filePath = conspectus.Path;
             if (!IsFileUsed(filePath))
                 File.Delete(filePath);
         }
-        catch (IOException ex)
+        catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            // TODO: do something with deleted files from db
+            throw new EntityDeletionException("Couldn't delete conspectus", ex);
         }
     }
     

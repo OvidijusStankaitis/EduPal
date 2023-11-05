@@ -17,27 +17,21 @@ public class CommentController : ControllerBase
         _commentRepository = commentRepository;
     }
     
-    [HttpGet("getOne/{commentId}")]
-    public IActionResult GetComment(string commentId)
-    {
-        Comment? comment = _commentRepository.GetItemById(commentId);
-        return comment == null
-            ? NotFound(new { error = "Comment not found." })
-            : Ok(comment);
-    }
-    
     [HttpGet("get/{topicId}")]
     public IActionResult GetAllCommentsFromTopic(string topicId)
     {
-        List<Comment> comment = _commentRepository.GetAllCommentsOfTopic(topicId);
-        return Ok(comment);
-    }
-    
-    [HttpDelete("delete/{commentId}")]
-    public IActionResult RemoveTopic(string commentId)
-    {
-        return _commentRepository.Remove(commentId) 
-            ? Ok("Comment has been successfully deleted")
-            : BadRequest("An error occured while deleting the topic");
+        try
+        {
+            List<Comment> comment = _commentRepository.GetAllCommentsOfTopic(topicId);
+            return Ok(comment);
+        }
+        catch (Exception ex)
+        {
+            // TODO: log errors
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
+        }
+        
+        return BadRequest("An error occured while getting all topic comments"); // TODO: think of better way of showing error to a user
     }
 }
