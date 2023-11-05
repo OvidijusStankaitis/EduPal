@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PSI_Project.DTO;
+using PSI_Project.Exceptions;
+using PSI_Project.Models;
 using PSI_Project.Repositories;
 
 namespace PSI_Project.Controllers;
@@ -18,61 +20,125 @@ public class ConspectusController : ControllerBase
     [HttpGet("get/{conspectusId}")]
     public IActionResult GetConspectus(string conspectusId)
     {
-        Stream? pdfStream = _conspectusRepository.GetPdfStream(conspectusId);
-        return pdfStream != null
-            ? File(pdfStream, "application/pdf")
-            : NotFound(new { error = "File not found." });
+        try
+        {
+            Stream pdfStream = _conspectusRepository.GetPdfStream(conspectusId);
+            return File(pdfStream, "application/pdf");
+        }
+        catch (Exception ex)
+        {
+            // TODO: log errors
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
+            
+            return NotFound(new { error = "File not found." });
+        }
     }
 
     [HttpGet("list/{topicId}")]
     public IActionResult GetTopicFiles(string topicId)
     {
-        return Ok(_conspectusRepository.GetConspectusListByTopicId(topicId));
+        try
+        {
+            return Ok(_conspectusRepository.GetConspectusListByTopicId(topicId));
+        }
+        catch (Exception ex)
+        {
+            // TODO: log errors
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
+            
+            return BadRequest("An error occured while uploading file");
+        }
     }
 
     [HttpPost("upload/{topicId}")]
     public IActionResult UploadFiles(string topicId, List<IFormFile> files)
     {
-        return Ok(_conspectusRepository.Upload(topicId, files).ToList());
+        try
+        {
+            return Ok(_conspectusRepository.Upload(topicId, files).ToList());
+        }
+        catch (Exception ex)
+        {
+            // TODO: log errors
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
+            
+            return BadRequest("An error occured while uploading file");
+        }
     }
     
     [HttpGet("download/{conspectusId}")]
     public IActionResult DownloadFile(string conspectusId)
     {
-        ConspectusFileContentDTO? response = _conspectusRepository.Download(conspectusId);
-        if (response == null)
-            return NotFound();
-        
-        Response.Headers.Add("Content-Disposition", "attachment; filename=" + response.Name);
-        return response.FileContent;
+        try
+        {
+            ConspectusFileContentDTO response = _conspectusRepository.Download(conspectusId);
+            Response.Headers.Add("Content-Disposition", "attachment; filename=" + response.Name);
+            return response.FileContent;
+        }
+        catch (Exception ex)
+        {
+            // TODO: log errors
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
+            
+            return BadRequest("An error occured while downloading file");
+        }
     }
 
     [HttpDelete("{conspectusId}/delete")]
     public IActionResult DeleteFile(string conspectusId)
     {
-        return _conspectusRepository.Remove(conspectusId)
-            ? Ok("File has been successfully deleted")
-            : BadRequest("An error occured while deleting file");
+        try
+        {
+            _conspectusRepository.Remove(conspectusId);
+            return Ok("File has been successfully deleted");
+        }
+        catch (Exception ex)
+        {
+            // TODO: log errors
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
+            
+            return BadRequest("An error occured while deleting file");
+        }
     }
     
     [HttpPost("rateUp/{conspectusId}")]
     public IActionResult RateConspectusUp(string conspectusId)
     {
-        bool isError = _conspectusRepository.ChangeRating(conspectusId, true);
-        if (!isError)
-           return NotFound(new { error = "File not found in database." });
-
-        return Ok(_conspectusRepository.Get(conspectusId));
+        try
+        {
+            Conspectus ratedConspectus = _conspectusRepository.ChangeRating(conspectusId, true);
+            return Ok(ratedConspectus);
+        }
+        catch (Exception ex)
+        {
+            // TODO: log errors
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
+        }
+        
+        return NotFound(new { error = "File not found in database." });
     }
     
     [HttpPost("rateDown/{conspectusId}")]
     public IActionResult RateConspectusDown(string conspectusId)
     {
-        bool isError = _conspectusRepository.ChangeRating(conspectusId, false);
-        if (!isError)
-            return NotFound(new { error = "File not found in database." });
-
-        return Ok(_conspectusRepository.Get(conspectusId));
+        try
+        {
+            Conspectus ratedConspectus = _conspectusRepository.ChangeRating(conspectusId, false);
+            return Ok(ratedConspectus);
+        }
+        catch (Exception ex)
+        {
+            // TODO: log errors
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
+            
+            return NotFound(new { error = "File not found in database." }); 
+        }
     }
-
 }

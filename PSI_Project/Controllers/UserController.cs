@@ -4,47 +4,58 @@ using System.Text.Json;
 using PSI_Project.DTO;
 using PSI_Project.Models;
 
-namespace PSI_Project.Controllers
+namespace PSI_Project.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class UserController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class UserController : ControllerBase
+    private readonly UserRepository _userRepository;
+
+    public UserController(UserRepository userRepository)
     {
-        private readonly UserRepository _userRepository;
+        _userRepository = userRepository;
+    }
 
-        public UserController(UserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
-
-        [HttpPost("register")]
-        public IActionResult Register([FromBody] UserCreationDTO newUser)
+    [HttpPost("register")]
+    public IActionResult Register([FromBody] UserCreationDTO newUser)
+    {
+        try
         {
             string? userId = _userRepository.CheckUserRegister(newUser);
-            return userId == null
-                ? BadRequest(new { success = false, message = "Invalid payload."})
-                : Ok(new { success = true, message = "Registration successful.", userId});
+            if (userId != null)
+            {
+                return Ok(new { success = true, message = "Registration successful.", userId });
+            }
+        }
+        catch (Exception ex)
+        {
+            // TODO: log errors
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
         }
 
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] JsonElement payload)
+        return BadRequest(new { success = false, message = "Invalid payload." }); // TODO: think of better way of showing error to a user
+    }
+
+    [HttpPost("login")]
+    public IActionResult Login([FromBody] JsonElement payload)
+    {
+        try
         {
             string? userId = _userRepository.CheckUserLogin(payload);
-            return userId == null
-                ? BadRequest(new { success = false, message = "Invalid payload." })
-                : Ok(new { success = true, message = "Login successful.", userId});
-        }
-
-        [HttpGet("get-name")]
-        public IActionResult GetName(string email)
-        {
-            var user = _userRepository.GetUserByEmail(email);
-            if (user != null)
+            if (userId != null)
             {
-                return Ok(new { name = user.Name });
+                return Ok(new { success = true, message = "Login successful.", userId });
             }
-
-            return NotFound(new { message = "User not found." });
         }
+        catch (Exception ex)
+        {
+            // TODO: log errors
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
+        }
+
+        return BadRequest(new { success = false, message = "Invalid payload." }); // TODO: think of better way of showing error to a user
     }
 }
