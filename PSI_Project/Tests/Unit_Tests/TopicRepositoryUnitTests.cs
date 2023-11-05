@@ -6,16 +6,16 @@ using Xunit;
 
 namespace PSI_Project.Tests;
 
-public class TopicRepositoryTests
+public class TopicRepositoryUnitTests
 {
     private readonly TopicRepository _topicRepository;
     private readonly SubjectRepository _subjectRepository;
     private readonly DbContextOptions<EduPalDatabaseContext> _options;
     private readonly EduPalDatabaseContext _context;
     
-    public TopicRepositoryTests()
+    public TopicRepositoryUnitTests()
     {
-        _options = GetInMemoryDatabaseOptions("TestDB"); 
+        _options = GetInMemoryDatabaseOptions("TestTopicDB"); 
         _context = new EduPalDatabaseContext(_options); //should it be in using? 
         _topicRepository = new TopicRepository(_context);
         _subjectRepository = new SubjectRepository(_context);
@@ -46,7 +46,7 @@ public class TopicRepositoryTests
         
         // Assert
         Assert.Single(result);
-        Assert.Collection(result, topicOfList1 => Assert.Contains(topic1.Name, topicOfList1.Name));
+        Assert.Collection(result, topicOfList1 => Assert.Equal(topic1.Name, topicOfList1.Name));
     }
     
     [Fact]
@@ -55,7 +55,8 @@ public class TopicRepositoryTests
         // Arrange
         var subject = new Subject("testSubject");
         _subjectRepository.Add(subject);
-
+        _context.SaveChanges();
+        
         var topic1 = new Topic("topic1", subject);
         var topic2 = new Topic("topic2", subject);
         _topicRepository.Add(topic1);
@@ -69,22 +70,26 @@ public class TopicRepositoryTests
         _topicRepository.Remove(topic2.Id); // removing topic so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
        
         // Assert
-        Assert.NotEmpty(result);
         Assert.Collection(result, 
-            topicOfList1 => Assert.Contains(topic1.Name, topicOfList1.Name), 
-            topicOfList2 => Assert.Contains(topic2.Name, topicOfList2.Name));
+            topicOfList1 => Assert.Equal(topic1.Id, topicOfList1.Id), 
+            topicOfList2 => Assert.Equal(topic2.Name, topicOfList2.Name));
     }
     
     [Fact]
     public void Remove_UserExists_ReturnsTrue()
     {
         // Arrange
-        var topic = new Topic("removeTestName", new Subject("testSubject"), KnowledgeLevel.Average);
+        var subject = new Subject("testSubject");
+        
+        var topic = new Topic("removeTestName", subject, KnowledgeLevel.Average);
         _topicRepository.Add(topic);
+        _subjectRepository.Add(subject);
         _context.SaveChanges();
         
         // Act
         var result = _topicRepository.Remove(topic.Id);
+        _topicRepository.Remove(topic.Id);
+        _subjectRepository.RemoveSubject(subject.Id);
 
         // Assert
         Assert.True(result);

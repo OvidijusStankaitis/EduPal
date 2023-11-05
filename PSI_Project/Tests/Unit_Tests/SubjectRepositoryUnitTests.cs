@@ -6,15 +6,15 @@ using Xunit;
 
 namespace PSI_Project.Tests;
 
-public class SubjectRepositoryTests
+public class SubjectRepositoryUnitTests
 {
     private readonly SubjectRepository _subjectRepository;
     private readonly DbContextOptions<EduPalDatabaseContext> _options;
     private readonly EduPalDatabaseContext _context;
     
-    public SubjectRepositoryTests()
+    public SubjectRepositoryUnitTests()
     {
-        _options = GetInMemoryDatabaseOptions("TestDB"); 
+        _options = GetInMemoryDatabaseOptions("TestSubjectDB"); 
         _context = new EduPalDatabaseContext(_options); //should it be in using? 
         _subjectRepository = new SubjectRepository(_context);
         
@@ -53,11 +53,11 @@ public class SubjectRepositoryTests
         
         // Assert
         Assert.Single(result);
-        Assert.Collection(result, subject1 => Assert.Contains(subject.Name, subject1.Name));
+        Assert.Collection(result, subject1 => Assert.Equal(subject.Name, subject1.Name));
     }
     
     [Fact]
-    public void GetSubjectsList_DBContainsTwoElement_ReturnsAListOfOneElement()
+    public void GetSubjectsList_DBContainsTwoElement_ReturnsAListOfTwoElements()
     {
         // Arrange
         var subject1 = new Subject("testSubject1");
@@ -76,8 +76,8 @@ public class SubjectRepositoryTests
         // Assert
         Assert.NotEmpty(result);
         Assert.Collection(result, 
-            subjectOfList1 => Assert.Contains(subject1.Name, subjectOfList1.Name),
-            subjectOfList2 => Assert.Contains(subject2.Name, subjectOfList2.Name));
+            subjectOfList1 => Assert.Equal(subject1.Name, subjectOfList1.Name),
+            subjectOfList2 => Assert.Equal(subject2.Name, subjectOfList2.Name));
     }
     
     [Fact]

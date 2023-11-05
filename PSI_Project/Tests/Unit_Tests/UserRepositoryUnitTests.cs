@@ -4,15 +4,15 @@ using PSI_Project.Repositories;
 using Xunit;
 namespace PSI_Project.Tests;
 
-public class UserRepositoryTests
+public class UserRepositoryUnitTests
 {
     private readonly UserRepository _userRepository;
     private readonly DbContextOptions<EduPalDatabaseContext> _options;
     private readonly EduPalDatabaseContext _context;
 
-    public UserRepositoryTests()
+    public UserRepositoryUnitTests()
     {
-        _options = GetInMemoryDatabaseOptions("TestDB"); 
+        _options = GetInMemoryDatabaseOptions("TestUserDB"); 
         _context = new EduPalDatabaseContext(_options); //should it be in using? 
         _userRepository = new UserRepository(_context);
         
