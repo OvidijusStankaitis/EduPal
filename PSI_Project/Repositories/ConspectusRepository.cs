@@ -1,6 +1,7 @@
 ﻿using System.Runtime.InteropServices.JavaScript;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.FileProviders;
 using PSI_Project.Data;
 using PSI_Project.DTO;
@@ -49,26 +50,40 @@ public class ConspectusRepository : Repository<Conspectus>
     {
         foreach (var formFile in files)
         {
+            string fileName = formFile.FileName;
+            if (!fileName.IsValidFileName())
+            {
+                Console.WriteLine($"The file {fileName} is not a valid PDF format.");
+                continue;
+            }
+
+            string filePath;
             try
             {
-                string fileName = formFile.FileName;
-                if (!fileName.IsValidFileName())
-                {
-                    Console.WriteLine($"The file {fileName} is not a valid PDF format.");
-                    continue;
-                }
-
-                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Files", fileName);
+                filePath = Path.Combine(Directory.GetCurrentDirectory(), "Files", fileName);
                 using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
                 {
                     formFile.CopyTo(fileStream);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new EntityCreationException("Error occured while uploading one of the files", ex);
+            }
+
+            try
+            {
+                Topic? topic = EduPalContext.Topics.Find(topicId);
+                if (topic == null)
+                {
+                    throw new ObjectNotFoundException("Couldn't find topic with specified id");
                 }
 
                 Conspectus conspectus = new()
                 {
                     Name = fileName,
                     Path = filePath,
-                    Topic = EduPalContext.Topics.Find(topicId)
+                    Topic = topic
                 };
 
                 Add(conspectus);
@@ -76,7 +91,7 @@ public class ConspectusRepository : Repository<Conspectus>
             }
             catch (Exception ex)
             {
-                // TODO: mb do something with un-uploaded file
+                File.Delete(filePath);
                 throw new EntityCreationException("Error occured while uploading one of the files", ex);
             }
         }
@@ -97,7 +112,6 @@ public class ConspectusRepository : Repository<Conspectus>
     {
         Conspectus conspectus = Get(conspectusId);
         Remove(conspectus);
-        EduPalContext.SaveChanges();
 
         try
         {
@@ -107,8 +121,13 @@ public class ConspectusRepository : Repository<Conspectus>
         }
         catch (Exception ex)
         {
-            // TODO: do something with deleted files from db
+            EntityEntry<Conspectus> entry = EduPalContext.Entry(conspectus);
+            entry.State = EntityState.Unchanged;
             throw new EntityDeletionException("Couldn't delete conspectus", ex);
+        }
+        finally
+        {
+            EduPalContext.SaveChanges();
         }
     }
     

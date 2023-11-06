@@ -26,20 +26,10 @@ public class CommentRepository : Repository<Comment>
     
     public bool Remove(string commentId)
     {
-        try
-        {
-            Comment comment = Get(commentId);
-
-            Remove(comment);
-            int changes = EduPalContext.SaveChanges();
-
-            return changes > 0;
-        }
-        catch (Exception ex)
-        {
-            // TODO: do something with undeleted comments
-            throw new EntityDeletionException("Error occured while trying to delete comment", ex);
-        }
+        Comment comment = Get(commentId);
+        Remove(comment);
+        int changes = EduPalContext.SaveChanges();
+        return changes > 0;
     }
     
 }

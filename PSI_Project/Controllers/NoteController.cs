@@ -14,7 +14,7 @@ public class NoteController : ControllerBase
 {
     private readonly NoteRepository _noteRepository;
     private readonly NoteService _noteService;
-    private readonly ILogger<NoteController> _logger;   // TODO: add logging
+    private readonly ILogger<NoteController> _logger;
 
     public NoteController(ILogger<NoteController> logger, NoteRepository noteRepository, NoteService noteService)  // Dependency injection
     {
@@ -26,24 +26,47 @@ public class NoteController : ControllerBase
     [HttpGet("{id}")]
     public IActionResult GetNoteById(int id)
     {
-        var note = _noteRepository.GetById(id);
-        if (note == null) return NotFound();
-        return Ok(note);
+        try
+        {
+            var note = _noteRepository.GetById(id);
+            return Ok(note);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Couldn't get note {noteId}", id);
+            return StatusCode(500, "An error occured while getting note");
+        }
     }
 
     [HttpGet]
     public IActionResult GetAllNotes()
     {
-        var notes = _noteRepository.GetAll();
-        if (notes == null || !notes.Any()) return NotFound();
-        return Ok(notes);
+        try
+        {
+            var notes = _noteRepository.GetAll();
+            return Ok(notes);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Couldn't list notes");
+            return StatusCode(500, "An error occured while listing notes");
+        }
     }
     
     [HttpPost]
     public IActionResult AddNote([FromBody] NoteCreationDTO note)
     {
-        var savedNote = _noteRepository.Add(new Note(note.Name, note.Content));
-        return CreatedAtAction(nameof(GetNoteById), new { id = savedNote.Id.ToString() }, savedNote);
+        try
+        {
+            var savedNote = _noteRepository.Add(new Note(note.Name, note.Content));
+            return CreatedAtAction(nameof(GetNoteById), new { id = savedNote.Id.ToString() }, savedNote);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Couldn't add note");
+        }
+
+        return StatusCode(500, "An error occured while creating new note");
     }
 
     [HttpPost("create-pdf")]

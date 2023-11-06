@@ -20,11 +20,22 @@ public class OpenAIController : ControllerBase
     }
 
     [HttpPost("send-message")]
-    public async Task<IActionResult> SendMessage([FromBody] string userMessage, [FromQuery] string userEmail)   // TODO: add logging
+    public async Task<IActionResult> SendMessage([FromBody] string userMessage, [FromQuery] string userEmail)
     {
-        var response = await _openAIService.SendMessageAsync(userMessage, userEmail);
-        if (response == null) return BadRequest(new { error = "Failed to get response from OpenAI." });
-        return Ok(new { response });
+        try
+        {
+            var response = await _openAIService.SendMessageAsync(userMessage, userEmail);
+            if (response != null)
+            {
+                return Ok(new { response });
+            }
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Couldn't send message to OpenAI {userEmail}", userEmail);
+        }
+        
+        return BadRequest(new { error = "Failed to get response from OpenAI." });
     }
 
     [HttpGet("get-messages")]
