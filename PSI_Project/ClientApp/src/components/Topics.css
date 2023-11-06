@@ -153,3 +153,9 @@ h2 {
     padding-bottom: 0.3em;
     padding-top: 0.3em;
 }
+
+.dropdown-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

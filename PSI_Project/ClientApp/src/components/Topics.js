@@ -140,8 +140,8 @@ export const Topics = () => {
                 </div>
                 <div className="topics-grid">
                     {topics.map((topic, index) => (
-                        <div className="topic-grid-item" key={index}>
-                            <div className="topic-content" onClick={() => handleTopicClick(topic.id)} title={topic.name}>
+                        <div className="topic-grid-item" key={index} onClick={() => handleTopicClick(topic.id)}>
+                            <div className="topic-content" title={topic.name}>
                                 <h2>{topicsDisplayNames[index]}</h2>
                                 <div className="dropdown-container" onClick={(e) => e.stopPropagation()}>
                                     <select
@@ -150,7 +150,7 @@ export const Topics = () => {
                                     >
                                         <option value="2">Poor</option>
                                         <option value="1">Average</option>
-                                        <option value="0">Good</option>  
+                                        <option value="0">Good</option>
                                     </select>
                                 </div>
                             </div>
