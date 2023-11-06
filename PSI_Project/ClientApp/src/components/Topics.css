@@ -131,3 +131,25 @@ h1 {
     padding-right: 11rem;
 }
 
+h2 {
+    text-align: center;
+}
+
+.topic-grid-item select {
+    width: 150px;
+    text-align: center;
+    background-color: #3a3a80cc;
+    color: #E0E0FF; /* Text color */
+    border: none; 
+    border-radius: 0.5vw;
+}
+
+.topic-grid-item select option {
+    text-align: center; 
+}
+
+.dropdown-container select {
+    font-size: 1.2em;
+    padding-bottom: 0.3em;
+    padding-top: 0.3em;
+}

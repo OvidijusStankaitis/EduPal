@@ -35,6 +35,22 @@ public class TopicRepository : Repository<Topic>
         return changes > 0 ? newTopic : null;
     }
     
+    public bool UpdateKnowledgeLevel(string topicId, KnowledgeLevel knowledgeLevel)
+    {
+        Topic? topic = Get(topicId);
+
+        if (topic == null)
+        {
+            return false; // Topic not found
+        }
+
+        topic.KnowledgeRating = knowledgeLevel;
+        
+        EduPalContext.SaveChanges();
+
+        return true;
+    }
+    
     public bool Remove(string topicId)
     {
         Topic? topic = Get(topicId);
