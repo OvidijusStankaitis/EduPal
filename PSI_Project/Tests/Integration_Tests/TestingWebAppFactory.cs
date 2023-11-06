@@ -53,6 +53,10 @@ internal class TestingWebAppFactory : WebApplicationFactory<Program>
                     appContext.Subjects.Add(subject1);
                     appContext.Subjects.Add(subject2);
                     appContext.Subjects.Add(subject3);
+
+                    User user1 = new User("test1@test.test", "testPassword1", "testName", "testSurname");
+                    appContext.Users.Add(user1);
+                    
                     appContext.SaveChanges();
                 }
             }
