@@ -4,9 +4,17 @@ using PSI_Project.Repositories;
 using PSI_Project.Services;
 using System.Text;
 using PSI_Project.Hubs;
+using Serilog;
 
 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 var builder = WebApplication.CreateBuilder(args);
+
+var logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+
+builder.Host.UseSerilog(logger);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
