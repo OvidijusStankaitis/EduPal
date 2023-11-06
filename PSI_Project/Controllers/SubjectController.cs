@@ -11,8 +11,11 @@ namespace PSI_Project.Controllers;
 public class SubjectController : ControllerBase
 {
     private readonly SubjectRepository _subjectRepository;
-    public SubjectController(SubjectRepository subjectRepository)
+    private readonly ILogger<SubjectController> _logger;
+    
+    public SubjectController(ILogger<SubjectController> logger, SubjectRepository subjectRepository)
     {
+        _logger = logger;
         _subjectRepository = subjectRepository;
     }
 
@@ -26,14 +29,12 @@ public class SubjectController : ControllerBase
         }
         catch (ObjectNotFoundException)
         {
+            _logger.LogWarning("Tried to reach unavailable / non-existing subject {subjectId}", subjectId);
             return NotFound("There is no subject with such id");
         }
         catch (Exception ex)
         {
-            // TODO: log errors
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.StackTrace);
-
+            _logger.LogError(ex, "Couldn't get subject {subjectId} information", subjectId);
             return BadRequest("An error occured while getting the subject");
         }
     }
@@ -47,10 +48,7 @@ public class SubjectController : ControllerBase
         }
         catch (Exception ex)
         {
-            // TODO: log errors
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.StackTrace);
-            
+            _logger.LogError(ex, "Couldn't list subjects");
             return BadRequest("An error occured while listing the subjects");
         }
     }
@@ -60,7 +58,7 @@ public class SubjectController : ControllerBase
     {
         try
         {
-            Subject? addedSubject = _subjectRepository.CreateSubject(request);  // TODO: add validation
+            Subject? addedSubject = _subjectRepository.CreateSubject(request);
             if (addedSubject != null)
             {
                 return Ok(addedSubject);
@@ -70,10 +68,7 @@ public class SubjectController : ControllerBase
         }
         catch (Exception ex)
         {
-            // TODO: log errors
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.StackTrace);
-            
+            _logger.LogError(ex, "Couldn't add new subject");
             return BadRequest("An error occured while uploading the subject");
         }
     }
@@ -87,11 +82,8 @@ public class SubjectController : ControllerBase
             return Ok("Subject has been successfully deleted");
         }
         catch (Exception ex)
-        {
-            // TODO: log errors
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.StackTrace);
-            
+        {   
+            _logger.LogError(ex, "Couldn't delete subject {subjectId}", subjectId);
             return BadRequest("An error occured while deleting the subject");
         }
     }

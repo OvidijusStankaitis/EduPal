@@ -14,9 +14,11 @@ public class NoteController : ControllerBase
 {
     private readonly NoteRepository _noteRepository;
     private readonly NoteService _noteService;
+    private readonly ILogger<NoteController> _logger;   // TODO: add logging
 
-    public NoteController(NoteRepository noteRepository, NoteService noteService)  // Dependency injection
+    public NoteController(ILogger<NoteController> logger, NoteRepository noteRepository, NoteService noteService)  // Dependency injection
     {
+        _logger = logger;
         _noteService = noteService;
         _noteRepository = noteRepository;
     }
@@ -40,7 +42,6 @@ public class NoteController : ControllerBase
     [HttpPost]
     public IActionResult AddNote([FromBody] NoteCreationDTO note)
     {
-        Console.WriteLine("sdsdfsfsf");
         var savedNote = _noteRepository.Add(new Note(note.Name, note.Content));
         return CreatedAtAction(nameof(GetNoteById), new { id = savedNote.Id.ToString() }, savedNote);
     }
@@ -59,7 +60,7 @@ public class NoteController : ControllerBase
             Console.WriteLine("Successfully created PDF");
             return File(pdfStream, "application/pdf");
         }
-        catch (NoteCreationException ex)
+        catch (EntityCreationException ex)
         {
             Console.WriteLine($"NoteCreationException: {ex.Message}, StackTrace: {ex.StackTrace}");
             return BadRequest(ex.Message);

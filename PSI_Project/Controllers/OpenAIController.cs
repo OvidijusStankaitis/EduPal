@@ -10,15 +10,17 @@ public class OpenAIController : ControllerBase
 {
     private readonly OpenAIService _openAIService;
     private readonly OpenAIRepository _openAIRepository;
+    private readonly ILogger<OpenAIController> _logger;
 
-    public OpenAIController(OpenAIService openAIService, OpenAIRepository openAIRepository)
+    public OpenAIController(ILogger<OpenAIController> logger, OpenAIService openAIService, OpenAIRepository openAIRepository)
     {
+        _logger = logger;
         _openAIService = openAIService;
         _openAIRepository = openAIRepository;
     }
 
     [HttpPost("send-message")]
-    public async Task<IActionResult> SendMessage([FromBody] string userMessage, [FromQuery] string userEmail)   // TODO: resolve
+    public async Task<IActionResult> SendMessage([FromBody] string userMessage, [FromQuery] string userEmail)   // TODO: add logging
     {
         var response = await _openAIService.SendMessageAsync(userMessage, userEmail);
         if (response == null) return BadRequest(new { error = "Failed to get response from OpenAI." });
@@ -34,10 +36,7 @@ public class OpenAIController : ControllerBase
         }
         catch (Exception ex)
         {
-            // TODO: log errors
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.StackTrace);
-            
+            _logger.LogError(ex, "Error while getting openAI chat {userEmail}", userEmail);
             return BadRequest("An error occured while getting the messages");
         }
     }

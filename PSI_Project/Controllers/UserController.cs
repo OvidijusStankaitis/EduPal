@@ -11,9 +11,11 @@ namespace PSI_Project.Controllers;
 public class UserController : ControllerBase
 {
     private readonly UserRepository _userRepository;
+    private readonly ILogger<UserController> _logger;
 
-    public UserController(UserRepository userRepository)
+    public UserController(ILogger<UserController> logger, UserRepository userRepository)
     {
+        _logger = logger;
         _userRepository = userRepository;
     }
 
@@ -30,9 +32,7 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            // TODO: log errors
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.StackTrace);
+            _logger.LogError(ex, "Couldn't register user {NewUserModel}", newUser);
         }
 
         return BadRequest(new { success = false, message = "Invalid payload." });
@@ -51,9 +51,7 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            // TODO: log errors
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.StackTrace);
+            _logger.LogError(ex, "Couldn't check user login information");
         }
 
         return BadRequest(new { success = false, message = "Invalid payload." });

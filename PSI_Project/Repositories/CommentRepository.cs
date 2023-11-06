@@ -24,13 +24,11 @@ public class CommentRepository : Repository<Comment>
             .FirstOrDefault(comment => comment.Id.Equals(itemId));
     }
     
-    public bool Remove(string commentId)    // TODO: resolve, might be not not needed
+    public bool Remove(string commentId)
     {
         try
         {
-            Comment? comment = Get(commentId);
-            if (comment is null)
-                return false;
+            Comment comment = Get(commentId);
 
             Remove(comment);
             int changes = EduPalContext.SaveChanges();
@@ -39,9 +37,7 @@ public class CommentRepository : Repository<Comment>
         }
         catch (Exception ex)
         {
-            // TODO: log errors
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.StackTrace);
+            // TODO: do something with undeleted comments
             throw new EntityDeletionException("Error occured while trying to delete comment", ex);
         }
     }

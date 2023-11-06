@@ -11,9 +11,11 @@ namespace PSI_Project.Controllers;
 public class CommentController : ControllerBase
 {
     private readonly CommentRepository _commentRepository;
+    private readonly ILogger<CommentController> _logger; 
 
-    public CommentController(CommentRepository commentRepository)
+    public CommentController(ILogger<CommentController> logger, CommentRepository commentRepository)
     {
+        _logger = logger; 
         _commentRepository = commentRepository;
     }
     
@@ -27,11 +29,9 @@ public class CommentController : ControllerBase
         }
         catch (Exception ex)
         {
-            // TODO: log errors
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.StackTrace);
+            _logger.LogError(ex, "Couldn't list topic {topicId} comments", topicId);
         }
         
-        return BadRequest("An error occured while getting all topic comments"); // TODO: think of better way of showing error to a user
+        return BadRequest("An error occured while getting all topic comments");
     }
 }

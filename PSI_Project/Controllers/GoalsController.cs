@@ -9,9 +9,11 @@ namespace PSI_Project.Controllers
     public class GoalsController : ControllerBase
     {
         private readonly GoalService _goalService;
+        private readonly ILogger<GoalsController> _logger;  // TODO: add logging
 
-        public GoalsController(GoalService goalService)
+        public GoalsController(ILogger<GoalsController> logger, GoalService goalService)
         {
+            _logger = logger;
             _goalService = goalService;
         }
 

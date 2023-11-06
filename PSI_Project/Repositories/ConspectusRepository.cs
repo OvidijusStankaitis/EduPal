@@ -52,7 +52,7 @@ public class ConspectusRepository : Repository<Conspectus>
             try
             {
                 string fileName = formFile.FileName;
-                if (!fileName.IsValidFileName()) // TODO: make useful validation
+                if (!fileName.IsValidFileName())
                 {
                     Console.WriteLine($"The file {fileName} is not a valid PDF format.");
                     continue;
@@ -76,15 +76,12 @@ public class ConspectusRepository : Repository<Conspectus>
             }
             catch (Exception ex)
             {
-                // TODO: log errors
                 // TODO: mb do something with un-uploaded file
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
                 throw new EntityCreationException("Error occured while uploading one of the files", ex);
             }
         }
 
-        return GetConspectusListByTopicId(topicId); // TODO: mb other return type is better?
+        return GetConspectusListByTopicId(topicId);
     }
     
     public Conspectus ChangeRating(string conspectusId, bool toIncrease)

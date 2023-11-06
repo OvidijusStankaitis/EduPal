@@ -11,9 +11,11 @@ namespace PSI_Project.Controllers;
 public class ConspectusController : ControllerBase
 {
     private readonly ConspectusRepository _conspectusRepository;
+    private readonly ILogger<ConspectusController> _logger;
 
-    public ConspectusController(ConspectusRepository conspectusRepository)
+    public ConspectusController(ILogger<ConspectusController> logger, ConspectusRepository conspectusRepository)
     {
+        _logger = logger;
         _conspectusRepository = conspectusRepository;
     }
 
@@ -27,10 +29,7 @@ public class ConspectusController : ControllerBase
         }
         catch (Exception ex)
         {
-            // TODO: log errors
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.StackTrace);
-            
+            _logger.LogError(ex, "Couldn't get conspectus {conspectusId} information", conspectusId);
             return NotFound(new { error = "File not found." });
         }
     }
@@ -44,10 +43,7 @@ public class ConspectusController : ControllerBase
         }
         catch (Exception ex)
         {
-            // TODO: log errors
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.StackTrace);
-            
+            _logger.LogError(ex, "Couldn't list topic {topicId} conspectuses", topicId);            
             return BadRequest("An error occured while uploading file");
         }
     }
@@ -61,10 +57,7 @@ public class ConspectusController : ControllerBase
         }
         catch (Exception ex)
         {
-            // TODO: log errors
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.StackTrace);
-            
+            _logger.LogError(ex, "Couldn't add new conspectus(es)");
             return BadRequest("An error occured while uploading file");
         }
     }
@@ -80,10 +73,7 @@ public class ConspectusController : ControllerBase
         }
         catch (Exception ex)
         {
-            // TODO: log errors
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.StackTrace);
-            
+            _logger.LogError("Couldn't download conspectus {conspectusId}", conspectusId);
             return BadRequest("An error occured while downloading file");
         }
     }
@@ -98,10 +88,7 @@ public class ConspectusController : ControllerBase
         }
         catch (Exception ex)
         {
-            // TODO: log errors
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.StackTrace);
-            
+            _logger.LogError(ex, "Couldn't delete conspectus {conspectusId}", conspectusId);
             return BadRequest("An error occured while deleting file");
         }
     }
@@ -116,9 +103,7 @@ public class ConspectusController : ControllerBase
         }
         catch (Exception ex)
         {
-            // TODO: log errors
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.StackTrace);
+            _logger.LogError(ex, "Couldn't rate up conspectus {conspectusId}", conspectusId);
         }
         
         return NotFound(new { error = "File not found in database." });
@@ -134,10 +119,7 @@ public class ConspectusController : ControllerBase
         }
         catch (Exception ex)
         {
-            // TODO: log errors
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.StackTrace);
-            
+            _logger.LogError(ex, "Couldn't rate down conspectus {conspectusId}", conspectusId);
             return NotFound(new { error = "File not found in database." }); 
         }
     }
