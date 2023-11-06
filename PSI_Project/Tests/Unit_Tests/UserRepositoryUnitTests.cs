@@ -16,7 +16,7 @@ public class UserRepositoryUnitTests
         _context = new EduPalDatabaseContext(_options); //should it be in using? 
         _userRepository = new UserRepository(_context);
         
-        //adding one test element for a test DB 
+        // adding one test element for a test DB 
         var user = new User("test@test.test", "testPassword", "testName", "testSurname");
         _context.Users.Add(user);
         _context.SaveChanges();
@@ -37,11 +37,6 @@ public class UserRepositoryUnitTests
 
         // Act
         var result = _userRepository.CheckUserRegister(user);
-        var users = _context.Users.ToList();
-        foreach (var u in users)
-        {
-            Console.WriteLine(u);
-        }
         // Assert
         Assert.True(result);
     }
