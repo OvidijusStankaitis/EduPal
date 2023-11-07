@@ -18,7 +18,7 @@ export const Conspectus = () => {
     const [showOpenAIDialog, setShowOpenAIDialog] = useState(false);
     const [showComments, setShowComments] = useState(false);
     const [showNote, setShowNote] = useState(false);
-    const [open, setOpen] = useState(false);
+    const [fileDropdowns, setFileDropdowns] = useState({});
 
     useEffect(() => {
         fetch(`https://localhost:7283/Topic/get/${topicId}`)
@@ -138,8 +138,8 @@ export const Conspectus = () => {
             .catch((err) => {console.error("Error rating file: ", err)})
     }
     
-    const handleOpen = () => {
-        setOpen(!open);
+    const handleOpen = (index) => {
+        fileDropdowns[index] = !fileDropdowns[index];
     }
 
     return (
@@ -181,20 +181,22 @@ export const Conspectus = () => {
                                     
                                     <div className="conspectus-rating">{file.rating}</div>
                                     
-                                    <button className="small-button" onClick={handleOpen}>
-                                        {'\uFE19'}
-                                    </button>
-                                    
-                                    {open ? (
-                                        <ul className="menu">
-                                            <li className="menu-item">
-                                                <button onClick={() => handleFileDownload(file.id)}>Download</button>
-                                            </li>
-                                            <li className="menu-item">
-                                                <button onClick={() => handleFileDelete(file.id)}>Delete</button>
-                                            </li>
-                                        </ul>
-                                    ) : null}
+                                    <div className="Dropdown">
+                                        <button className="small-button" onClick={() => handleOpen(index)}>
+                                            {'\uFE19'}
+                                        </button>
+
+                                        {fileDropdowns[index] ? (
+                                            <ul className="menu">
+                                                <li className="menu-item">
+                                                    <button onClick={() => handleFileDownload(file.id)}>Download</button>
+                                                </li>
+                                                <li className="menu-item">
+                                                    <button onClick={() => handleFileDelete(file.id)}>Delete</button>
+                                                </li>
+                                            </ul>
+                                        ) : null}
+                                    </div>
                                 </li>
                             ))
                         ) : (
