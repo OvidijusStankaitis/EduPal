@@ -7,7 +7,6 @@ import { OpenAIDialogue } from './OpenAIDialogue';
 import { Comments } from "./Comments";
 import { Note } from "./Note";
 import Notes from "../assets/Notes.webp";
-
 export const Conspectus = () => {
     const { topicId } = useParams();
     const [topicName, setTopicName] = useState("");
@@ -29,7 +28,7 @@ export const Conspectus = () => {
             .catch(error => console.error('Error getting topic name:', error));
     }, []);
 
-    useEffect(() => {
+    useEffect(() => {        
         fetch(`https://localhost:7283/Conspectus/list/${topicId}`)
             .then(response => response.json())
             .then(data => {

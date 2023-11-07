@@ -16,7 +16,7 @@ export const Topics = () => {
     const [showPomodoroDialog, setShowPomodoroDialog] = useState(false)
     const [showOpenAIDialog, setShowOpenAIDialog] = useState(false);
     const navigate = useNavigate();
-
+    
     useEffect(() => {
         fetch(`https://localhost:7283/Subject/get/${subjectId}`)
             .then(response => response.json())

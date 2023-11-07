@@ -1,18 +1,21 @@
-﻿namespace PSI_Project.Models;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-public class Comment : BaseEntity 
+namespace PSI_Project.Models;
+
+public class Comment : BaseEntity
 {
-    //public string TopicId { get; init; }
+    [ForeignKey("TopicId")]
+    public string TopicId { get; set; }
     public Topic Topic { get; init; }
+    [ForeignKey("UserId")]
+    public string UserId { get; set; }
+    public User User { get; init; }
     public string CommentText { get; init; }
-
-    public Comment()
+    
+    public Comment(string userId, string topicId, string commentText)
     {
-    }
-
-    public Comment(Topic topic, string commentText)
-    {
-        Topic = topic;
+        UserId = userId;
+        TopicId = topicId;
         CommentText = commentText;
     }
 }

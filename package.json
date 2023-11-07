@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@microsoft/signalr": "^7.0.12",
     "pdfjs-dist": "^3.11.174",
     "react-pdf": "^7.3.3"
   }

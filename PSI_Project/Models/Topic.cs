@@ -6,7 +6,7 @@ public class Topic : BaseEntity
     public KnowledgeLevel KnowledgeRating { get; set; }
     public Subject Subject { get; init; }
 
-    public Topic()
+    private Topic() // used by EF
     {
     }
 
