@@ -1,6 +1,5 @@
 ﻿using PdfSharp.Pdf;
 using PdfSharp.Drawing;
-using PdfSharp.Drawing.Layout;
 using PSI_Project.Models;
 using PSI_Project.Exceptions;
 using System.Text;
@@ -20,36 +19,77 @@ public class NoteService
         var pdf = new PdfDocument();
         var page = pdf.AddPage();
         var gfx = XGraphics.FromPdfPage(page);
-            
-        var font = new XFont("Arial", 20, XFontStyle.Bold);
+        var font = new XFont("Verdana", 15, XFontStyle.Regular);
 
-        var format = new XStringFormat();
-        format.Alignment = XStringAlignment.Near;
-        format.LineAlignment = XLineAlignment.Near;
+        const double leftMargin = 50;
+        const double topMargin = 50;
+        const double bottomMargin = 50;
 
-        var wrappedText = InsertLineBreaks(note.Content, 80); // Insert line breaks after 80 characters
-        var formatter = new XTextFormatter(gfx);
-        formatter.DrawString(wrappedText, font, XBrushes.Black, new XRect(0, 0, page.Width, page.Height), format);
+        double currentYPosition = topMargin;
+
+        var paragraphs = note.Content.Replace("\r\n", "\n").Split('\n');
+
+        foreach (var paragraph in paragraphs)
+        {
+            var words = paragraph.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            var line = new StringBuilder();
+
+            foreach (var word in words)
+            {
+                var testLine = line + (line.Length == 0 ? "" : " ") + word;
+                var testLineWidth = gfx.MeasureString(testLine, font).Width;
+
+                if (testLineWidth > page.Width - leftMargin * 2)
+                {
+                    if (line.Length > 0)
+                    {
+                        gfx.DrawString(line.ToString(), font, XBrushes.Black, leftMargin, currentYPosition);
+                        line.Clear();
+                    }
+
+                    currentYPosition += font.Height;
+
+                    if (currentYPosition > page.Height - bottomMargin - font.Height)
+                    {
+                        page = pdf.AddPage();
+                        gfx.Dispose();
+                        gfx = XGraphics.FromPdfPage(page);
+                        currentYPosition = topMargin;
+                    }
+
+                    line.Append(word);
+                }
+                else
+                {
+                    if (line.Length > 0)
+                    {
+                        line.Append(" ");
+                    }
+                    line.Append(word);
+                }
+            }
+
+            if (line.Length > 0)
+            {
+                gfx.DrawString(line.ToString(), font, XBrushes.Black, leftMargin, currentYPosition);
+                currentYPosition += font.Height; 
+            }
+
+            currentYPosition += font.Height;
+        }
+
+        if (currentYPosition > topMargin)
+        {
+            currentYPosition -= font.Height;
+        }
 
         var stream = new MemoryStream();
         pdf.Save(stream, false);
         stream.Position = 0;
 
+        gfx.Dispose();
+
         return await Task.FromResult(stream);
     }
-
-    private string InsertLineBreaks(string text, int maxChars)
-    {
-        if (text.Contains(" ")) return text; // If text contains spaces, return as is
-
-        var sb = new StringBuilder();
-        for (int i = 0; i < text.Length; i += maxChars)
-        {
-            if (i + maxChars < text.Length)
-                sb.AppendLine(text.Substring(i, maxChars));
-            else
-                sb.Append(text.Substring(i));
-        }
-        return sb.ToString();
-    }
 }
+

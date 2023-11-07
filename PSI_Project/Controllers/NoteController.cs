@@ -39,6 +39,11 @@ public class NoteController : ControllerBase
     [HttpPost]
     public IActionResult AddNote([FromBody] Note note)
     {
+        if (string.IsNullOrWhiteSpace(note.Name) || string.IsNullOrWhiteSpace(note.Content))
+        {
+            return BadRequest("Note name and content must not be empty.");
+        }
+        
         var savedNote = _noteRepository.Add(note);
         return CreatedAtAction(nameof(GetNoteById), new { id = savedNote.Id.ToString() }, savedNote);
     }

@@ -37,7 +37,6 @@ export const Note = ({ show, onClose, topicId }) => {
     };
 
     const handleExport = async () => {
-        console.log("Sending Data:", JSON.stringify({ Content: noteContent, Name: noteName }));
         const response = await fetch("https://localhost:7283/Note/create-pdf", {
             method: "POST",
             headers: {
@@ -45,7 +44,6 @@ export const Note = ({ show, onClose, topicId }) => {
             },
             body: JSON.stringify({ Content: noteContent, Name: noteName })
         });
-        console.log("Received Response:", response);
         if (!response.ok) {
             console.log("Response Text:", await response.text());
             return;
@@ -56,6 +54,40 @@ export const Note = ({ show, onClose, topicId }) => {
         a.href = url;
         a.download = `${noteName}.pdf`;
         a.click();
+    };
+
+    const handleUpload = async () => {
+        try {
+            const exportResponse = await fetch("https://localhost:7283/Note/create-pdf", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ Content: noteContent, Name: noteName })
+            });
+
+            if (!exportResponse.ok) {
+                throw new Error("Error creating PDF");
+            }
+            const blob = await exportResponse.blob();
+
+            const formData = new FormData();
+            formData.append('files', blob, `${noteName}.pdf`);
+
+            const uploadResponse = await fetch(`https://localhost:7283/Conspectus/upload/${topicId}`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!uploadResponse.ok) {
+                throw new Error('Error uploading PDF');
+            }
+            const data = await uploadResponse.json();
+            console.log('PDF uploaded successfully:', data);
+            window.location.reload();
+        } catch (error) {
+            console.error('Failed to create or upload PDF:', error);
+        }
     };
 
     const handleSave = async () => {
@@ -107,6 +139,7 @@ export const Note = ({ show, onClose, topicId }) => {
             <div className="button-group1">
                 <button className="modify-note" onClick={handleSave}>Save</button>
                 <button className="modify-note" onClick={handleExport}>Export</button>
+                <button className="modify-note" onClick={handleUpload}>Upload</button>
                 <button className="modify-note" onClick={onClose}>Cancel</button>
             </div>
 
