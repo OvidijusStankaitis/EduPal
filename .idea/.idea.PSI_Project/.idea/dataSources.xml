@@ -8,15 +8,7 @@
       <jdbc-url>jdbc:postgresql://localhost:5432/postgres</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="EduPal@localhost" uuid="fecf2fe6-3f4c-4398-8ef8-e1dc7058c7e6">
-      <driver-ref>postgresql</driver-ref>
-      <synchronize>true</synchronize>
-      <configured-by-url>true</configured-by-url>
-      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost/EduPal?password=bred1&amp;user=postgres</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
-    <data-source source="LOCAL" name="EduPal@localhost [2]" uuid="2d8ecbf6-52ab-450b-b6d5-451ff06f48a6">
+    <data-source source="LOCAL" name="EduPal@localhost" uuid="2d8ecbf6-52ab-450b-b6d5-451ff06f48a6">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>

@@ -34,6 +34,7 @@ builder.Services.AddTransient<SubjectRepository>();
 builder.Services.AddTransient<TopicRepository>();
 builder.Services.AddTransient<UserRepository>();
 builder.Services.AddTransient<ConspectusRepository>();
+builder.Services.AddTransient<ConspectusService>();
 builder.Services.AddTransient<CommentRepository>();
 builder.Services.AddTransient<OpenAIService>();
 builder.Services.AddTransient<OpenAIRepository>();
