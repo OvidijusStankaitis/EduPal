@@ -29,7 +29,7 @@ export const Conspectus = () => {
             .catch(error => console.error('Error getting topic name:', error));
     }, []);
 
-    useEffect(() => {        
+    useEffect(() => {
         fetch(`https://localhost:7283/Conspectus/list/${topicId}`)
             .then(response => response.json())
             .then(data => {
@@ -46,7 +46,7 @@ export const Conspectus = () => {
                 setFiles(fileList);
             })
             .catch(error => console.error('Error fetching files:', error));
-    }, [topicId, files]);
+    }, [topicId]);
 
     const handleFileChange = (event) => {
         const fileList = Array.from(event.target.files).map(file => {
@@ -129,24 +129,33 @@ export const Conspectus = () => {
         })
             .then(response => response.json())
             .then(data => {
-                const fileIndex = files.findIndex(file => file.id === id);
-                files[fileIndex].rating = data.rating;
-                setFiles(files);
-                console.log("data", files)
+                setFiles(prevFiles => {
+                    const updatedFiles = prevFiles.map(file => {
+                        if (file.id === id) {
+                            return { ...file, rating: data.rating };
+                        }
+                        return file;
+                    });
+                    return updatedFiles;
+                });
             })
-            .catch((err) => {console.error("Error rating file: ", err)})
-    }
-    
+            .catch(err => {
+                console.error("Error rating file: ", err);
+            });
+    };
+
     const handleOpen = (index) => {
-        fileDropdowns[index] = !fileDropdowns[index];
-    }
+        setFileDropdowns(prevDropdowns => {
+            return { ...prevDropdowns, [index]: !prevDropdowns[index] };
+        });
+    };
 
     return (
         <div className="user-panel">
             <div className="header">
                 <h1 title={topicName} className="truncated-text">{truncatedTopicName}</h1>
                 <img className="notes" src={Notes} alt="notes" onClick={() => setShowNote(true)}/>
-                <UserComponent 
+                <UserComponent
                     setShowPomodoroDialog={setShowPomodoroDialog}
                     setShowOpenAIDialog={setShowOpenAIDialog}
                 />
@@ -169,7 +178,7 @@ export const Conspectus = () => {
                                     >
                                         {file.truncatedName}
                                     </button>
-                                    
+
                                     <button className="small-button vote-up-button" onClick={() => handleVote(file.id, true)}>
                                         {'\u25B2'}
                                     </button>
@@ -177,9 +186,9 @@ export const Conspectus = () => {
                                     <button className="small-button vote-down-button" onClick={() => handleVote(file.id, false)}>
                                         {'\u25BC'}
                                     </button>
-                                    
+
                                     <div className="conspectus-rating">{file.rating}</div>
-                                    
+
                                     <div className="Dropdown">
                                         <button className="small-button" onClick={() => handleOpen(index)}>
                                             {'\uFE19'}
@@ -210,8 +219,8 @@ export const Conspectus = () => {
                     show={showPomodoroDialog}
                     onClose={() => setShowPomodoroDialog(false)}
                 />
-                <OpenAIDialogue 
-                    show={showOpenAIDialog} 
+                <OpenAIDialogue
+                    show={showOpenAIDialog}
                     onClose={() => setShowOpenAIDialog(false)}
                 />
                 <Comments
