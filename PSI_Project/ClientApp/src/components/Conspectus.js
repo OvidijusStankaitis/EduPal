@@ -17,6 +17,7 @@ export const Conspectus = () => {
     const [showOpenAIDialog, setShowOpenAIDialog] = useState(false);
     const [showComments, setShowComments] = useState(false);
     const [showNote, setShowNote] = useState(false);
+    const [fileDropdowns, setFileDropdowns] = useState({});
 
     useEffect(() => {
         fetch(`https://localhost:7283/Topic/get/${topicId}`)
@@ -37,6 +38,7 @@ export const Conspectus = () => {
                     return {
                         id: fileObj.id,
                         name: fileName,
+                        rating: fileObj.rating,
                         truncatedName: fileName.length > 11 ? fileName.substring(0, 11) + "..." : fileName,
                         isSelected: false
                     };
@@ -44,13 +46,14 @@ export const Conspectus = () => {
                 setFiles(fileList);
             })
             .catch(error => console.error('Error fetching files:', error));
-    }, [topicId]);
+    }, [topicId, files]);
 
     const handleFileChange = (event) => {
         const fileList = Array.from(event.target.files).map(file => {
             return {
                 name: file.name,
                 data: file,
+                rating: file.rating,
                 isSelected: false
             };
         });
@@ -70,6 +73,7 @@ export const Conspectus = () => {
                     return {
                         id: fileObj.id,
                         name: fileName,
+                        rating: fileObj.rating,
                         truncatedName: fileName.length > 11 ? fileName.substring(0, 11) + "..." : fileName, // add truncatedName here
                         isSelected: false
                     };
@@ -119,6 +123,24 @@ export const Conspectus = () => {
             .catch(error => console.error('Error deleting file:', error));
     };
 
+    const handleVote = (id, voteType) => {
+        fetch(`https://localhost:7283/Conspectus/${voteType ? 'rateUp' : 'rateDown'}/${id}`, {
+            method: 'POST'
+        })
+            .then(response => response.json())
+            .then(data => {
+                const fileIndex = files.findIndex(file => file.id === id);
+                files[fileIndex].rating = data.rating;
+                setFiles(files);
+                console.log("data", files)
+            })
+            .catch((err) => {console.error("Error rating file: ", err)})
+    }
+    
+    const handleOpen = (index) => {
+        fileDropdowns[index] = !fileDropdowns[index];
+    }
+
     return (
         <div className="user-panel">
             <div className="header">
@@ -139,7 +161,7 @@ export const Conspectus = () => {
                     <ul className="files-list">
                         {files.length > 0 ? (
                             files.map((file, index) => (
-                                <li key={index}>
+                                <li className="file-element" key={index}>
                                     <button
                                         className="small-button file-name"
                                         onClickCapture={() => handleFileClick(file.id)}
@@ -147,12 +169,33 @@ export const Conspectus = () => {
                                     >
                                         {file.truncatedName}
                                     </button>
-                                    <button className="small-button download-button" onClick={() => handleFileDownload(file.id)}>
-                                        Download
+                                    
+                                    <button className="small-button vote-up-button" onClick={() => handleVote(file.id, true)}>
+                                        {'\u25B2'}
                                     </button>
-                                    <button className="small-button delete-button" onClick={() => handleFileDelete(file.id)}>
-                                        Delete
+
+                                    <button className="small-button vote-down-button" onClick={() => handleVote(file.id, false)}>
+                                        {'\u25BC'}
                                     </button>
+                                    
+                                    <div className="conspectus-rating">{file.rating}</div>
+                                    
+                                    <div className="Dropdown">
+                                        <button className="small-button" onClick={() => handleOpen(index)}>
+                                            {'\uFE19'}
+                                        </button>
+
+                                        {fileDropdowns[index] ? (
+                                            <ul className="menu">
+                                                <li className="menu-item">
+                                                    <button onClick={() => handleFileDownload(file.id)}>Download</button>
+                                                </li>
+                                                <li className="menu-item">
+                                                    <button onClick={() => handleFileDelete(file.id)}>Delete</button>
+                                                </li>
+                                            </ul>
+                                        ) : null}
+                                    </div>
                                 </li>
                             ))
                         ) : (

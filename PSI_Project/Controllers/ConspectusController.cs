@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PSI_Project.DTO;
 using PSI_Project.Repositories;
+using PSI_Project.Services;
 
 namespace PSI_Project.Controllers;
 
@@ -8,10 +9,11 @@ namespace PSI_Project.Controllers;
 [Route("[controller]")]
 public class ConspectusController : ControllerBase
 {
+    private readonly ConspectusService _conspectusService;
     private readonly ConspectusRepository _conspectusRepository;
-
-    public ConspectusController(ConspectusRepository conspectusRepository)
+    public ConspectusController(ConspectusService conspectusService, ConspectusRepository conspectusRepository)
     {
+        _conspectusService = conspectusService;
         _conspectusRepository = conspectusRepository;
     }
 
@@ -27,7 +29,7 @@ public class ConspectusController : ControllerBase
     [HttpGet("list/{topicId}")]
     public IActionResult GetTopicFiles(string topicId)
     {
-        return Ok(_conspectusRepository.GetConspectusListByTopicId(topicId));
+        return Ok(_conspectusService.GetConspectuses(topicId));
     }
 
     [HttpPost("upload/{topicId}")]
