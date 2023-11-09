@@ -1,64 +1,85 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import './Comments.css';
+import {HttpTransportType, HubConnectionBuilder} from "@microsoft/signalr";
+import {useUserContext} from "../UserContext";
+import {User} from "oidc-client";
 
 export const Comments = ({ show, onClose, topicId }) => {
+    const { userId } = useUserContext()
     const [comments, setComments] = useState([]);
     const [currentComment, setCurrentComment] = useState('');
     const chatContentRef = React.createRef();
+    const [connection, setConnection] = useState(null);
 
     useEffect(() => {
         if (show) {
+            initWSConnection();
+            
             fetch(`https://localhost:7283/Comment/get/${topicId}`)
                 .then(response => response.json())
                 .then(data => setComments(data))
                 .catch(error => console.error("Error fetching comments:", error));
         }
+
         if (chatContentRef.current) {
             chatContentRef.current.scrollTop = chatContentRef.current.scrollHeight;
         }
     }, [show, topicId]);
-
-    const handleSend = () => {
-        if (currentComment.trim() !== '') {
-            const newComment = {
-                topicId: topicId,
-                commentText: currentComment
-            };
-
-            fetch(`https://localhost:7283/Comment/upload`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(newComment)
+    
+    const initWSConnection = () => {
+        const newConnection = new HubConnectionBuilder()
+            .withUrl("https://localhost:7283/chat-hub", {
+                skipNegotiation: true,
+                transport: HttpTransportType.WebSockets
             })
-                .then(response => response.json())
-                .then(data => {
-                    setComments(prevComments => [...prevComments, data]);
-                    setCurrentComment('');
-                })
-                .catch(error => console.error("Error posting comment:", error));
+            .withAutomaticReconnect()
+            .build();
+
+        newConnection.on("ReceiveMessage", (id, senderId, messageContent) => {
+            const newComment = {
+                id: id,
+                userId: senderId,
+                commentText: messageContent
+            }
+            setComments(prevComments => [...prevComments,newComment])
+        });
+
+        newConnection.on("DeleteMessage", (messageId) => {
+            setComments(prevComments => prevComments.filter(comment => comment.id !== messageId));
+        });
+        
+        newConnection.start()
+            .then(() => {
+                newConnection.invoke("AddToBroadcastGroup", topicId);
+                setConnection(newConnection);
+            });
+    }
+    
+    const handleSend = async () => {
+        if (currentComment.trim() !== '') {            
+            await connection.invoke("SendMessage", userId, topicId, currentComment);
+            setCurrentComment('');
         }
         if (chatContentRef.current) {
             chatContentRef.current.scrollTop = chatContentRef.current.scrollHeight;
         }
     };
 
-    const handleDelete = (commentId) => {
-        fetch(`https://localhost:7283/Comment/delete/${commentId}`, {
-            method: 'DELETE',
-        })
-            .then(response => {
-                if(response.ok) {
-                    setComments(prevComments => prevComments.filter(comment => comment.id !== commentId));
-                } else {
-                    console.error("Error deleting comment:", response.statusText);
-                }
-            })
-            .catch(error => console.error("Error deleting comment:", error));
+    const handleDelete = async (commentId) => {
+        if (commentId != null) {
+            await connection.invoke("DeleteMessage",  String(commentId));
+        }
     };
 
-    if (!show) return null;
+    if (!show) {
+        if (connection) {
+            connection.stop().then(() => {
+                setConnection(connection);
+            });
+        }
+        
+        return null;   
+    }
 
     return (
         <div className="comments">
@@ -73,12 +94,15 @@ export const Comments = ({ show, onClose, topicId }) => {
                                 <div className="comment-text-content">
                                     {comment.commentText}
                                 </div>
-                                <button
-                                    className="delete-button1"
-                                    onClick={() => handleDelete(comment.id)}
-                                >
-                                    🗑️
-                                </button>
+                                
+                                {comment.userId === userId 
+                                    ? (<button
+                                        className="delete-button1"
+                                        onClick={() => handleDelete(comment.id)}>
+                                        🗑️
+                                    </button>) 
+                                    : (<div></div>)
+                                }
                             </div>
                         ))}
 

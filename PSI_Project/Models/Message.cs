@@ -7,7 +7,7 @@ public class Message : BaseEntity
     public bool IsUserMessage { get; set; }
     public User Sender { get; set; }
 
-    public Message()
+    private Message()   // used by EF
     {
     }
 

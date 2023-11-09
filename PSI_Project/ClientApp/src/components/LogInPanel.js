@@ -4,7 +4,7 @@ import './LogInPanel.css';
 import { useUserContext } from '../UserContext'; // Import the hook
 
 export const LogInPanel = () => {
-    const { setUserEmail } = useUserContext(); // Access setUserEmail from the context
+    const { setUserId, setUserEmail } = useUserContext(); // Access setUserId, setUserEmail from the context
     const [showDialog, setShowDialog] = useState(false);
     const [targetRoute, setTargetRoute] = useState('');
     const [email, setEmail] = useState('');
@@ -58,6 +58,7 @@ export const LogInPanel = () => {
         const data = await response.json();
         if (data.success) {
             localStorage.clear();
+            setUserId(data.userId)
             setUserEmail(email); // Set the user's email directly in the parent component
             localStorage.setItem('userEmail', email);
             navigate(targetRoute);
@@ -77,8 +78,10 @@ export const LogInPanel = () => {
             body: JSON.stringify({ name, surname, email, password })
         });
         const data = await response.json();
+        console.log("REGISTER DATA: ", data);
         if (data.success) {
             localStorage.clear();
+            setUserId(data.userId);
             setUserEmail(email);
             localStorage.setItem('userEmail', email);
             navigate(targetRoute);

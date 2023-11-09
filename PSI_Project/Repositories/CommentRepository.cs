@@ -12,7 +12,7 @@ public class CommentRepository : Repository<Comment>
     
     public List<Comment> GetAllCommentsOfTopic(string topicId)
     {
-        return EduPalContext.Comments.Select(comment => comment).Where(comment => comment.Topic.Id.Equals(topicId)).ToList();
+        return EduPalContext.Comments.Select(comment => comment).Where(comment => comment.TopicId.Equals(topicId)).ToList();
     }
     
     public Comment? GetItemById(string itemId)  
@@ -22,16 +22,18 @@ public class CommentRepository : Repository<Comment>
     
     public Comment? CreateComment(JsonElement request)
     {
-        if (request.TryGetProperty("commentText", out var commentTextProperty) &&
+        if (request.TryGetProperty("senderId", out var senderProperty) &&
+            request.TryGetProperty("commentText", out var commentTextProperty) &&
             request.TryGetProperty("topicId", out var topicIdProperty))
         {
+            string? senderId = senderProperty.GetString();
             string? commentText = commentTextProperty.GetString();
             string? topicId = topicIdProperty.GetString();
             
-            if (topicId != null && commentText != null)
+            if (senderId != null && topicId != null && commentText != null)
             {
-                Topic topic = EduPalContext.Topics.Find(topicId);
-                Comment newComment = new Comment(topic, commentText);
+                // Topic topic = EduPalContext.Topics.Find(topicId); TODO: check if such topic exists
+                Comment newComment = new Comment(senderId, topicId, commentText);
                 Add(newComment);
                 int changes = EduPalContext.SaveChanges();
                 

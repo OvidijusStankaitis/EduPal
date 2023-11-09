@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
+using PSI_Project.DTO;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
 using PSI_Project.Services;
@@ -37,9 +38,10 @@ public class NoteController : ControllerBase
     }
     
     [HttpPost]
-    public IActionResult AddNote([FromBody] Note note)
+    public IActionResult AddNote([FromBody] NoteCreationDTO note)
     {
-        var savedNote = _noteRepository.Add(note);
+        Console.WriteLine("sdsdfsfsf");
+        var savedNote = _noteRepository.Add(new Note(note.Name, note.Content));
         return CreatedAtAction(nameof(GetNoteById), new { id = savedNote.Id.ToString() }, savedNote);
     }
 
