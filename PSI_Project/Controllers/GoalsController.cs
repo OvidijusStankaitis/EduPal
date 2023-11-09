@@ -17,6 +17,14 @@ namespace PSI_Project.Controllers
             _logger = logger;
             _goalService = goalService;
         }
+        // DTO object specific to Goals class only (specifically POST update-study-time endpoint)
+        // so that's why it is here rather than Models folder.
+        public class StudyTimeUpdateRequest
+        {
+            public string UserId { get; set; }
+            public string SubjectId { get; set; }
+            public double ElapsedHours { get; set; }
+        }
 
         [HttpPost("create")]
         public IActionResult CreateDailyGoal([FromBody] Goal goalRequest)
@@ -80,6 +88,17 @@ namespace PSI_Project.Controllers
                 _logger.LogError(ex, "Couldn't get user {userId} goals", userId);
                 return StatusCode(500, "An error occured while getting user goals");
             }
+        }
+
+        [HttpPost("update-study-time")]
+        public IActionResult UpdateStudyTime([FromBody] StudyTimeUpdateRequest request)
+        {
+            if (_goalService.UpdateHoursStudied(request.UserId, request.SubjectId, request.ElapsedHours))
+            {
+                return Ok(new { success = true, message = "Hours updated successfully." });
+            }
+
+            return BadRequest(new { success = false, message = "Failed to update hours." });
         }
     }
 }

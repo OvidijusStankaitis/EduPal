@@ -54,7 +54,7 @@ public class NoteController : ControllerBase
     }
     
     [HttpPost]
-    public IActionResult AddNote([FromBody] NoteCreationDTO note)
+    public IActionResult AddNote([FromBody] Note note)
     {
         try
         {

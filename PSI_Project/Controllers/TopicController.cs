@@ -73,6 +73,40 @@ public class TopicController : ControllerBase
             return BadRequest("An error occured while uploading topic");
         }
     }
+    
+    [HttpPut("updateKnowledgeLevel")]
+    public IActionResult UpdateKnowledgeLevel([FromBody] JsonElement request)
+    {
+        try
+        {
+            string topicId = request.GetProperty("topicId").GetString();
+            string knowledgeLevel = request.GetProperty("knowledgeLevel").GetString();
+
+            // Check if the knowledge level is valid (Good, Average, Poor).
+            if (Enum.TryParse<KnowledgeLevel>(knowledgeLevel, true, out var level))
+            {
+                // Update the knowledge level of the topic.
+                bool updated = _topicRepository.UpdateKnowledgeLevel(topicId, level);
+
+                if (updated)
+                {
+                    return Ok("Knowledge level updated successfully");
+                }
+                else
+                {
+                    return BadRequest("Error updating knowledge level");
+                }
+            }
+            else
+            {
+                return BadRequest("Invalid knowledge level");
+            }
+        }
+        catch (Exception ex)
+        {
+            return BadRequest("Invalid request body: " + ex.Message);
+        }
+    }
 
     [HttpDelete("{topicId}/delete")]
     public IActionResult RemoveTopic(string topicId)
