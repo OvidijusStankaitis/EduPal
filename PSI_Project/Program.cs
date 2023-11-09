@@ -3,6 +3,7 @@ using PSI_Project.Data;
 using PSI_Project.Repositories;
 using PSI_Project.Services;
 using System.Text;
+using PSI_Project.Hubs;
 
 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 var builder = WebApplication.CreateBuilder(args);
@@ -27,17 +28,24 @@ builder.Services.AddDbContext<EduPalDatabaseContext>(options =>
     options.UseNpgsql(builder.Configuration["DatabaseConnectionString"]);
 });
 
-// Repositories and Services for DI
+builder.Services.AddSignalR();
+
+// services dependency injections
 builder.Services.AddTransient<GoalService>();
+builder.Services.AddTransient<OpenAIService>();
+builder.Services.AddTransient<NoteService>();
+builder.Services.AddTransient<ChatService>();
+builder.Services.AddTransient<NoteService>();
+
+// repositories dependency injections
 builder.Services.AddTransient<GoalsRepository>();
 builder.Services.AddTransient<SubjectRepository>();
 builder.Services.AddTransient<TopicRepository>();
 builder.Services.AddTransient<UserRepository>();
 builder.Services.AddTransient<ConspectusRepository>();
+builder.Services.AddTransient<ConspectusService>();
 builder.Services.AddTransient<CommentRepository>();
-builder.Services.AddTransient<OpenAIService>();
 builder.Services.AddTransient<OpenAIRepository>();
-builder.Services.AddTransient<NoteService>();
 builder.Services.AddTransient<NoteRepository>();
 
 var app = builder.Build();
@@ -61,5 +69,7 @@ app.MapControllerRoute(
     pattern: "{controller}/{action=Index}/{id?}");
 
 app.MapFallbackToFile("index.html");
+
+app.MapHub<ChatHub>("/chat-hub");
 
 app.Run();
