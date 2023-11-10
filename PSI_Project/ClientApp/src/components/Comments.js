@@ -21,16 +21,16 @@ export const Comments = ({ show, onClose, topicId }) => {
                 .withAutomaticReconnect()
                 .build();
 
-            newConnection.on("ReceiveMessage", (id, senderId, messageContent) => {
-                // Ignore messages from the current user
-                if (senderId !== userId) {
-                    const newComment = {
-                        id: id,
-                        userId: senderId,
-                        commentText: messageContent
-                    };
-                    setComments(prevComments => [...prevComments, newComment]);
-                }
+            newConnection.on("ReceiveMessage", (realId, senderId, messageContent) => {
+                setComments(prevComments => {
+                    // Replace the optimistic comment with the real one from the server
+                    return prevComments.map(comment => {
+                        if (comment.isOptimistic && comment.userId === userId && comment.commentText === messageContent) {
+                            return { ...comment, id: realId, isOptimistic: false };
+                        }
+                        return comment;
+                    });
+                });
             });
 
             newConnection.on("DeleteMessage", (messageId) => {
@@ -82,36 +82,41 @@ export const Comments = ({ show, onClose, topicId }) => {
 
     const handleSend = async () => {
         if (currentComment.trim() !== '' && connection) {
-            // Create a temporary unique ID for the new comment
-            const tempId = Date.now(); // Or any other method to generate a unique ID
-
-            const newComment = {
-                id: tempId,
+            const optimisticId = `temp-${Date.now()}`;
+            const optimisticComment = {
+                id: optimisticId,
                 userId: userId,
-                commentText: currentComment
+                commentText: currentComment,
+                isOptimistic: true // Mark this comment as optimistic
             };
 
-            // Optimistically add the new comment to the local state
-            setComments(prevComments => [...prevComments, newComment]);
+            // Add the optimistic comment to the local state
+            setComments(prevComments => [...prevComments, optimisticComment]);
 
-            // Send the message
-            await connection.invoke("SendMessage", userId, topicId, currentComment);
-
-            setCurrentComment('');
+            try {
+                // Send the message to the server
+                await connection.invoke("SendMessage", userId, topicId, currentComment);
+                // Clear the input field
+                setCurrentComment('');
+            } catch (error) {
+                // If there's an error sending the message, remove the optimistic comment
+                setComments(prevComments => prevComments.filter(comment => comment.id !== optimisticId));
+            }
         }
     };
 
     const handleDelete = async (commentId) => {
-        if (commentId != null && connection && connection.state === "Connected") {
+        // Ensure we're using real IDs when attempting to delete
+        if (commentId && !commentId.startsWith('temp-') && connection && connection.state === "Connected") {
             try {
                 await connection.invoke("DeleteMessage", commentId);
-                // Possibly update state to reflect the deletion
+                // Optimistically remove the comment from the local state
+                setComments(prevComments => prevComments.filter(comment => comment.id !== commentId));
             } catch (error) {
                 console.error("Error invoking 'DeleteMessage':", error);
-                // Handle the error appropriately in the UI
             }
         } else {
-            console.error("Connection is not in a Connected state or commentId is null");
+            console.error("Cannot delete an optimistic or non-existing comment.");
         }
     };
 
@@ -133,13 +138,13 @@ export const Comments = ({ show, onClose, topicId }) => {
                                 <div className="comment-text-content">
                                     {comment.commentText}
                                 </div>
-                                
-                                {comment.userId === userId 
+
+                                {comment.userId === userId
                                     ? (<button
                                         className="delete-button1"
                                         onClick={() => handleDelete(comment.id)}>
                                         🗑️
-                                    </button>) 
+                                    </button>)
                                     : (<div></div>)
                                 }
                             </div>
