@@ -12,6 +12,7 @@ namespace PSI_Project.Repositories;
 public class ConspectusRepository : Repository<Conspectus>
 {
     public EduPalDatabaseContext EduPalContext => Context as EduPalDatabaseContext;
+    private static readonly object _deleteLock = new object();
 
     public ConspectusRepository(EduPalDatabaseContext context) : base(context)
     {
@@ -111,13 +112,27 @@ public class ConspectusRepository : Repository<Conspectus>
     public void Remove(string conspectusId)
     {
         Conspectus conspectus = Get(conspectusId);
-        Remove(conspectus);
 
+        // Use Monitor for thread safety
+        Monitor.Enter(_deleteLock);
         try
         {
             string filePath = conspectus.Path;
-            if (!IsFileUsed(filePath))
+        
+            // Remove the conspectus from the context
+            Remove(conspectus);
+            EduPalContext.SaveChanges();
+
+            // Try to delete the file
+            if (File.Exists(filePath))
+            {
                 File.Delete(filePath);
+                Console.WriteLine($"File deleted: {filePath}");
+            }
+            else
+            {
+                Console.WriteLine($"File not found: {filePath}");
+            }
         }
         catch (Exception ex)
         {
@@ -127,7 +142,7 @@ public class ConspectusRepository : Repository<Conspectus>
         }
         finally
         {
-            EduPalContext.SaveChanges();
+            Monitor.Exit(_deleteLock);
         }
     }
     
