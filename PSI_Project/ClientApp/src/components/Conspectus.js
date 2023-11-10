@@ -99,6 +99,7 @@ export const Conspectus = () => {
     };
 
     const handleFileDownload = (fileId) => {
+        console.log('handleFileDownload - fileId:', fileId);
         const fileToDownload = files.find(file => file.id === fileId);
         const downloadLink = document.createElement('a');
         downloadLink.href = `https://localhost:7283/Conspectus/download/${fileId}`;
@@ -109,14 +110,14 @@ export const Conspectus = () => {
     };
 
     const handleFileDelete = (fileId) => {
+        console.log('handleFileDelete - fileId:', fileId);
         fetch(`https://localhost:7283/Conspectus/${fileId}/delete`, {
             method: 'DELETE'
         })
             .then(response => {
                 if (response.ok) {
-                    const updatedFiles = files.filter(file => file.id !== fileId);
-                    setFiles(updatedFiles);
-                    window.location.reload();
+                    setFiles(files.filter(file => file.id !== fileId));
+                    setOpenDropdownIndex(null); // Close the dropdown if it's open
                 } else {
                     console.error('Error deleting file:', response.statusText);
                 }
@@ -125,6 +126,7 @@ export const Conspectus = () => {
     };
 
     const handleVote = (id, voteType) => {
+        console.log('handleVote - fileId:', id, 'voteType:', voteType);
         fetch(`https://localhost:7283/Conspectus/${voteType ? 'rateUp' : 'rateDown'}/${id}`, {
             method: 'POST'
         })
@@ -145,10 +147,14 @@ export const Conspectus = () => {
             });
     };
 
-    const handleOpen = (index) => {
-        // If the dropdown is already open, clicking should close it (set to null)
-        // Otherwise, set the index to the one that was clicked
-        setOpenDropdownIndex(openDropdownIndex === index ? null : index);
+    const handleOpen = (fileId) => {
+        console.log('handleOpen - current fileId:', fileId);
+        console.log('handleOpen - current openDropdownIndex:', openDropdownIndex);
+        setOpenDropdownIndex((prevOpenId) => {
+            const newOpenId = prevOpenId === fileId ? null : fileId;
+            console.log('handleOpen - new openDropdownIndex:', newOpenId);
+            return newOpenId;
+        });
     };
 
     return (
@@ -170,8 +176,8 @@ export const Conspectus = () => {
                     <input type="file" id="fileInput" accept=".pdf" style={{display: 'none'}} onChange={handleFileChange} multiple />
                     <ul className="files-list">
                         {files.length > 0 ? (
-                            files.map((file, index) => (
-                                <li className="file-element" key={index}>
+                            files.map((file) => (
+                                <li className="file-element" key={file.id}>
                                     <button
                                         className="small-button file-name"
                                         onClickCapture={() => handleFileClick(file.id)}
@@ -191,11 +197,11 @@ export const Conspectus = () => {
                                     <div className="conspectus-rating">{file.rating}</div>
 
                                     <div className="Dropdown">
-                                        <button className="small-button" onClick={() => handleOpen(index)}>
+                                        <button className="small-button" onClick={() => handleOpen(file.id)}>
                                             {'\uFE19'}
                                         </button>
 
-                                        {openDropdownIndex === index ? (
+                                        {openDropdownIndex === file.id ? (
                                             <ul className="menu">
                                                 <li className="menu-item">
                                                     <button onClick={() => handleFileDownload(file.id)}>Download</button>
@@ -204,7 +210,7 @@ export const Conspectus = () => {
                                                     <button onClick={() => handleFileDelete(file.id)}>Delete</button>
                                                 </li>
                                             </ul>
-                                        ) : null} 
+                                        ) : null}
                                     </div>
                                 </li>
                             ))
