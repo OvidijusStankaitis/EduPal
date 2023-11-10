@@ -18,6 +18,7 @@ export const Conspectus = () => {
     const [showComments, setShowComments] = useState(false);
     const [showNote, setShowNote] = useState(false);
     const [fileDropdowns, setFileDropdowns] = useState({});
+    const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
 
     useEffect(() => {
         fetch(`https://localhost:7283/Topic/get/${topicId}`)
@@ -145,9 +146,9 @@ export const Conspectus = () => {
     };
 
     const handleOpen = (index) => {
-        setFileDropdowns(prevDropdowns => {
-            return { ...prevDropdowns, [index]: !prevDropdowns[index] };
-        });
+        // If the dropdown is already open, clicking should close it (set to null)
+        // Otherwise, set the index to the one that was clicked
+        setOpenDropdownIndex(openDropdownIndex === index ? null : index);
     };
 
     return (
@@ -194,7 +195,7 @@ export const Conspectus = () => {
                                             {'\uFE19'}
                                         </button>
 
-                                        {fileDropdowns[index] ? (
+                                        {openDropdownIndex === index ? (
                                             <ul className="menu">
                                                 <li className="menu-item">
                                                     <button onClick={() => handleFileDownload(file.id)}>Download</button>
@@ -203,7 +204,7 @@ export const Conspectus = () => {
                                                     <button onClick={() => handleFileDelete(file.id)}>Delete</button>
                                                 </li>
                                             </ul>
-                                        ) : null}
+                                        ) : null} 
                                     </div>
                                 </li>
                             ))

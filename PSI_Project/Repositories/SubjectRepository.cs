@@ -34,13 +34,10 @@ public class SubjectRepository : Repository<Subject>
     
     public bool RemoveSubject(string subjectId)
     {
-        Subject? subject = Get(subjectId);
-        if (subject is null)
-            return false;
-        
+        Subject subject = Get(subjectId);
         Remove(subject);
+        
         int changes = EduPalContext.SaveChanges();
-
         return changes > 0;
     } 
 }

@@ -3,29 +3,29 @@ using PSI_Project.Data;
 
 namespace PSI_Project.Repositories;
 
-public class NoteRepository
+public class NoteRepository : Repository<Note>
 {
-    private readonly EduPalDatabaseContext _context;
+    public readonly EduPalDatabaseContext EduPalContext;
 
-    public NoteRepository(EduPalDatabaseContext context)
+    public NoteRepository(EduPalDatabaseContext context) : base(context)
     {
-        _context = context;
+        EduPalContext = context;
     }
 
     public Note Add(Note note)
     {
-        _context.Notes.Add(note);
-        _context.SaveChanges();
+        EduPalContext.Notes.Add(note);
+        EduPalContext.SaveChanges();
         return note;
     }
 
     public Note GetById(int id)
     {
-        return _context.Notes.Find(id);
+        return EduPalContext.Notes.Find(id);
     }
 
     public IQueryable<Note> GetAll()
     {
-        return _context.Notes;
+        return EduPalContext.Notes;
     }
 }

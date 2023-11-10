@@ -14,7 +14,7 @@ export const Note = ({ show, onClose, topicId }) => {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify(note)
+                body: JSON.stringify(note) // 'note' should have properties 'Name' and 'Content'
             });
 
             if (!response.ok) throw new Error("Error saving note");
@@ -91,7 +91,7 @@ export const Note = ({ show, onClose, topicId }) => {
     };
 
     const handleSave = async () => {
-        const newNote = { name: noteName, content: noteContent };
+        const newNote = { Name: noteName, Content: noteContent }; // Notice the capitalized properties
         const savedNote = await saveNoteToServer(newNote);
         if (savedNote) {
             setSavedNotes(prevNotes => [...prevNotes, savedNote]);

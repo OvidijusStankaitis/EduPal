@@ -11,33 +11,27 @@ namespace PSI_Project.Controllers;
 public class CommentController : ControllerBase
 {
     private readonly CommentRepository _commentRepository;
+    private readonly ILogger<CommentController> _logger; 
 
-    public CommentController(CommentRepository commentRepository)
+    public CommentController(ILogger<CommentController> logger, CommentRepository commentRepository)
     {
+        _logger = logger; 
         _commentRepository = commentRepository;
-    }
-    
-    [HttpGet("getOne/{commentId}")]
-    public IActionResult GetComment(string commentId)
-    {
-        Comment? comment = _commentRepository.GetItemById(commentId);
-        return comment == null
-            ? NotFound(new { error = "Comment not found." })
-            : Ok(comment);
     }
     
     [HttpGet("get/{topicId}")]
     public IActionResult GetAllCommentsFromTopic(string topicId)
     {
-        List<Comment> comment = _commentRepository.GetAllCommentsOfTopic(topicId);
-        return Ok(comment);
-    }
-    
-    [HttpDelete("delete/{commentId}")]
-    public IActionResult RemoveTopic(string commentId)
-    {
-        return _commentRepository.Remove(commentId) 
-            ? Ok("Comment has been successfully deleted")
-            : BadRequest("An error occured while deleting the topic");
+        try
+        {
+            List<Comment> comment = _commentRepository.GetAllCommentsOfTopic(topicId);
+            return Ok(comment);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Couldn't list topic {topicId} comments", topicId);
+        }
+        
+        return BadRequest("An error occured while getting all topic comments");
     }
 }
