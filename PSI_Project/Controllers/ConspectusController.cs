@@ -14,9 +14,8 @@ public class ConspectusController : ControllerBase
     private readonly ConspectusService _conspectusService;
     private readonly ConspectusRepository _conspectusRepository;
     private readonly ILogger<ConspectusController> _logger;
-
-    public ConspectusController(ILogger<ConspectusController> logger, ConspectusRepository conspectusRepository)
-    public ConspectusController(ConspectusService conspectusService, ConspectusRepository conspectusRepository)
+    
+    public ConspectusController(ILogger<ConspectusController> logger, ConspectusRepository conspectusRepository, ConspectusService conspectusService)
     {
         _logger = logger;
         _conspectusService = conspectusService;
@@ -41,7 +40,6 @@ public class ConspectusController : ControllerBase
     [HttpGet("list/{topicId}")]
     public IActionResult GetTopicFiles(string topicId)
     {
-        return Ok(_conspectusService.GetConspectuses(topicId));
         try
         {
             return Ok(_conspectusRepository.GetConspectusListByTopicId(topicId));

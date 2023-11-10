@@ -56,4 +56,16 @@ public class UserController : ControllerBase
 
         return BadRequest(new { success = false, message = "Invalid payload." });
     }
+    
+    [HttpGet("get-name")]
+    public IActionResult GetName(string email)
+    {
+        var user = _userRepository.GetUserByEmail(email);
+        if (user != null)
+        {
+            return Ok(new { name = user.Name });
+        }
+
+        return NotFound(new { message = "User not found." });
+    }
 }

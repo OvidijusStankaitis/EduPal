@@ -124,11 +124,9 @@ namespace PSI_Project.Migrations
 
             modelBuilder.Entity("PSI_Project.Models.Note", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("text");
 
                     b.Property<string>("Content")
                         .IsRequired()
