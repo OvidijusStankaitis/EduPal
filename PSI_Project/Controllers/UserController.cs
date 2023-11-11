@@ -1,47 +1,71 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PSI_Project.Repositories;
 using System.Text.Json;
+using PSI_Project.DTO;
 using PSI_Project.Models;
 
-namespace PSI_Project.Controllers
+namespace PSI_Project.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class UserController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class UserController : ControllerBase
+    private readonly UserRepository _userRepository;
+    private readonly ILogger<UserController> _logger;
+
+    public UserController(ILogger<UserController> logger, UserRepository userRepository)
     {
-        private readonly UserRepository _userRepository;
+        _logger = logger;
+        _userRepository = userRepository;
+    }
 
-        public UserController(UserRepository userRepository)
+    [HttpPost("register")]
+    public IActionResult Register([FromBody] UserCreationDTO newUser)
+    {
+        try
         {
-            _userRepository = userRepository;
-        }
-
-        [HttpPost("register")]
-        public IActionResult Register(User user)
-        {
-            return _userRepository.CheckUserRegister(user)
-                ? Ok(new { success = true, message = "Registration successful." })
-                : BadRequest(new { success = false, message = "Invalid payload." });
-        }
-
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] JsonElement payload)
-        {
-            return _userRepository.CheckUserLogin(payload)
-                ? BadRequest(new { success = false, message = "Invalid payload." })
-                : Ok(new { success = true, message = "Login successful." });
-        }
-
-        [HttpGet("get-name")]
-        public IActionResult GetName(string email)
-        {
-            var user = _userRepository.GetUserByEmail(email);
-            if (user != null)
+            string? userId = _userRepository.CheckUserRegister(newUser);
+            if (userId != null)
             {
-                return Ok(new { name = user.Name });
+                return Ok(new { success = true, message = "Registration successful.", userId });
             }
-
-            return NotFound(new { message = "User not found." });
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Couldn't register user {NewUserModel}", newUser);
+        }
+
+        return BadRequest(new { success = false, message = "Invalid payload." });
+    }
+
+    [HttpPost("login")]
+    public IActionResult Login([FromBody] JsonElement payload)
+    {
+        try
+        {
+            string? userId = _userRepository.CheckUserLogin(payload);
+            if (userId != null)
+            {
+                return Ok(new { success = true, message = "Login successful.", userId });
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Couldn't check user login information");
+        }
+
+        return BadRequest(new { success = false, message = "Invalid payload." });
+    }
+    
+    [HttpGet("get-name")]
+    public IActionResult GetName(string email)
+    {
+        var user = _userRepository.GetUserByEmail(email);
+        if (user != null)
+        {
+            return Ok(new { name = user.Name });
+        }
+
+        return NotFound(new { message = "User not found." });
     }
 }

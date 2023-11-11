@@ -7,7 +7,6 @@ import { OpenAIDialogue } from './OpenAIDialogue';
 import { Comments } from "./Comments";
 import { Note } from "./Note";
 import Notes from "../assets/Notes.webp";
-
 export const Conspectus = () => {
     const { topicId } = useParams();
     const [topicName, setTopicName] = useState("");
@@ -18,6 +17,8 @@ export const Conspectus = () => {
     const [showOpenAIDialog, setShowOpenAIDialog] = useState(false);
     const [showComments, setShowComments] = useState(false);
     const [showNote, setShowNote] = useState(false);
+    const [fileDropdowns, setFileDropdowns] = useState({});
+    const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
 
     useEffect(() => {
         fetch(`https://localhost:7283/Topic/get/${topicId}`)
@@ -38,6 +39,7 @@ export const Conspectus = () => {
                     return {
                         id: fileObj.id,
                         name: fileName,
+                        rating: fileObj.rating,
                         truncatedName: fileName.length > 11 ? fileName.substring(0, 11) + "..." : fileName,
                         isSelected: false
                     };
@@ -52,6 +54,7 @@ export const Conspectus = () => {
             return {
                 name: file.name,
                 data: file,
+                rating: file.rating,
                 isSelected: false
             };
         });
@@ -71,6 +74,7 @@ export const Conspectus = () => {
                     return {
                         id: fileObj.id,
                         name: fileName,
+                        rating: fileObj.rating,
                         truncatedName: fileName.length > 11 ? fileName.substring(0, 11) + "..." : fileName, // add truncatedName here
                         isSelected: false
                     };
@@ -95,6 +99,7 @@ export const Conspectus = () => {
     };
 
     const handleFileDownload = (fileId) => {
+        console.log('handleFileDownload - fileId:', fileId);
         const fileToDownload = files.find(file => file.id === fileId);
         const downloadLink = document.createElement('a');
         downloadLink.href = `https://localhost:7283/Conspectus/download/${fileId}`;
@@ -105,14 +110,14 @@ export const Conspectus = () => {
     };
 
     const handleFileDelete = (fileId) => {
+        console.log('handleFileDelete - fileId:', fileId);
         fetch(`https://localhost:7283/Conspectus/${fileId}/delete`, {
             method: 'DELETE'
         })
             .then(response => {
                 if (response.ok) {
-                    const updatedFiles = files.filter(file => file.id !== fileId);
-                    setFiles(updatedFiles);
-                    window.location.reload();
+                    setFiles(files.filter(file => file.id !== fileId));
+                    setOpenDropdownIndex(null); // Close the dropdown if it's open
                 } else {
                     console.error('Error deleting file:', response.statusText);
                 }
@@ -120,12 +125,44 @@ export const Conspectus = () => {
             .catch(error => console.error('Error deleting file:', error));
     };
 
+    const handleVote = (id, voteType) => {
+        console.log('handleVote - fileId:', id, 'voteType:', voteType);
+        fetch(`https://localhost:7283/Conspectus/${voteType ? 'rateUp' : 'rateDown'}/${id}`, {
+            method: 'POST'
+        })
+            .then(response => response.json())
+            .then(data => {
+                setFiles(prevFiles => {
+                    const updatedFiles = prevFiles.map(file => {
+                        if (file.id === id) {
+                            return { ...file, rating: data.rating };
+                        }
+                        return file;
+                    });
+                    return updatedFiles;
+                });
+            })
+            .catch(err => {
+                console.error("Error rating file: ", err);
+            });
+    };
+
+    const handleOpen = (fileId) => {
+        console.log('handleOpen - current fileId:', fileId);
+        console.log('handleOpen - current openDropdownIndex:', openDropdownIndex);
+        setOpenDropdownIndex((prevOpenId) => {
+            const newOpenId = prevOpenId === fileId ? null : fileId;
+            console.log('handleOpen - new openDropdownIndex:', newOpenId);
+            return newOpenId;
+        });
+    };
+
     return (
         <div className="user-panel">
             <div className="header">
                 <h1 title={topicName} className="truncated-text">{truncatedTopicName}</h1>
                 <img className="notes" src={Notes} alt="notes" onClick={() => setShowNote(true)}/>
-                <UserComponent 
+                <UserComponent
                     setShowPomodoroDialog={setShowPomodoroDialog}
                     setShowOpenAIDialog={setShowOpenAIDialog}
                 />
@@ -139,8 +176,8 @@ export const Conspectus = () => {
                     <input type="file" id="fileInput" accept=".pdf" style={{display: 'none'}} onChange={handleFileChange} multiple />
                     <ul className="files-list">
                         {files.length > 0 ? (
-                            files.map((file, index) => (
-                                <li key={index}>
+                            files.map((file) => (
+                                <li className="file-element" key={file.id}>
                                     <button
                                         className="small-button file-name"
                                         onClickCapture={() => handleFileClick(file.id)}
@@ -148,12 +185,33 @@ export const Conspectus = () => {
                                     >
                                         {file.truncatedName}
                                     </button>
-                                    <button className="small-button download-button" onClick={() => handleFileDownload(file.id)}>
-                                        Download
+
+                                    <button className="small-button vote-up-button" onClick={() => handleVote(file.id, true)}>
+                                        {'\u25B2'}
                                     </button>
-                                    <button className="small-button delete-button" onClick={() => handleFileDelete(file.id)}>
-                                        Delete
+
+                                    <button className="small-button vote-down-button" onClick={() => handleVote(file.id, false)}>
+                                        {'\u25BC'}
                                     </button>
+
+                                    <div className="conspectus-rating">{file.rating}</div>
+
+                                    <div className="Dropdown">
+                                        <button className="small-button" onClick={() => handleOpen(file.id)}>
+                                            {'\uFE19'}
+                                        </button>
+
+                                        {openDropdownIndex === file.id ? (
+                                            <ul className="menu">
+                                                <li className="menu-item">
+                                                    <button onClick={() => handleFileDownload(file.id)}>Download</button>
+                                                </li>
+                                                <li className="menu-item">
+                                                    <button onClick={() => handleFileDelete(file.id)}>Delete</button>
+                                                </li>
+                                            </ul>
+                                        ) : null}
+                                    </div>
                                 </li>
                             ))
                         ) : (
@@ -168,8 +226,8 @@ export const Conspectus = () => {
                     show={showPomodoroDialog}
                     onClose={() => setShowPomodoroDialog(false)}
                 />
-                <OpenAIDialogue 
-                    show={showOpenAIDialog} 
+                <OpenAIDialogue
+                    show={showOpenAIDialog}
                     onClose={() => setShowOpenAIDialog(false)}
                 />
                 <Comments

@@ -2,12 +2,11 @@
 {
     public class SubjectGoal : BaseEntity
     {
-        //public string SubjectId { get; set; }
         public Subject Subject { get; set; }
         public double TargetHours { get; set; }
         public double ActualHoursStudied { get; set; }
 
-        public SubjectGoal()
+        private SubjectGoal()   // used by EF    
         {
         }
 

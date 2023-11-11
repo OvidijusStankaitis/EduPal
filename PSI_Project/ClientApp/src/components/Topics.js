@@ -16,7 +16,7 @@ export const Topics = () => {
     const [showPomodoroDialog, setShowPomodoroDialog] = useState(false)
     const [showOpenAIDialog, setShowOpenAIDialog] = useState(false);
     const navigate = useNavigate();
-
+    
     useEffect(() => {
         fetch(`https://localhost:7283/Subject/get/${subjectId}`)
             .then(response => response.json())
@@ -28,14 +28,15 @@ export const Topics = () => {
         const fetchTopics = async () => {
             const response = await fetch(`https://localhost:7283/Topic/list/${subjectId}`);
 
-            if(response.ok) {
+            if (response.ok) {
                 const data = await response.json();
                 console.log("Fetched topics:", data);
 
                 const topicsData = data.map(topic => {
                     return {
                         id: topic.id,
-                        name: topic.name
+                        name: topic.name,
+                        knowledgeRating: topic.knowledgeRating
                     };
                 });
 
@@ -48,8 +49,7 @@ export const Topics = () => {
                 });
 
                 setTopicsDisplayNames(displayNames);
-            }
-            else {
+            } else {
                 console.error("Error fetching topics: ", await response.text());
             }
         };
@@ -94,6 +94,40 @@ export const Topics = () => {
         navigate(`/Subjects/${subjectId}-Topics/${topicId}-Conspectus`);
     };
 
+    const handleKnowledgeLevelChange = async (topicId, knowledgeLevel) => {
+        // Send a request to update the knowledge level on the server
+        const requestBody = {
+            topicId,
+            knowledgeLevel
+        };
+
+        try {
+            const response = await fetch('https://localhost:7283/Topic/updateKnowledgeLevel', {
+                method: 'PUT', // Use the appropriate HTTP method for updates
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (response.ok) {
+                // Update the component state with the new knowledge level
+                const updatedTopics = topics.map(topic => {
+                    if (topic.id === topicId) {
+                        return { ...topic, knowledgeRating: knowledgeLevel };
+                    }
+                    return topic;
+                });
+
+                setTopics(updatedTopics);
+            } else {
+                console.error("Error updating knowledge level:", await response.text());
+            }
+        } catch (error) {
+            console.error("Error updating knowledge level:", error);
+        }
+    };
+
     return (
         <div className="topics-page-container">
             <div className="topics-container">
@@ -106,13 +140,20 @@ export const Topics = () => {
                 </div>
                 <div className="topics-grid">
                     {topics.map((topic, index) => (
-                        <div
-                            key={index}
-                            className="topic-grid-item"
-                            onClick={() => handleTopicClick(topic.id)}
-                            title={topic.name} // Tooltip with full topic name
-                        >
-                            <h2>{topicsDisplayNames[index]}</h2>
+                        <div className="topic-grid-item" key={index} onClick={() => handleTopicClick(topic.id)}>
+                            <div className="topic-content" title={topic.name}>
+                                <h2>{topicsDisplayNames[index]}</h2>
+                                <div className="dropdown-container" onClick={(e) => e.stopPropagation()}>
+                                    <select
+                                        value={topic.knowledgeRating}
+                                        onChange={(e) => handleKnowledgeLevelChange(topic.id, e.target.value)}
+                                    >
+                                        <option value="2">Poor</option>
+                                        <option value="1">Average</option>
+                                        <option value="0">Good</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     ))}
                     <div className="topic-grid-item add-topic" onClick={() => setShowDialog(true)}>

@@ -1,13 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Runtime.InteropServices.JavaScript;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.FileProviders;
 using PSI_Project.Data;
 using PSI_Project.DTO;
+using PSI_Project.Exceptions;
 using PSI_Project.Models;
 
 namespace PSI_Project.Repositories;
 public class ConspectusRepository : Repository<Conspectus>
 {
     public EduPalDatabaseContext EduPalContext => Context as EduPalDatabaseContext;
+    private static readonly object _deleteLock = new object();
 
     public ConspectusRepository(EduPalDatabaseContext context) : base(context)
     {
@@ -15,53 +20,31 @@ public class ConspectusRepository : Repository<Conspectus>
 
     public IEnumerable<Conspectus> GetConspectusListByTopicId(string topicId)
     {
-        return 
-            EduPalContext.Conspectuses.Where(conspectus => conspectus.Topic.Id == topicId);
+        return EduPalContext.Conspectuses.Where(conspectus => conspectus.Topic.Id == topicId);
     }
 
-    public Stream? GetPdfStream(string conspectusId)
+    public Stream GetPdfStream(string conspectusId)
     {
-        try
-        {
-            Conspectus? conspectus = Get(conspectusId);
-            if (conspectus == null)
-                return null;
+        Conspectus conspectus = Get(conspectusId);
+        string dirPath = Path.GetDirectoryName(conspectus.Path)!;
+        string filename = Path.GetFileName(conspectus.Path);
         
-            string? dirPath = Path.GetDirectoryName(conspectus.Path);
-            string filename = Path.GetFileName(conspectus.Path);
+        IFileProvider provider = new PhysicalFileProvider(dirPath);
+        IFileInfo fileInfo = provider.GetFileInfo(filename);
         
-            IFileProvider provider = new PhysicalFileProvider(dirPath);
-            IFileInfo fileInfo = provider.GetFileInfo(filename);
-            if (!fileInfo.Exists)
-                return null;
-
-            return fileInfo.CreateReadStream();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            return null;
-        }
+        return fileInfo.CreateReadStream();
     }
 
-    public ConspectusFileContentDTO? Download(string conspectusId)
+    public ConspectusFileContentDTO Download(string conspectusId)
     {
-        Conspectus? conspectus = Get(conspectusId);
-        if (conspectus == null)
-            return null;
-        
-        if (File.Exists(conspectus.Path))
+        Conspectus conspectus = Get(conspectusId);
+        byte[] fileBytes = File.ReadAllBytes(conspectus.Path);
+        FileContentResult fileContent = new FileContentResult(fileBytes, "application/pdf")
         {
-            var fileBytes = File.ReadAllBytes(conspectus.Path);
-            var fileContent = new FileContentResult(fileBytes, "application/pdf")
-            {
-                FileDownloadName = Path.GetFileName(conspectus.Name) 
-            };
-            
-            return new ConspectusFileContentDTO(conspectus.Name, fileContent);  
-        }
-
-        return null;
+            FileDownloadName = Path.GetFileName(conspectus.Name) 
+        };
+    
+        return new ConspectusFileContentDTO(conspectus.Name, fileContent);
     }
 
     public IEnumerable<Conspectus> Upload(string topicId, List<IFormFile> files)
@@ -75,62 +58,91 @@ public class ConspectusRepository : Repository<Conspectus>
                 continue;
             }
 
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "Files", fileName);
-            using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+            string filePath;
+            try
             {
-                formFile.CopyTo(fileStream);
+                filePath = Path.Combine(Directory.GetCurrentDirectory(), "Files", fileName);
+                using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    formFile.CopyTo(fileStream);
+                }
             }
-            
-            Conspectus conspectus = new()
+            catch (Exception ex)
             {
-                Name = fileName,
-                Path = filePath,
-                Topic = EduPalContext.Topics.Find(topicId)
-            };
-            
-            Add(conspectus);
-            EduPalContext.SaveChanges();
+                throw new EntityCreationException("Error occured while uploading one of the files", ex);
+            }
+
+            try
+            {
+                Topic? topic = EduPalContext.Topics.Find(topicId);
+                if (topic == null)
+                {
+                    throw new ObjectNotFoundException("Couldn't find topic with specified id");
+                }
+
+                Conspectus conspectus = new()
+                {
+                    Name = fileName,
+                    Path = filePath,
+                    Topic = topic
+                };
+
+                Add(conspectus);
+                EduPalContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                File.Delete(filePath);
+                throw new EntityCreationException("Error occured while uploading one of the files", ex);
+            }
         }
 
         return GetConspectusListByTopicId(topicId);
     }
     
-    public bool ChangeRating(string conspectusId, bool toIncrease)
+    public Conspectus ChangeRating(string conspectusId, bool toIncrease)
     {
-        Conspectus? conspectus = Get(conspectusId);
-        if (conspectus is null)
-            return false;
-
+        Conspectus conspectus = Get(conspectusId);
         conspectus.Rating += toIncrease ? +1 : -1;
-        int changes = EduPalContext.SaveChanges();
-        return changes > 0;
-    }
-
-    public bool Remove(string conspectusId)
-    {
-        Conspectus? conspectus = Get(conspectusId);
-        if (conspectus is null)
-            return false;
         
-        Remove(conspectus);
-        int changes = EduPalContext.SaveChanges();
-
-        string filePath = conspectus.Path;
-        DeleteFile(filePath);
-
-        return changes > 0;
+        EduPalContext.SaveChanges();
+        return conspectus;
     }
-
-    public void DeleteFile(string filePath)
+    
+    public void Remove(string conspectusId)
     {
+        Conspectus conspectus = Get(conspectusId);
+
+        // Use Monitor for thread safety
+        Monitor.Enter(_deleteLock);
         try
         {
-            if (!IsFileUsed(filePath))
+            string filePath = conspectus.Path;
+        
+            // Remove the conspectus from the context
+            Remove(conspectus);
+            EduPalContext.SaveChanges();
+
+            // Try to delete the file
+            if (File.Exists(filePath))
+            {
                 File.Delete(filePath);
+                Console.WriteLine($"File deleted: {filePath}");
+            }
+            else
+            {
+                Console.WriteLine($"File not found: {filePath}");
+            }
         }
-        catch (IOException ex)
+        catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            EntityEntry<Conspectus> entry = EduPalContext.Entry(conspectus);
+            entry.State = EntityState.Unchanged;
+            throw new EntityDeletionException("Couldn't delete conspectus", ex);
+        }
+        finally
+        {
+            Monitor.Exit(_deleteLock);
         }
     }
     

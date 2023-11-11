@@ -1,64 +1,129 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import './Comments.css';
+import { HttpTransportType, HubConnectionBuilder } from "@microsoft/signalr";
+import { useUserContext } from "../UserContext";
 
 export const Comments = ({ show, onClose, topicId }) => {
+    const { userId } = useUserContext();
     const [comments, setComments] = useState([]);
     const [currentComment, setCurrentComment] = useState('');
-    const chatContentRef = React.createRef();
+    const chatContentRef = useRef(null);
+    const [connection, setConnection] = useState(null);
 
+    // Initialize WebSocket connection
     useEffect(() => {
-        if (show) {
+        const initializeConnection = async () => {
+            const newConnection = new HubConnectionBuilder()
+                .withUrl("https://localhost:7283/chat-hub", {
+                    skipNegotiation: true,
+                    transport: HttpTransportType.WebSockets
+                })
+                .withAutomaticReconnect()
+                .build();
+
+            newConnection.on("ReceiveMessage", (realId, senderId, messageContent) => {
+                setComments(prevComments => {
+                    // Replace the optimistic comment with the real one from the server
+                    return prevComments.map(comment => {
+                        if (comment.isOptimistic && comment.userId === userId && comment.commentText === messageContent) {
+                            return { ...comment, id: realId, isOptimistic: false };
+                        }
+                        return comment;
+                    });
+                });
+            });
+
+            newConnection.on("DeleteMessage", (messageId) => {
+                setComments(prevComments => prevComments.filter(comment => comment.id !== messageId));
+            });
+
+            newConnection.start()
+                .then(() => {
+                    newConnection.invoke("AddToBroadcastGroup", topicId);
+                    setConnection(newConnection);
+                })
+                .catch(e => console.log('Connection failed: ', e));
+
+            // Fetch initial comments
             fetch(`https://localhost:7283/Comment/get/${topicId}`)
                 .then(response => response.json())
                 .then(data => setComments(data))
                 .catch(error => console.error("Error fetching comments:", error));
         }
+
+        if (show && (!connection || connection.state !== "Connected")) {
+            initializeConnection()
+                .then(newConnection => {
+                    setConnection(newConnection); // Set the new connection
+                })
+                .catch(e => console.error('Connection initialization failed: ', e));
+        }
+
+
+        // Clean up function to close WebSocket connection
+        return () => {
+            if (connection) {
+                connection.stop()
+                    .then(() => {
+                        console.log('Connection stopped');
+                        setConnection(null); // Reset the connection state to null
+                    })
+                    .catch(e => console.log('Failed to stop connection', e));
+            }
+        };
+    }, [show, connection, topicId]); // Adjust the dependencies as needed
+
+    // Scroll to the bottom of the chat whenever comments update
+    useEffect(() => {
         if (chatContentRef.current) {
             chatContentRef.current.scrollTop = chatContentRef.current.scrollHeight;
         }
-    }, [show, topicId]);
+    }, [comments]);
 
-    const handleSend = () => {
-        if (currentComment.trim() !== '') {
-            const newComment = {
-                topicId: topicId,
-                commentText: currentComment
+    const handleSend = async () => {
+        if (currentComment.trim() !== '' && connection) {
+            const optimisticId = `temp-${Date.now()}`;
+            const optimisticComment = {
+                id: optimisticId,
+                userId: userId,
+                commentText: currentComment,
+                isOptimistic: true // Mark this comment as optimistic
             };
 
-            fetch(`https://localhost:7283/Comment/upload`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(newComment)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    setComments(prevComments => [...prevComments, data]);
-                    setCurrentComment('');
-                })
-                .catch(error => console.error("Error posting comment:", error));
-        }
-        if (chatContentRef.current) {
-            chatContentRef.current.scrollTop = chatContentRef.current.scrollHeight;
+            // Add the optimistic comment to the local state
+            setComments(prevComments => [...prevComments, optimisticComment]);
+
+            try {
+                // Send the message to the server
+                await connection.invoke("SendMessage", userId, topicId, currentComment);
+                // Clear the input field
+                setCurrentComment('');
+            } catch (error) {
+                // If there's an error sending the message, remove the optimistic comment
+                setComments(prevComments => prevComments.filter(comment => comment.id !== optimisticId));
+            }
         }
     };
 
-    const handleDelete = (commentId) => {
-        fetch(`https://localhost:7283/Comment/delete/${commentId}`, {
-            method: 'DELETE',
-        })
-            .then(response => {
-                if(response.ok) {
-                    setComments(prevComments => prevComments.filter(comment => comment.id !== commentId));
-                } else {
-                    console.error("Error deleting comment:", response.statusText);
-                }
-            })
-            .catch(error => console.error("Error deleting comment:", error));
+    const handleDelete = async (commentId) => {
+        // Ensure we're using real IDs when attempting to delete
+        if (commentId && !commentId.startsWith('temp-') && connection && connection.state === "Connected") {
+            try {
+                await connection.invoke("DeleteMessage", commentId);
+                // Optimistically remove the comment from the local state
+                setComments(prevComments => prevComments.filter(comment => comment.id !== commentId));
+            } catch (error) {
+                console.error("Error invoking 'DeleteMessage':", error);
+            }
+        } else {
+            console.error("Cannot delete an optimistic or non-existing comment.");
+        }
     };
 
-    if (!show) return null;
+    // If the component is not supposed to show, don't render anything
+    if (!show) {
+        return null;
+    }
 
     return (
         <div className="comments">
@@ -73,12 +138,15 @@ export const Comments = ({ show, onClose, topicId }) => {
                                 <div className="comment-text-content">
                                     {comment.commentText}
                                 </div>
-                                <button
-                                    className="delete-button1"
-                                    onClick={() => handleDelete(comment.id)}
-                                >
-                                    🗑️
-                                </button>
+
+                                {comment.userId === userId
+                                    ? (<button
+                                        className="delete-button1"
+                                        onClick={() => handleDelete(comment.id)}>
+                                        🗑️
+                                    </button>)
+                                    : (<div></div>)
+                                }
                             </div>
                         ))}
 

@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PSI_Project.Models;
 
 public class BaseEntity
 {
     [Key]
-    public string Id { get; init; } = Guid.NewGuid().ToString();
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public string Id { get; set; }
 }
