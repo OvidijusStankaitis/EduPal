@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Net;
-using Newtonsoft.Json;
-using PSI_Project.Models;
-using Xunit;
+﻿using System.Net;
+using System.Net.Http.Json;
 
-namespace PSI_Project.Tests.Integration_Tests;
+namespace PSI_Project.Tests.IntegrationTests;
 
 public class UserControllerIntegrationTests : IDisposable
 {

@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using PSI_Project.Data;
 using PSI_Project.Models;
 
-namespace PSI_Project.Tests.Integration_Tests;
+namespace PSI_Project.Tests.IntegrationTests;
 
 internal class TestingWebAppFactory : WebApplicationFactory<Program>
 {

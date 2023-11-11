@@ -2,9 +2,8 @@
 using PSI_Project.Data;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
-using Xunit;
 
-namespace PSI_Project.Tests;
+namespace PSI_Project.Tests.UnitTests;
 
 public class CommentRepositoryUnitTests
 {  

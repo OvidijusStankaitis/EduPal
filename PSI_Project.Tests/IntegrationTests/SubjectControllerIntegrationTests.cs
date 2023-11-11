@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Net;
-using System.Text;
+﻿using System.Net;
+using System.Net.Http.Json;
 using Newtonsoft.Json;
 using PSI_Project.Models;
-using Xunit;
 
-namespace PSI_Project.Tests.Integration_Tests;
+namespace PSI_Project.Tests.IntegrationTests;
 
 public class SubjectControllerIntegrationTests : IDisposable
 {
