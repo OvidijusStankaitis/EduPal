@@ -24,12 +24,11 @@ public class CommentRepository : Repository<Comment>
             .FirstOrDefault(comment => comment.Id.Equals(itemId));
     }
     
-    public bool Remove(string commentId)
+    public bool Remove(string commentId) 
     {
         Comment comment = Get(commentId);
         Remove(comment);
         int changes = EduPalContext.SaveChanges();
         return changes > 0;
     }
-    
 }
