@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using PSI_Project.Data;
 using PSI_Project.Exceptions;
 using PSI_Project.Models;
-using Xunit.Sdk;
 
 namespace PSI_Project.Repositories;
 

@@ -53,10 +53,7 @@ public class TopicRepository : Repository<Topic>
     
     public bool Remove(string topicId)
     {
-        Topic? topic = Get(topicId);
-        if (topic is null)
-            return false;
-        
+        Topic topic = Get(topicId);
         Remove(topic);
         int changes = EduPalContext.SaveChanges();
 
