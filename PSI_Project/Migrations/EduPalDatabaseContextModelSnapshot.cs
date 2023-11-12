@@ -208,7 +208,7 @@ namespace PSI_Project.Migrations
                     b.ToTable("Topics");
                 });
 
-            modelBuilder.Entity("PSI_Project.User", b =>
+            modelBuilder.Entity("PSI_Project.Models.User", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
@@ -243,7 +243,7 @@ namespace PSI_Project.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PSI_Project.User", "User")
+                    b.HasOne("PSI_Project.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -265,7 +265,7 @@ namespace PSI_Project.Migrations
 
             modelBuilder.Entity("PSI_Project.Models.Goal", b =>
                 {
-                    b.HasOne("PSI_Project.User", "User")
+                    b.HasOne("PSI_Project.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
 
@@ -274,7 +274,7 @@ namespace PSI_Project.Migrations
 
             modelBuilder.Entity("PSI_Project.Models.Message", b =>
                 {
-                    b.HasOne("PSI_Project.User", "Sender")
+                    b.HasOne("PSI_Project.Models.User", "Sender")
                         .WithMany()
                         .HasForeignKey("SenderId");
 
