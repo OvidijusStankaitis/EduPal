@@ -85,7 +85,7 @@ public class SubjectRepositoryUnitTests
     {
         // Arrange
         var subject = new Subject("removeSubjectTestName");
-        subject = _subjectRepository.Add(subject);
+        _subjectRepository.Add(subject);
         _context.SaveChanges();
         
         // Act

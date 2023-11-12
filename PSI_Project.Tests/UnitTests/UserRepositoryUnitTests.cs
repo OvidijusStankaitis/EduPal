@@ -3,7 +3,6 @@ using PSI_Project.Data;
 using PSI_Project.DTO;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
-using Xunit.Abstractions;
 
 namespace PSI_Project.Tests.UnitTests;
 

@@ -1,10 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PSI_Project.Data;
-using PSI_Project.DTO;
 using PSI_Project.Exceptions;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
-using Xunit.Abstractions;
 
 namespace PSI_Project.Tests.UnitTests;
 
@@ -56,12 +54,12 @@ public class CommentRepositoryUnitTests
         var topic = new Topic("testTopic", subject, KnowledgeLevel.Average);
         var user = new User("TestUserName", "TestUserSurname", "testmail@test.test", "userPassword");
         
-        user = _userRepository.Add(user);
-        subject = _subjectRepository.Add(subject);
-        topic = _topicRepository.Add(topic);
+        _userRepository.Add(user);
+        _subjectRepository.Add(subject);
+        _topicRepository.Add(topic);
 
         var comment = new Comment(user.Id, topic.Id, "testComment");
-        comment = _commentRepository.Add(comment);
+        _commentRepository.Add(comment);
         _context.SaveChanges();
         
         // Act
@@ -83,14 +81,14 @@ public class CommentRepositoryUnitTests
         var user = new User("TestUserName", "TestUserSurname", "testmail@test.test", "userPassword");
         var subject = new Subject("testSubject");
         var topic = new Topic("testTopic", subject, KnowledgeLevel.Average);
-        user = _userRepository.Add(user);
-        subject = _subjectRepository.Add(subject);
-        topic = _topicRepository.Add(topic);
+        _userRepository.Add(user);
+        _subjectRepository.Add(subject);
+        _topicRepository.Add(topic);
     
         var comment1 = new Comment(user.Id, topic.Id, "testComment1");
         var comment2 = new Comment(user.Id, topic.Id, "testComment2");
-        comment1 = _commentRepository.Add(comment1);
-        comment2 = _commentRepository.Add(comment2);
+        _commentRepository.Add(comment1);
+        _commentRepository.Add(comment2);
         _context.SaveChanges();
         
         // Act
@@ -114,9 +112,9 @@ public class CommentRepositoryUnitTests
         var user = new User("TestUserName", "TestUserSurname", "testmail@test.test", "userPassword");
         var subject = new Subject("testSubject");
         var topic = new Topic("testTopic", subject, KnowledgeLevel.Average);
-        user = _userRepository.Add(user);
-        subject = _subjectRepository.Add(subject);
-        topic = _topicRepository.Add(topic);
+        _userRepository.Add(user);
+        _subjectRepository.Add(subject);
+        _topicRepository.Add(topic);
     
         var comment = new Comment(user.Id, topic.Id, "testComment");
         _commentRepository.Add(comment);
