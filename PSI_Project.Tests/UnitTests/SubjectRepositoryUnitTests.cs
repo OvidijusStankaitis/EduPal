@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PSI_Project.Data;
+using PSI_Project.Exceptions;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
 
@@ -80,11 +81,11 @@ public class SubjectRepositoryUnitTests
     }
     
     [Fact]
-    public void RemoveSubject_UserExists_ReturnsTrue()
+    public void RemoveSubject_SubjectExists_ReturnsTrue()
     {
         // Arrange
         var subject = new Subject("removeSubjectTestName");
-        _subjectRepository.Add(subject);
+        subject = _subjectRepository.Add(subject);
         _context.SaveChanges();
         
         // Act
@@ -95,17 +96,15 @@ public class SubjectRepositoryUnitTests
     }
     
     [Fact]
-    public void RemoveSubject_UserDoesNotExist_ReturnsFalse()
+    public void RemoveSubject_SubjectDoesNotExist_ReturnsFalse()
     {
         // Arrange
         var subject = new Subject("nonexistentTestRemoveSubject");
         
         // Act
-        var result = _subjectRepository.RemoveSubject(subject.Id);
 
         // Assert
-        Assert.False(result);
+        var exception = Assert.Throws<ObjectNotFoundException>(() => _subjectRepository.RemoveSubject(subject.Id));
+        Assert.Equal("Couldn't get object with specified id", exception.Message);
     }
-
-    
 }

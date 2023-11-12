@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PSI_Project.Data;
+using PSI_Project.DTO;
+using PSI_Project.Models;
 using PSI_Project.Repositories;
+using Xunit.Abstractions;
 
 namespace PSI_Project.Tests.UnitTests;
 
@@ -30,28 +33,29 @@ public class UserRepositoryUnitTests
     }
     
     [Fact]
-    public void CheckUserRegister_UserDoesNotExist_ReturnsTrue()
+    public void CheckUserRegister_UserDoesNotExist_ReturnsNotNull()
     {
         // Arrange
-        var user = new User("nonexistentTest@test.test", "nonexistentTestPassword", "nonexistentTestName", "nonexistentTestSurname");
+        var user = new UserCreationDTO("nonexistentTest@test.test", "nonexistentTestPassword", "nonexistentTestName", "nonexistentTestSurname");
 
         // Act
         var result = _userRepository.CheckUserRegister(user);
+        
         // Assert
-        Assert.True(result);
+        Assert.NotNull(result);
     }
     
     [Fact]
-    public void CheckUserRegister_UserExists_ReturnsFalse()
+    public void CheckUserRegister_UserExists_ReturnsNull()
     {
         // Arrange
+        var userExisting = new UserCreationDTO("testName", "testSurname", "test@test.test", "testPassword");
         
-        var userExisting = new User("test@test.test", "testPassword", "testName", "testSurname");
         // Act
         var result = _userRepository.CheckUserRegister(userExisting);
 
         // Assert
-        Assert.False(result);
+        Assert.Null(result);
     }
     
     [Fact]

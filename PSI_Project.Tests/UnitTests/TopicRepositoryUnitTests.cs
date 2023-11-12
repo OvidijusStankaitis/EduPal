@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PSI_Project.Data;
+using PSI_Project.Exceptions;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
 
@@ -40,8 +41,8 @@ public class TopicRepositoryUnitTests
         
         // Act
         var result = _topicRepository.GetTopicsListBySubjectId(subject.Id);
-        _subjectRepository.RemoveSubject(subject.Id); // removing subject so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
         _topicRepository.Remove(topic1.Id); // removing topic so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
+        _subjectRepository.RemoveSubject(subject.Id); // removing subject so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
         
         // Assert
         Assert.Single(result);
@@ -64,9 +65,9 @@ public class TopicRepositoryUnitTests
         
         // Act
         var result = _topicRepository.GetTopicsListBySubjectId(subject.Id);
-        _subjectRepository.RemoveSubject(subject.Id); // removing subject so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
         _topicRepository.Remove(topic1.Id); // removing topic so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
         _topicRepository.Remove(topic2.Id); // removing topic so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
+        _subjectRepository.RemoveSubject(subject.Id); // removing subject so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
        
         // Assert
         Assert.Collection(result, 
@@ -75,7 +76,7 @@ public class TopicRepositoryUnitTests
     }
     
     [Fact]
-    public void Remove_UserExists_ReturnsTrue()
+    public void Remove_TopicExists_ReturnsTrue()
     {
         // Arrange
         var subject = new Subject("testSubject");
@@ -87,7 +88,6 @@ public class TopicRepositoryUnitTests
         
         // Act
         var result = _topicRepository.Remove(topic.Id);
-        _topicRepository.Remove(topic.Id);
         _subjectRepository.RemoveSubject(subject.Id);
 
         // Assert
@@ -95,16 +95,16 @@ public class TopicRepositoryUnitTests
     }
     
     [Fact]
-    public void Remove_UserDoesNotExist_ReturnsFalse()
+    public void Remove_TopicDoesNotExist_ThrowsException()
     {
         // Arrange
         var topic = new Topic("nonexistentTestRemove", new Subject("nonexistentTestRemoveSubject"), KnowledgeLevel.Average);
         
         // Act
-        var result = _topicRepository.Remove(topic.Id);
 
         // Assert
-        Assert.False(result);
+        var exception = Assert.Throws<ObjectNotFoundException>(() => _topicRepository.Remove(topic.Id));
+        Assert.Equal("Couldn't get object with specified id", exception.Message);
     }
     
 }
