@@ -1,5 +1,8 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
+using PSI_Project.Models;
+using Xunit.Abstractions;
 
 namespace PSI_Project.Tests.IntegrationTests;
 
@@ -7,6 +10,11 @@ public class UserControllerIntegrationTests : IDisposable
 {
     private readonly HttpClient _client;
     private readonly TestingWebAppFactory _factory;
+    
+    record UserControllerOkResponse(bool success, string message, string? userId);
+    record UserControllerGetNameOkResponse(string name);
+    record UserControllerGetNameNotFoundResponse(string message);
+    record UserControllerBadRequestResponse(bool success, string message);
     
     public UserControllerIntegrationTests()
     {
@@ -26,7 +34,12 @@ public class UserControllerIntegrationTests : IDisposable
         
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Equal("{\"success\":true,\"message\":\"Registration successful.\"}", responseString);
+        
+        var responseData  = JsonSerializer.Deserialize<UserControllerOkResponse>(responseString);
+        Assert.NotNull(responseData);
+        Assert.True(responseData.success); 
+        Assert.Equal("Registration successful.", responseData.message);
+        Assert.NotNull(responseData.userId);
     }
     
     [Fact] 
@@ -41,7 +54,11 @@ public class UserControllerIntegrationTests : IDisposable
         
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.Equal("{\"success\":false,\"message\":\"Invalid payload.\"}", responseString);
+        
+        var responseData  = JsonSerializer.Deserialize<UserControllerBadRequestResponse>(responseString);
+        Assert.NotNull(responseData);
+        Assert.False(responseData.success); 
+        Assert.Equal("Invalid payload.", responseData.message);
     }
     
     [Fact] 
@@ -52,7 +69,7 @@ public class UserControllerIntegrationTests : IDisposable
         {
             email = "test1@test.test",
             password = "testPassword1"
-        }; 
+        };
         
         // Act
         var response = await _client.PostAsync("user/login", JsonContent.Create(validUserLogin));
@@ -60,7 +77,12 @@ public class UserControllerIntegrationTests : IDisposable
         
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Equal("{\"success\":true,\"message\":\"Login successful.\"}", responseString);
+        
+        var responseData  = JsonSerializer.Deserialize<UserControllerOkResponse>(responseString);
+        Assert.NotNull(responseData);
+        Assert.True(responseData.success); 
+        Assert.Equal("Login successful.", responseData.message);
+        Assert.NotNull(responseData.userId);
     }
     
     [Fact] 
@@ -79,34 +101,46 @@ public class UserControllerIntegrationTests : IDisposable
         
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.Equal("{\"success\":false,\"message\":\"Invalid payload.\"}", responseString);
+        var responseData  = JsonSerializer.Deserialize<UserControllerBadRequestResponse>(responseString);
+        
+        Assert.NotNull(responseData);
+        Assert.False(responseData.success); 
+        Assert.Equal("Invalid payload.", responseData.message);
     }
 
-    // [Fact] 
-    // public async Task GetName_GetsValidExistingEmail_ReturnsOkAndUserName() // WHERE AM I SUPPOSED TO WRITE EMAIL???
-    // {
-    //     // Arrange
-    //     
-    //     // Act
-    //     var response = await _client.GetAsync("/user/get-name");
-    //     var responseString = await response.Content.ReadAsStringAsync();
-    //     
-    //     // Assert
-    //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-    // }
-    //
-    // [Fact] 
-    // public async Task GetName_GetsNonexistentEmail_ReturnsNotFound() // WHERE AM I SUPPOSED TO WRITE EMAIL???
-    // {
-    //     // Arrange
-    //     
-    //     // Act
-    //     var response = await _client.GetAsync("/user/get-name");
-    //     var responseString = await response.Content.ReadAsStringAsync();
-    //     
-    //     // Assert
-    //     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-    // }
+    [Fact] 
+    public async Task GetName_GetsValidExistingEmail_ReturnsOkAndUserName()
+    {
+        // Arrange
+        
+        // Act
+        var response = await _client.GetAsync("/user/get-name/?email=test1@test.test");
+        var responseString = await response.Content.ReadAsStringAsync();
+        
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        
+        var responseData  = JsonSerializer.Deserialize<UserControllerGetNameOkResponse>(responseString);
+        Assert.NotNull(responseData);
+        Assert.NotNull(responseData.name);
+    }
+    
+    [Fact] 
+    public async Task GetName_GetsNonexistentEmail_ReturnsNotFound()
+    {
+        // Arrange
+        
+        // Act
+        var response = await _client.GetAsync("/user/get-name/?email=nonexistent@test.test");
+        var responseString = await response.Content.ReadAsStringAsync();
+        
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        
+        var responseData  = JsonSerializer.Deserialize<UserControllerGetNameNotFoundResponse>(responseString);
+        Assert.NotNull(responseData);
+        Assert.Equal("User not found.", responseData.message);
+    }
     public void Dispose()
     {
         _client.Dispose();

@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics.Eventing.Reader;
+using System.Net;
 using System.Net.Http.Json;
 using Newtonsoft.Json;
 using PSI_Project.Models;
@@ -67,7 +68,7 @@ public class SubjectControllerIntegrationTests : IDisposable
         
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-        Assert.Equal("{\"error\":\"Subject not found.\"}", responseString);
+        Assert.Equal("There is no subject with such id", responseString);
     }
 
     [Fact]
