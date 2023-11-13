@@ -53,7 +53,7 @@ namespace PSI_Project.Controllers
                 userTimers[request.UserId].Interrupt();
                 if(!userTimers.TryRemove(request.UserId, out _))
                 {
-                    return BadRequest($"the operation is impossible because some other thread modified the dictionary (UserId:{request.UserId})");
+                    return Conflict($"the operation is impossible because some other thread modified the dictionary (UserId:{request.UserId})");
                 }
             }
 
@@ -62,7 +62,7 @@ namespace PSI_Project.Controllers
 
             if (!userTimers.TryAdd(request.UserId, timerThread))
             {
-                return BadRequest($"the operation is impossible because some other thread modified the dictionary (UserId:{request.UserId})");
+                return Conflict($"the operation is impossible because some other thread modified the dictionary (UserId:{request.UserId})");
             }
 
             return Ok("Timer started");
@@ -76,7 +76,7 @@ namespace PSI_Project.Controllers
                 userTimers[request.UserId].Interrupt();
                 if(!userTimers.TryRemove(request.UserId, out _))
                 {
-                    return BadRequest($"the operation is impossible because some other thread modified the dictionary (UserId:{request.UserId})");
+                    return Conflict($"the operation is impossible because some other thread modified the dictionary (UserId:{request.UserId})");
                 }
                 return Ok("Timer stopped");
             }
