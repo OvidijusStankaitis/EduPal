@@ -70,7 +70,7 @@ public class TopicController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Couldn't add new topic");
-            return BadRequest("An error occured while uploading topic");
+            return BadRequest($"An error occured while uploading topic");
         }
     }
     
@@ -92,15 +92,12 @@ public class TopicController : ControllerBase
                 {
                     return Ok("Knowledge level updated successfully");
                 }
-                else
-                {
-                    return BadRequest("Error updating knowledge level");
-                }
-            }
-            else
-            {
-                return BadRequest("Invalid knowledge level");
-            }
+                
+                return BadRequest("Error updating knowledge level");
+                
+            } 
+            
+            return BadRequest("Invalid knowledge level");
         }
         catch (Exception ex)
         {

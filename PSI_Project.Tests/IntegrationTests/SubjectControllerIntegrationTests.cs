@@ -63,7 +63,7 @@ public class SubjectControllerIntegrationTests : IDisposable
         // Arrange
         
         // Act
-        var response = await _client.GetAsync("/subject/get/nonexistentId");
+        var response = await _client.GetAsync("/subject/get/nonexistent-id");
         var responseString = await response.Content.ReadAsStringAsync();
         
         // Assert
@@ -80,11 +80,11 @@ public class SubjectControllerIntegrationTests : IDisposable
         // Act
         var response = await _client.PostAsync("/subject/upload", JsonContent.Create(validSubject));
         var responseString = await response.Content.ReadAsStringAsync();
-        var resulSubject = JsonConvert.DeserializeObject<Subject>(responseString);
+        var resultSubject = JsonConvert.DeserializeObject<Subject>(responseString);
         
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Equal("validSubjectTest", resulSubject?.Name);
+        Assert.Equal("validSubjectTest", resultSubject?.Name);
     }
     
     [Fact]
@@ -126,14 +126,14 @@ public class SubjectControllerIntegrationTests : IDisposable
         // Arrange
         
         // Act
-        var response = await _client.DeleteAsync("/subject/nonexistentID/delete");
+        var response = await _client.DeleteAsync("/subject/nonexistent-id/delete");
         var responseString = await response.Content.ReadAsStringAsync();
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.Equal("An error occured while deleting the subject", responseString);
     }
-    
+        
     public void Dispose()
     {
         _client.Dispose();

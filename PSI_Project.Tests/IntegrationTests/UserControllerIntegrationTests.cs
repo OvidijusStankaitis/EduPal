@@ -29,7 +29,7 @@ public class UserControllerIntegrationTests : IDisposable
         var newUser = new User("test2@test.test", "testPassword2", "newUserName", "newUserSurname");
         
         // Act
-        var response = await _client.PostAsync("user/register", JsonContent.Create(newUser));
+        var response = await _client.PostAsync("/user/register", JsonContent.Create(newUser));
         var responseString = await response.Content.ReadAsStringAsync();
         
         // Assert
@@ -49,7 +49,7 @@ public class UserControllerIntegrationTests : IDisposable
         var existingUser = new User("test1@test.test", "testPassword1", "testName", "testSurname");
         
         // Act
-        var response = await _client.PostAsync("user/register", JsonContent.Create(existingUser));
+        var response = await _client.PostAsync("/user/register", JsonContent.Create(existingUser));
         var responseString = await response.Content.ReadAsStringAsync();
         
         // Assert
@@ -72,7 +72,7 @@ public class UserControllerIntegrationTests : IDisposable
         };
         
         // Act
-        var response = await _client.PostAsync("user/login", JsonContent.Create(validUserLogin));
+        var response = await _client.PostAsync("/user/login", JsonContent.Create(validUserLogin));
         var responseString = await response.Content.ReadAsStringAsync();
         
         // Assert
