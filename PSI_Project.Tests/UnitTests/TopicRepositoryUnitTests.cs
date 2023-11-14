@@ -41,8 +41,8 @@ public class TopicRepositoryUnitTests
         
         // Act
         var result = _topicRepository.GetTopicsListBySubjectId(subject.Id);
-        _topicRepository.Remove(topic1.Id); // removing topic so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
-        _subjectRepository.RemoveSubject(subject.Id); // removing subject so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
+        //_topicRepository.Remove(topic1.Id); // removing topic so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
+        //_subjectRepository.RemoveSubject(subject.Id); // removing subject so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
         
         // Assert
         Assert.Single(result);
@@ -65,9 +65,9 @@ public class TopicRepositoryUnitTests
         
         // Act
         var result = _topicRepository.GetTopicsListBySubjectId(subject.Id);
-        _topicRepository.Remove(topic1.Id); // removing topic so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
-        _topicRepository.Remove(topic2.Id); // removing topic so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
-        _subjectRepository.RemoveSubject(subject.Id); // removing subject so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
+       // _topicRepository.Remove(topic1.Id); // removing topic so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
+       // _topicRepository.Remove(topic2.Id); // removing topic so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
+       // _subjectRepository.RemoveSubject(subject.Id); // removing subject so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
        
         // Assert
         Assert.Collection(result, 
