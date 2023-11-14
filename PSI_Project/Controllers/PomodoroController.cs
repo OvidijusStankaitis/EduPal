@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Concurrent;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PSI_Project.Controllers
 {
@@ -6,7 +8,7 @@ namespace PSI_Project.Controllers
     [Route("[controller]")]
     public class PomodoroController : ControllerBase
     {
-        private static Dictionary<string, Thread> userTimers = new Dictionary<string, Thread>();
+        private static ConcurrentDictionary<string, Thread> userTimers = new ConcurrentDictionary<string, Thread>(); // 6. Usage of threading via Thread class;
 
         private void RunTimer(string userId, int duration) // duration from front-end should be passed as milliseconds!!!
         {
@@ -20,7 +22,7 @@ namespace PSI_Project.Controllers
                 
                 if (userTimers.ContainsKey(userId))
                 {
-                    userTimers.Remove(userId);
+                    userTimers.TryRemove(userId, out _);
                 }
             }
             catch (ThreadInterruptedException)
@@ -49,13 +51,19 @@ namespace PSI_Project.Controllers
             if (userTimers.ContainsKey(request.UserId))
             {
                 userTimers[request.UserId].Interrupt();
-                userTimers.Remove(request.UserId);
+                if(!userTimers.TryRemove(request.UserId, out _))
+                {
+                    return Conflict($"the operation is impossible because some other thread modified the dictionary (UserId:{request.UserId})");
+                }
             }
 
-            Thread timerThread = new Thread(() => RunTimer(request.UserId, request.Duration));
+            Thread timerThread = new Thread(() => RunTimer(request.UserId, request.Duration)); // 6. Usage of threading via Thread class;
             timerThread.Start();
 
-            userTimers[request.UserId] = timerThread;
+            if (!userTimers.TryAdd(request.UserId, timerThread))
+            {
+                return Conflict($"the operation is impossible because some other thread modified the dictionary (UserId:{request.UserId})");
+            }
 
             return Ok("Timer started");
         }
@@ -66,7 +74,10 @@ namespace PSI_Project.Controllers
             if (userTimers.ContainsKey(request.UserId))
             {
                 userTimers[request.UserId].Interrupt();
-                userTimers.Remove(request.UserId);
+                if(!userTimers.TryRemove(request.UserId, out _))
+                {
+                    return Conflict($"the operation is impossible because some other thread modified the dictionary (UserId:{request.UserId})");
+                }
                 return Ok("Timer stopped");
             }
             return NotFound("No timer found for the user.");

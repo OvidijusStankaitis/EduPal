@@ -18,7 +18,7 @@ public class OpenAIService
         _apiKey = File.ReadAllText("..//PSI_Project//DB//api_key.txt").Trim();
     }
 
-    public async Task<string?> SendMessageAsync(string userMessage, string userEmail)
+    public async Task<string?> SendMessageAsync(string userMessage, string userEmail) // 7. Usage of async/await
     {
         //_openAIRepository.InsertItem(new Message(userMessage, userEmail, true));
         _openAIRepository.Add(new Message(userMessage, userEmail, true));
