@@ -8,7 +8,7 @@ namespace PSI_Project.Controllers
     [Route("api/[controller]")]
     public class PomodoroController : ControllerBase
     {
-        private static ConcurrentDictionary<string, Thread> userTimers = new ConcurrentDictionary<string, Thread>();
+        private static ConcurrentDictionary<string, Thread> userTimers = new ConcurrentDictionary<string, Thread>(); // 6. Usage of threading via Thread class;
 
         private void RunTimer(string userId, int duration) // duration from front-end should be passed as milliseconds!!!
         {
@@ -57,7 +57,7 @@ namespace PSI_Project.Controllers
                 }
             }
 
-            Thread timerThread = new Thread(() => RunTimer(request.UserId, request.Duration));
+            Thread timerThread = new Thread(() => RunTimer(request.UserId, request.Duration)); // 6. Usage of threading via Thread class;
             timerThread.Start();
 
             if (!userTimers.TryAdd(request.UserId, timerThread))

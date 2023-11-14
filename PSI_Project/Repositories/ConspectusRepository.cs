@@ -114,7 +114,7 @@ public class ConspectusRepository : Repository<Conspectus>
         Conspectus conspectus = Get(conspectusId);
 
         // Use Monitor for thread safety
-        Monitor.Enter(_deleteLock);
+        Monitor.Enter(_deleteLock); // 8. Use at least 1 concurrent collection or Monitor;
         try
         {
             string filePath = conspectus.Path;
