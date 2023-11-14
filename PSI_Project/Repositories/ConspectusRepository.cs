@@ -20,7 +20,7 @@ public class ConspectusRepository : Repository<Conspectus>
 
     public IEnumerable<Conspectus> GetConspectusListByTopicId(string topicId)
     {
-        return EduPalContext.Conspectuses.Where(conspectus => conspectus.Topic.Id == topicId);
+        return Find(conspectus => conspectus.Topic.Id == topicId);
     }
 
     public Stream GetPdfStream(string conspectusId)

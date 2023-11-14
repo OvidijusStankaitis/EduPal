@@ -6,7 +6,7 @@ using PSI_Project.Models;
 
 namespace PSI_Project.Repositories;
 
-public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
+public class Repository<TEntity> where TEntity : BaseEntity // 2: generic constraint
 {
     protected readonly DbContext Context;
     
@@ -30,7 +30,7 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseEnti
         return Context.Set<TEntity>().ToList();
     }
 
-    public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
+    public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate) // 2, 3: generic delegate
     {
         return Context.Set<TEntity>().Where(predicate);
     }

@@ -13,7 +13,7 @@ public class TopicRepository : Repository<Topic>
     
     public IEnumerable<Topic> GetTopicsListBySubjectId(string subjectId)
     {
-        return EduPalContext.Topics.Select(topic => topic).Where(topic => topic.Subject.Id == subjectId).ToList();
+        return Find(topic => topic.Subject.Id == subjectId);
     }
 
     public Topic? Create(JsonElement request)

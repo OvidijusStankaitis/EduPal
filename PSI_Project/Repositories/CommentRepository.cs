@@ -13,9 +13,7 @@ public class CommentRepository : Repository<Comment>
     
     public List<Comment> GetAllCommentsOfTopic(string topicId)
     {
-        return EduPalContext.Comments
-            .Select(comment => comment)
-            .Where(comment => comment.TopicId.Equals(topicId)).ToList();
+        return Find(comment => comment.TopicId == topicId).ToList();
     }
     
     public Comment? GetItemById(string itemId)  
