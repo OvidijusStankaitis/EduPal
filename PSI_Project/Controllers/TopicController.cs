@@ -1,9 +1,9 @@
 ﻿using System.Text.Json;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using PSI_Project.Exceptions;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
+using PSI_Project.Responses;
 
 namespace PSI_Project.Controllers;
 
@@ -62,7 +62,7 @@ public class TopicController : ControllerBase
             Topic? topic = _topicRepository.Create(request);
             if (topic != null)
             {
-                return Ok(topic);
+                return Ok(new CreationResponseDTO<Topic>("Subject was successfully created", topic));
             }
             
             return BadRequest("Invalid topic name");
