@@ -82,7 +82,7 @@ public class TopicControllerIntegrationTests : IDisposable
         var resultTopic = JsonConvert.DeserializeObject<Topic>(await responseForTopic.Content.ReadAsStringAsync());
         
         // Act
-        var response = await _client.DeleteAsync($"/topic/{resultTopic?.Id}/delete");
+        var response = await _client.DeleteAsync($"/topic/delete/{resultTopic?.Id}");
         var responseString = await response.Content.ReadAsStringAsync();
 
         // Assert
@@ -96,7 +96,7 @@ public class TopicControllerIntegrationTests : IDisposable
         // Arrange
         
         // Act
-        var response = await _client.DeleteAsync($"/topic/nonexistent-id/delete");
+        var response = await _client.DeleteAsync($"/topic/delete/nonexistent-id");
         var responseString = await response.Content.ReadAsStringAsync();
 
         // Assert
@@ -188,11 +188,11 @@ public class TopicControllerIntegrationTests : IDisposable
         var validData = new { topicId = resultTopic.Id, knowledgeLevel = KnowledgeLevel.Good.ToString()};
         
         // Act
-        var response = await _client.PutAsync($"/topic/updateKnowledgeLevel", JsonContent.Create(validData));
+        var response = await _client.PutAsync($"/topic/update-knowledge-level", JsonContent.Create(validData));
         var responseString = await response.Content.ReadAsStringAsync();
         
         // deleting the new topic
-        await _client.DeleteAsync($"/topic/{resultTopic.Id}/delete");
+        await _client.DeleteAsync($"/topic/delete/{resultTopic.Id}");
         
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -213,11 +213,11 @@ public class TopicControllerIntegrationTests : IDisposable
         var invalidData = new { topicId = resultTopic.Id, knowledgeLevel = KnowledgeLevel.Good};
         
         // Act
-        var response = await _client.PutAsync($"/topic/updateKnowledgeLevel", JsonContent.Create(invalidData));
+        var response = await _client.PutAsync($"/topic/update-knowledge-level", JsonContent.Create(invalidData));
         var responseString = await response.Content.ReadAsStringAsync();
         
         // deleting the new topic
-        await _client.DeleteAsync($"/topic/{resultTopic.Id}/delete");
+        await _client.DeleteAsync($"/topic/delete/{resultTopic.Id}");
         
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -231,7 +231,7 @@ public class TopicControllerIntegrationTests : IDisposable
         var invalidData = new { topicId = "nonexistentId", knowledgeLevel = KnowledgeLevel.Good.ToString()};
         
         // Act
-        var response = await _client.PutAsync($"/topic/updateKnowledgeLevel", JsonContent.Create(invalidData));
+        var response = await _client.PutAsync($"/topic/update-knowledge-level", JsonContent.Create(invalidData));
         var responseString = await response.Content.ReadAsStringAsync();
         
         // Assert
@@ -253,11 +253,11 @@ public class TopicControllerIntegrationTests : IDisposable
         var invalidData = new { topicId = resultTopic.Id, knowledgeLevel = "nonexistentKnowledgeLevel"};
         
         // Act
-        var response = await _client.PutAsync($"/topic/updateKnowledgeLevel", JsonContent.Create(invalidData));
+        var response = await _client.PutAsync($"/topic/update-knowledge-level", JsonContent.Create(invalidData));
         var responseString = await response.Content.ReadAsStringAsync();
         
         // deleting the new topic
-        await _client.DeleteAsync($"/topic/{resultTopic.Id}/delete");
+        await _client.DeleteAsync($"/topic/delete/{resultTopic.Id}");
         
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

@@ -112,7 +112,7 @@ public class SubjectControllerIntegrationTests : IDisposable
         var responseStringForSubject1 = await responseToGetSubject.Content.ReadAsStringAsync();
         var resultSubject1 = JsonConvert.DeserializeObject<Subject>(responseStringForSubject1);
         
-        var response = await _client.DeleteAsync($"/subject/{resultSubject1?.Id}/delete");
+        var response = await _client.DeleteAsync($"/subject/delete/{resultSubject1?.Id}");
         var responseString = await response.Content.ReadAsStringAsync();
 
         // Assert
@@ -126,7 +126,7 @@ public class SubjectControllerIntegrationTests : IDisposable
         // Arrange
         
         // Act
-        var response = await _client.DeleteAsync("/subject/nonexistent-id/delete");
+        var response = await _client.DeleteAsync("/subject/delete/nonexistent-id");
         var responseString = await response.Content.ReadAsStringAsync();
 
         // Assert

@@ -62,7 +62,8 @@ public class SubjectController : ControllerBase
             Subject? addedSubject = _subjectRepository.CreateSubject(request);
             if (addedSubject != null)
             {
-                return Ok(new CreationResponseDTO<Subject>("Subject was successfully created", addedSubject));
+                //return Ok(new CreationResponseDTO<Subject>("Subject was successfully created", addedSubject));
+                return Ok(addedSubject);
             }
 
             return BadRequest("Invalid subject name");

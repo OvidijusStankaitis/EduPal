@@ -62,7 +62,8 @@ public class TopicController : ControllerBase
             Topic? topic = _topicRepository.Create(request);
             if (topic != null)
             {
-                return Ok(new CreationResponseDTO<Topic>("Subject was successfully created", topic));
+                //return Ok(new CreationResponseDTO<Topic>("Subject was successfully created", topic));
+                return Ok(topic);
             }
             
             return BadRequest("Invalid topic name");
