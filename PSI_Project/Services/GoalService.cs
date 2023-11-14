@@ -38,7 +38,8 @@ namespace PSI_Project.Services
             {
                 return false; // No goal for today.
             }
-
+            
+            // Lambda expressions usage
             var subjectGoal = todaysGoal.SubjectGoals.FirstOrDefault(sg => sg.Subject.Id == subjectId);
 
             if (subjectGoal == null)

@@ -74,7 +74,7 @@ public class SubjectController : ControllerBase
         }
     }
     
-    [HttpDelete("{subjectId}/delete")]
+    [HttpDelete("delete/{subjectId}")]
     public IActionResult RemoveSubject(string subjectId)
     {
         try

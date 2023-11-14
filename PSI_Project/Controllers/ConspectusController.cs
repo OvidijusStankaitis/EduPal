@@ -81,7 +81,7 @@ public class ConspectusController : ControllerBase
         }
     }
 
-    [HttpDelete("{conspectusId}/delete")]
+    [HttpDelete("delete/{conspectusId}")]
     public IActionResult DeleteFile(string conspectusId)
     {
         try
@@ -96,7 +96,7 @@ public class ConspectusController : ControllerBase
         }
     }
     
-    [HttpPost("rateUp/{conspectusId}")]
+    [HttpPost("rate-up/{conspectusId}")]
     public IActionResult RateConspectusUp(string conspectusId)
     {
         try
@@ -112,7 +112,7 @@ public class ConspectusController : ControllerBase
         return NotFound(new { error = "File not found in database." });
     }
     
-    [HttpPost("rateDown/{conspectusId}")]
+    [HttpPost("rate-down/{conspectusId}")]
     public IActionResult RateConspectusDown(string conspectusId)
     {
         try
