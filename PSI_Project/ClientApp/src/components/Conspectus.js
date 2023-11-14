@@ -111,7 +111,7 @@ export const Conspectus = () => {
 
     const handleFileDelete = (fileId) => {
         console.log('handleFileDelete - fileId:', fileId);
-        fetch(`https://localhost:7283/Conspectus/${fileId}/delete`, {
+        fetch(`https://localhost:7283/Conspectus/delete/${fileId}`, {
             method: 'DELETE'
         })
             .then(response => {
@@ -127,7 +127,7 @@ export const Conspectus = () => {
 
     const handleVote = (id, voteType) => {
         console.log('handleVote - fileId:', id, 'voteType:', voteType);
-        fetch(`https://localhost:7283/Conspectus/${voteType ? 'rateUp' : 'rateDown'}/${id}`, {
+        fetch(`https://localhost:7283/Conspectus/${voteType ? 'rate-up' : 'rate-down'}/${id}`, {
             method: 'POST'
         })
             .then(response => response.json())

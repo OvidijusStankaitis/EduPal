@@ -3,7 +3,7 @@
 namespace PSI_Project.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class PomodoroController : ControllerBase
     {
         private static Dictionary<string, Thread> userTimers = new Dictionary<string, Thread>();

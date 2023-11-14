@@ -74,7 +74,7 @@ public class TopicController : ControllerBase
         }
     }
     
-    [HttpPut("updateKnowledgeLevel")]
+    [HttpPut("update-knowledge-level")]
     public IActionResult UpdateKnowledgeLevel([FromBody] JsonElement request)
     {
         try
@@ -108,7 +108,7 @@ public class TopicController : ControllerBase
         }
     }
 
-    [HttpDelete("{topicId}/delete")]
+    [HttpDelete("delete/{topicId}")]
     public IActionResult RemoveTopic(string topicId)
     {
         try

@@ -21,6 +21,7 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseEnti
         TEntity? item = Context.Set<TEntity>().Find(id);
         if (item == null)
         {
+            // Create at least 1 exception type and throw it; meaningfully deal with it; 
             throw new ObjectNotFoundException("Couldn't get object with specified id");
         }
         return item;
