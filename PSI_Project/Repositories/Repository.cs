@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using PSI_Project.Data;
 using PSI_Project.Exceptions;
 using PSI_Project.Models;
-using Xunit.Sdk;
 
 namespace PSI_Project.Repositories;
 
@@ -36,14 +35,14 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseEnti
         return Context.Set<TEntity>().Where(predicate);
     }
 
-    public void Add(TEntity entity)
+    public TEntity Add(TEntity entity)
     {
-        Context.Set<TEntity>().Add(entity);
+        return Context.Set<TEntity>().Add(entity).Entity;
     }
 
-    public void Remove(TEntity entity)
+    public TEntity Remove(TEntity entity)
     {
-        Context.Set<TEntity>().Remove(entity);
+        return Context.Set<TEntity>().Remove(entity).Entity;
     }
 
     public bool Exists(string id)

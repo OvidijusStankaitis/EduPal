@@ -14,7 +14,7 @@ namespace PSI_Project.Repositories
         
         public User? GetUserByEmail(string email)
         {
-            return EduPalContext.Users.FirstOrDefault(user => user.Email == email);
+            return EduPalContext.Users.FirstOrDefault(user => user.Email.Equals(email));
         }
         
         public string? CheckUserLogin(JsonElement request)

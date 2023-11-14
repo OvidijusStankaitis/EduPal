@@ -9,6 +9,6 @@ public interface IRepository<TEntity>
     IEnumerable<TEntity> GetAll();
     IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate);
 
-    void Add(TEntity entity);
-    void Remove(TEntity entity);
+    TEntity Add(TEntity entity);
+    TEntity Remove(TEntity entity);
 }

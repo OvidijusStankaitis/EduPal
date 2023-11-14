@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSI_Project", "PSI_Project\PSI_Project.csproj", "{C7529F5F-66D2-4A93-AEAB-C1FCACEA92C1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSI_Project.Tests", "PSI_Project.Tests\PSI_Project.Tests.csproj", "{F8EDDA8E-5E63-485F-A828-E2DF73A2C380}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{C7529F5F-66D2-4A93-AEAB-C1FCACEA92C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7529F5F-66D2-4A93-AEAB-C1FCACEA92C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7529F5F-66D2-4A93-AEAB-C1FCACEA92C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8EDDA8E-5E63-485F-A828-E2DF73A2C380}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8EDDA8E-5E63-485F-A828-E2DF73A2C380}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8EDDA8E-5E63-485F-A828-E2DF73A2C380}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8EDDA8E-5E63-485F-A828-E2DF73A2C380}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
