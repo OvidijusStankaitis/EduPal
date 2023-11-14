@@ -49,6 +49,9 @@ internal class TestingWebAppFactory : WebApplicationFactory<Program>
                         Console.WriteLine("=================================================");
                     }
 
+                    User user1 = new User("test1@test.test", "testPassword1", "testName", "testSurname");
+                    appContext.Users.Add(user1);
+                    
                     Subject subject1 = new Subject("testSubject1");
                     Subject subject2 = new Subject("testSubject2");
                     Subject subject3 = new Subject("testSubject3");
@@ -56,8 +59,12 @@ internal class TestingWebAppFactory : WebApplicationFactory<Program>
                     appContext.Subjects.Add(subject2);
                     appContext.Subjects.Add(subject3);
 
-                    User user1 = new User("test1@test.test", "testPassword1", "testName", "testSurname");
-                    appContext.Users.Add(user1);
+                    Topic topic1 = new Topic("testTopic1", subject2, KnowledgeLevel.Good);
+                    Topic topic2 = new Topic("testTopic2", subject2);
+                    Topic topic3 = new Topic("testTopic3", subject3, KnowledgeLevel.Average);
+                    appContext.Topics.Add(topic1);
+                    appContext.Topics.Add(topic2);
+                    appContext.Topics.Add(topic3);
                     
                     appContext.SaveChanges();
                 }
