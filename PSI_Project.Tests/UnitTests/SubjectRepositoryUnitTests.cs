@@ -1,20 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PSI_Project.Data;
+using PSI_Project.Exceptions;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
-using Xunit;
 
-namespace PSI_Project.Tests;
+namespace PSI_Project.Tests.UnitTests;
 
-public class SubjectRepositoryTests
+public class SubjectRepositoryUnitTests
 {
     private readonly SubjectRepository _subjectRepository;
     private readonly DbContextOptions<EduPalDatabaseContext> _options;
     private readonly EduPalDatabaseContext _context;
     
-    public SubjectRepositoryTests()
+    public SubjectRepositoryUnitTests()
     {
-        _options = GetInMemoryDatabaseOptions("TestDB"); 
+        _options = GetInMemoryDatabaseOptions("TestSubjectDB"); 
         _context = new EduPalDatabaseContext(_options); //should it be in using? 
         _subjectRepository = new SubjectRepository(_context);
         
@@ -53,11 +53,11 @@ public class SubjectRepositoryTests
         
         // Assert
         Assert.Single(result);
-        Assert.Collection(result, subject1 => Assert.Contains(subject.Name, subject1.Name));
+        Assert.Collection(result, subject1 => Assert.Equal(subject.Name, subject1.Name));
     }
     
     [Fact]
-    public void GetSubjectsList_DBContainsTwoElement_ReturnsAListOfOneElement()
+    public void GetSubjectsList_DBContainsTwoElement_ReturnsAListOfTwoElements()
     {
         // Arrange
         var subject1 = new Subject("testSubject1");
@@ -76,12 +76,12 @@ public class SubjectRepositoryTests
         // Assert
         Assert.NotEmpty(result);
         Assert.Collection(result, 
-            subjectOfList1 => Assert.Contains(subject1.Name, subjectOfList1.Name),
-            subjectOfList2 => Assert.Contains(subject2.Name, subjectOfList2.Name));
+            subjectOfList1 => Assert.Equal(subject1.Name, subjectOfList1.Name),
+            subjectOfList2 => Assert.Equal(subject2.Name, subjectOfList2.Name));
     }
     
     [Fact]
-    public void RemoveSubject_UserExists_ReturnsTrue()
+    public void RemoveSubject_SubjectExists_ReturnsTrue()
     {
         // Arrange
         var subject = new Subject("removeSubjectTestName");
@@ -96,17 +96,15 @@ public class SubjectRepositoryTests
     }
     
     [Fact]
-    public void RemoveSubject_UserDoesNotExist_ReturnsFalse()
+    public void RemoveSubject_SubjectDoesNotExist_ReturnsFalse()
     {
         // Arrange
         var subject = new Subject("nonexistentTestRemoveSubject");
         
         // Act
-        var result = _subjectRepository.RemoveSubject(subject.Id);
 
         // Assert
-        Assert.False(result);
+        var exception = Assert.Throws<ObjectNotFoundException>(() => _subjectRepository.RemoveSubject(subject.Id));
+        Assert.Equal("Couldn't get object with specified id", exception.Message);
     }
-
-    
 }

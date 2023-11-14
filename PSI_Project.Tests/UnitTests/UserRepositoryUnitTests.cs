@@ -1,24 +1,24 @@
-﻿using System.Text.Json;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using PSI_Project.Data;
 using PSI_Project.DTO;
+using PSI_Project.Models;
 using PSI_Project.Repositories;
-using Xunit;
-namespace PSI_Project.Tests;
 
-public class UserRepositoryTests
+namespace PSI_Project.Tests.UnitTests;
+
+public class UserRepositoryUnitTests
 {
     private readonly UserRepository _userRepository;
     private readonly DbContextOptions<EduPalDatabaseContext> _options;
     private readonly EduPalDatabaseContext _context;
 
-    public UserRepositoryTests()
+    public UserRepositoryUnitTests()
     {
-        _options = GetInMemoryDatabaseOptions("TestDB"); 
+        _options = GetInMemoryDatabaseOptions("TestUserDB"); 
         _context = new EduPalDatabaseContext(_options); //should it be in using? 
         _userRepository = new UserRepository(_context);
         
-        //adding one test element for a test DB 
+        // adding one test element for a test DB 
         var user = new User("test@test.test", "testPassword", "testName", "testSurname");
         _context.Users.Add(user);
         _context.SaveChanges();
@@ -35,15 +35,10 @@ public class UserRepositoryTests
     public void CheckUserRegister_UserDoesNotExist_ReturnsNotNull()
     {
         // Arrange
-        var user = new UserCreationDTO("nonexistentTestName", "nonexistentTestSurname", "nonexistentTest@test.test", "nonexistentTestPassword");
+        var user = new UserCreationDTO("nonexistentTest@test.test", "nonexistentTestPassword", "nonexistentTestName", "nonexistentTestSurname");
 
         // Act
         var result = _userRepository.CheckUserRegister(user);
-        var users = _context.Users.ToList();
-        foreach (var u in users)
-        {
-            Console.WriteLine(u);
-        }
         
         // Assert
         Assert.NotNull(result);
@@ -57,7 +52,7 @@ public class UserRepositoryTests
         
         // Act
         var result = _userRepository.CheckUserRegister(userExisting);
-        
+
         // Assert
         Assert.Null(result);
     }
@@ -79,6 +74,7 @@ public class UserRepositoryTests
         Assert.Equal("testPassword", result.Password);
         Assert.Equal("testName", result.Name);
         Assert.Equal("testSurname", result.Surname);
+        
     }
 
     [Fact]

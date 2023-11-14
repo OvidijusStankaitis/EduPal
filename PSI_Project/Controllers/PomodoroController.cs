@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace PSI_Project.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class PomodoroController : ControllerBase
     {
         private static ConcurrentDictionary<string, Thread> userTimers = new ConcurrentDictionary<string, Thread>(); // 6. Usage of threading via Thread class;

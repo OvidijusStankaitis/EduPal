@@ -102,7 +102,7 @@ export const Topics = () => {
         };
 
         try {
-            const response = await fetch('https://localhost:7283/Topic/updateKnowledgeLevel', {
+            const response = await fetch('https://localhost:7283/Topic/update-knowledge-level', {
                 method: 'PUT', // Use the appropriate HTTP method for updates
                 headers: {
                     'Content-Type': 'application/json'

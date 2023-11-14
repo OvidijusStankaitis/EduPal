@@ -1,6 +1,4 @@
-﻿using PSI_Project.Models;
-
-namespace PSI_Project
+﻿namespace PSI_Project.Models
 {
     public class User : BaseEntity
     {

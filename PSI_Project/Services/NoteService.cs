@@ -12,6 +12,7 @@ public class NoteService
     {
         if (string.IsNullOrEmpty(note.Content))
         {
+            // Create at least 1 exception type and throw it; meaningfully deal with it; 
             throw new EntityCreationException("Note content cannot be null or empty.");
         }
 

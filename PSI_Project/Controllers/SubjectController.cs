@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PSI_Project.Exceptions;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
+using PSI_Project.Responses;
 
 namespace PSI_Project.Controllers;
 
@@ -61,7 +62,7 @@ public class SubjectController : ControllerBase
             Subject? addedSubject = _subjectRepository.CreateSubject(request);
             if (addedSubject != null)
             {
-                return Ok(addedSubject);
+                return Ok(new CreationResponseDTO<Subject>("Subject was successfully created", addedSubject));
             }
 
             return BadRequest("Invalid subject name");
@@ -73,7 +74,7 @@ public class SubjectController : ControllerBase
         }
     }
     
-    [HttpDelete("{subjectId}/delete")]
+    [HttpDelete("delete/{subjectId}")]
     public IActionResult RemoveSubject(string subjectId)
     {
         try

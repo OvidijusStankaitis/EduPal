@@ -13,9 +13,7 @@ public class CommentRepository : Repository<Comment>
     
     public List<Comment> GetAllCommentsOfTopic(string topicId)
     {
-        return EduPalContext.Comments
-            .Select(comment => comment)
-            .Where(comment => comment.TopicId.Equals(topicId)).ToList();
+        return Find(comment => comment.TopicId == topicId).ToList();
     }
     
     public Comment? GetItemById(string itemId)  
@@ -24,12 +22,11 @@ public class CommentRepository : Repository<Comment>
             .FirstOrDefault(comment => comment.Id.Equals(itemId));
     }
     
-    public bool Remove(string commentId)
+    public bool Remove(string commentId) 
     {
         Comment comment = Get(commentId);
         Remove(comment);
         int changes = EduPalContext.SaveChanges();
         return changes > 0;
     }
-    
 }

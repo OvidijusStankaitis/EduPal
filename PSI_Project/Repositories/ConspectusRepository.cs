@@ -20,7 +20,7 @@ public class ConspectusRepository : Repository<Conspectus>
 
     public IEnumerable<Conspectus> GetConspectusListByTopicId(string topicId)
     {
-        return EduPalContext.Conspectuses.Where(conspectus => conspectus.Topic.Id == topicId);
+        return Find(conspectus => conspectus.Topic.Id == topicId);
     }
 
     public Stream GetPdfStream(string conspectusId)
@@ -69,6 +69,7 @@ public class ConspectusRepository : Repository<Conspectus>
             }
             catch (Exception ex)
             {
+                // Create at least 1 exception type and throw it; meaningfully deal with it; 
                 throw new EntityCreationException("Error occured while uploading one of the files", ex);
             }
 
@@ -77,6 +78,7 @@ public class ConspectusRepository : Repository<Conspectus>
                 Topic? topic = EduPalContext.Topics.Find(topicId);
                 if (topic == null)
                 {
+                    // Create at least 1 exception type and throw it; meaningfully deal with it; 
                     throw new ObjectNotFoundException("Couldn't find topic with specified id");
                 }
 
@@ -93,6 +95,7 @@ public class ConspectusRepository : Repository<Conspectus>
             catch (Exception ex)
             {
                 File.Delete(filePath);
+                // Create at least 1 exception type and throw it; meaningfully deal with it; 
                 throw new EntityCreationException("Error occured while uploading one of the files", ex);
             }
         }
@@ -138,6 +141,7 @@ public class ConspectusRepository : Repository<Conspectus>
         {
             EntityEntry<Conspectus> entry = EduPalContext.Entry(conspectus);
             entry.State = EntityState.Unchanged;
+            // Create at least 1 exception type and throw it; meaningfully deal with it; 
             throw new EntityDeletionException("Couldn't delete conspectus", ex);
         }
         finally

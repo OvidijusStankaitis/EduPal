@@ -3,11 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using PSI_Project.Data;
 using PSI_Project.Exceptions;
 using PSI_Project.Models;
-using Xunit.Sdk;
 
 namespace PSI_Project.Repositories;
 
-public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
+public class Repository<TEntity> where TEntity : BaseEntity // 2: generic constraint
 {
     protected readonly DbContext Context;
     
@@ -21,6 +20,7 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseEnti
         TEntity? item = Context.Set<TEntity>().Find(id);
         if (item == null)
         {
+            // Create at least 1 exception type and throw it; meaningfully deal with it; 
             throw new ObjectNotFoundException("Couldn't get object with specified id");
         }
         return item;
@@ -31,19 +31,19 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseEnti
         return Context.Set<TEntity>().ToList();
     }
 
-    public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
+    public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate) // 2, 3: generic delegate
     {
         return Context.Set<TEntity>().Where(predicate);
     }
 
-    public void Add(TEntity entity)
+    public TEntity Add(TEntity entity)
     {
-        Context.Set<TEntity>().Add(entity);
+        return Context.Set<TEntity>().Add(entity).Entity;
     }
 
-    public void Remove(TEntity entity)
+    public TEntity Remove(TEntity entity)
     {
-        Context.Set<TEntity>().Remove(entity);
+        return Context.Set<TEntity>().Remove(entity).Entity;
     }
 
     public bool Exists(string id)
