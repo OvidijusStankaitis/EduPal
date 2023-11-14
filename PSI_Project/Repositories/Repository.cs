@@ -30,7 +30,7 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseEnti
         return Context.Set<TEntity>().ToList();
     }
 
-    public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
+    public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate) // 3: delegates usage
     {
         return Context.Set<TEntity>().Where(predicate);
     }
