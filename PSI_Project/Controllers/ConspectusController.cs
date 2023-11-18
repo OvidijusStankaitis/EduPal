@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PSI_Project.DTO;
 using PSI_Project.Exceptions;
 using PSI_Project.Models;
@@ -7,6 +8,8 @@ using PSI_Project.Services;
 
 namespace PSI_Project.Controllers;
 
+
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class ConspectusController : ControllerBase

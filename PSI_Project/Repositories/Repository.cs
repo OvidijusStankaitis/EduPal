@@ -45,17 +45,4 @@ public class Repository<TEntity> where TEntity : BaseEntity // 2: generic constr
     {
         return Context.Set<TEntity>().Remove(entity).Entity;
     }
-
-    public bool Exists(string id)
-    {
-        try
-        {
-            Get(id);
-            return true;
-        }
-        catch (ObjectNotFoundException)
-        {
-            return false;
-        }
-    }
 }

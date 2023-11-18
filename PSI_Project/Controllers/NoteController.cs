@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using PSI_Project.DTO;
 using PSI_Project.Models;
@@ -8,6 +9,7 @@ using PSI_Project.Exceptions;
 
 namespace PSI_Project.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class NoteController : ControllerBase

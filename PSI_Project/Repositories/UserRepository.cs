@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Microsoft.IdentityModel.Tokens;
 using PSI_Project.Data;
 using PSI_Project.DTO;
 using PSI_Project.Models;
@@ -16,27 +17,15 @@ namespace PSI_Project.Repositories
         {
             return EduPalContext.Users.FirstOrDefault(user => user.Email.Equals(email));
         }
-        
-        public string? CheckUserLogin(JsonElement request)
+
+        public User? Create(RegisterRequest registerData)
         {
-            if (request.TryGetProperty("email", out JsonElement emailElement) &&
-                request.TryGetProperty("password", out JsonElement passwordElement))
+            if (Find(user => user.Email == registerData.Email).IsNullOrEmpty())
             {
-                string? email = emailElement.GetString();
-                string? password = passwordElement.GetString();
-                
-                if (email == null || password == null)
-                {
-                    return null;
-                }
-                
-                User? user = GetUserByEmail(email);
-                if (user != null && user.Password == password)
-                {
-                    return user.Id;
-                }
+                User newUser = new User(registerData.Name, registerData.Surname, registerData.Email, registerData.Password);
+                return Add(newUser);
             }
-            
+
             return null;
         }
 

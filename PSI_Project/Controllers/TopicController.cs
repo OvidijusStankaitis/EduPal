@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PSI_Project.Exceptions;
 using PSI_Project.Models;
@@ -7,6 +8,7 @@ using PSI_Project.Responses;
 
 namespace PSI_Project.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class TopicController : ControllerBase

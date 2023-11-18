@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PSI_Project.Repositories;
-using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using PSI_Project.DTO;
 using PSI_Project.Models;
+using PSI_Project.Services;
 
 namespace PSI_Project.Controllers;
 
@@ -10,43 +11,40 @@ namespace PSI_Project.Controllers;
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly UserRepository _userRepository;
     private readonly ILogger<UserController> _logger;
+    
+    private readonly UserAuthService _userAuthService;
+    private readonly UserRepository _userRepository;
 
-    public UserController(ILogger<UserController> logger, UserRepository userRepository)
+    public UserController(ILogger<UserController> logger, UserAuthService userAuthService, UserRepository userRepository)
     {
         _logger = logger;
+        
+        _userAuthService = userAuthService;
         _userRepository = userRepository;
     }
-
-    [HttpPost("register")]
-    public IActionResult Register([FromBody] UserCreationDTO newUser)
-    {
-        try
-        {
-            string? userId = _userRepository.CheckUserRegister(newUser);
-            if (userId != null)
-            {
-                return Ok(new { success = true, message = "Registration successful.", userId });
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Couldn't register user {NewUserModel}", newUser);
-        }
-
-        return BadRequest(new { success = false, message = "Invalid payload." });
-    }
-
+    
+    [AllowAnonymous]
     [HttpPost("login")]
-    public IActionResult Login([FromBody] JsonElement payload)
+    public async Task<IActionResult> Login([FromBody] LoginRequest loginData)
     {
         try
         {
-            string? userId = _userRepository.CheckUserLogin(payload);
-            if (userId != null)
+            User? user = _userAuthService.Authenticate(loginData);
+            
+            if (user != null)
             {
-                return Ok(new { success = true, message = "Login successful.", userId });
+                string token = await _userAuthService.GenerateToken(user);
+                Response.Cookies.Append("token", token, new CookieOptions
+                {
+                    Expires = DateTimeOffset.Now.AddMinutes(15),
+                    HttpOnly = true,
+                    Secure = true,
+                    IsEssential = true,
+                    SameSite = SameSiteMode.None
+                });
+                
+                return Ok(new { success = true, message = "Login successful.", user.Id});
             }
         }
         catch (Exception ex)
@@ -56,9 +54,41 @@ public class UserController : ControllerBase
 
         return BadRequest(new { success = false, message = "Invalid payload." });
     }
+
+    [AllowAnonymous]
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterRequest registerData)
+    {
+        try
+        {
+            User? user = _userRepository.Create(registerData);
+            
+            if (user != null)
+            {
+                string token = await _userAuthService.GenerateToken(user);
+                Response.Cookies.Append("token", token, new CookieOptions
+                {
+                    Expires = DateTimeOffset.Now.AddMinutes(15),
+                    HttpOnly = true,
+                    Secure = true,
+                    IsEssential = true,
+                    SameSite = SameSiteMode.None
+                });
+                
+                return Ok(new { success = true, message = "Registration successful.", user.Id });
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Couldn't register user {NewUserModel}", registerData);
+        }
+
+        return BadRequest(new { success = false, message = "Invalid payload." });
+    }
     
+    [Authorize]
     [HttpGet("get-name")]
-    public IActionResult GetName(string email)
+    public IActionResult GetName([FromQuery] string email)
     {
         var user = _userRepository.GetUserByEmail(email);
         if (user != null)

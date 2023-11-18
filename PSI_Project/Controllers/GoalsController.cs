@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PSI_Project.Services;
 using PSI_Project.Models;
 using Serilog;
 
 namespace PSI_Project.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class GoalsController : ControllerBase
