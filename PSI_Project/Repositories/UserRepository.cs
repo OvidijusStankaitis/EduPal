@@ -63,8 +63,8 @@ namespace PSI_Project.Repositories
             
             User newUser = new User(email, password, name, surname);
             
-            Add(newUser);
-            int changes = EduPalContext.SaveChanges();
+            int changes = Add(newUser);
+            //int changes = EduPalContext.SaveChanges();
             if (changes > 0)
             {
                 return newUser.Id;

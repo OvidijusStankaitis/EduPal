@@ -13,7 +13,8 @@ public class SubjectRepository : Repository<Subject>
 
     public List<Subject> GetSubjectsList()
     {
-        return EduPalContext.Subjects.ToList();
+        //return EduPalContext.Subjects.ToList();
+        return GetAll().ToList();
     }
 
     public Subject? CreateSubject(JsonElement request)
@@ -26,8 +27,8 @@ public class SubjectRepository : Repository<Subject>
             return null;
         
         Subject newSubject = new Subject(subjectName);
-        Add(newSubject);
-        int changes = EduPalContext.SaveChanges();
+        int changes = Add(newSubject);
+        //int changes = EduPalContext.SaveChanges();
        
         return changes > 0 ? newSubject : null;
     }
@@ -35,9 +36,9 @@ public class SubjectRepository : Repository<Subject>
     public bool RemoveSubject(string subjectId)
     {
         Subject subject = Get(subjectId);
-        Remove(subject);
+        int changes = Remove(subject);
+        //int changes = EduPalContext.SaveChanges();
         
-        int changes = EduPalContext.SaveChanges();
         return changes > 0;
     } 
 }

@@ -90,7 +90,7 @@ public class ConspectusRepository : Repository<Conspectus>
                 };
 
                 Add(conspectus);
-                EduPalContext.SaveChanges();
+                //EduPalContext.SaveChanges();
             }
             catch (Exception ex)
             {
@@ -123,8 +123,8 @@ public class ConspectusRepository : Repository<Conspectus>
             string filePath = conspectus.Path;
         
             // Remove the conspectus from the context
-            Remove(conspectus);
-            EduPalContext.SaveChanges();
+            Remove(conspectus); 
+            //EduPalContext.SaveChanges();
 
             // Try to delete the file
             if (File.Exists(filePath))

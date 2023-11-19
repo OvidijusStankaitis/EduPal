@@ -17,8 +17,8 @@ namespace PSI_Project.Repositories
             {
                 // var goalString = ItemToDbString(goal);
                 // File.AppendAllText(DbFilePath, goalString + Environment.NewLine);
-                Add(goal);
-                int changes = EduPalContext.SaveChanges();
+                int changes = Add(goal);
+                //int changes = EduPalContext.SaveChanges();
 
                 return changes > 0;
             }

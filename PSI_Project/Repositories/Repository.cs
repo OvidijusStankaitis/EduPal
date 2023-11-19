@@ -6,7 +6,7 @@ using PSI_Project.Models;
 
 namespace PSI_Project.Repositories;
 
-public class Repository<TEntity> where TEntity : BaseEntity // 2: generic constraint
+public class Repository<TEntity> where TEntity : BaseEntity
 {
     protected readonly DbContext Context;
     
@@ -15,7 +15,7 @@ public class Repository<TEntity> where TEntity : BaseEntity // 2: generic constr
         Context = context;
     }
     
-    public TEntity Get(string id)
+    public virtual TEntity Get(string id)
     {
         TEntity? item = Context.Set<TEntity>().Find(id);
         if (item == null)
@@ -26,27 +26,31 @@ public class Repository<TEntity> where TEntity : BaseEntity // 2: generic constr
         return item;
     }
 
-    public IEnumerable<TEntity> GetAll()
+    public virtual IEnumerable<TEntity> GetAll()
     {
         return Context.Set<TEntity>().ToList();
     }
 
-    public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate) // 2, 3: generic delegate
+    public virtual IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate) // 2, 3: generic delegate
     {
         return Context.Set<TEntity>().Where(predicate);
     }
 
-    public TEntity Add(TEntity entity)
+    public virtual int Add(TEntity entity)
     {
-        return Context.Set<TEntity>().Add(entity).Entity;
+        //return Context.Set<TEntity>().Add(entity).Entity;
+        Context.Set<TEntity>().Add(entity);
+        return Context.SaveChanges();
     }
 
-    public TEntity Remove(TEntity entity)
+    public virtual int Remove(TEntity entity)
     {
-        return Context.Set<TEntity>().Remove(entity).Entity;
+        //return Context.Set<TEntity>().Remove(entity).Entity;
+        Context.Set<TEntity>().Remove(entity);
+        return Context.SaveChanges();
     }
 
-    public bool Exists(string id)
+    public virtual bool Exists(string id)
     {
         try
         {

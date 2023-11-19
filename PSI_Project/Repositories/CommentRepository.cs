@@ -25,8 +25,8 @@ public class CommentRepository : Repository<Comment>
     public bool Remove(string commentId) 
     {
         Comment comment = Get(commentId);
-        Remove(comment);
-        int changes = EduPalContext.SaveChanges();
+        int changes = Remove(comment);
+        //int changes = EduPalContext.SaveChanges();
         return changes > 0;
     }
 }

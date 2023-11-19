@@ -29,8 +29,8 @@ public class TopicRepository : Repository<Topic>
 
         Subject subject = EduPalContext.Subjects.Find(subjectId);
         Topic newTopic = new Topic(topicName, subject);
-        Add(newTopic);
-        int changes = EduPalContext.SaveChanges();
+        int changes = Add(newTopic);
+        //int changes = EduPalContext.SaveChanges();
         
         return changes > 0 ? newTopic : null;
     }
@@ -54,8 +54,8 @@ public class TopicRepository : Repository<Topic>
     public bool Remove(string topicId)
     {
         Topic topic = Get(topicId);
-        Remove(topic);
-        int changes = EduPalContext.SaveChanges();
+        int changes = Remove(topic);
+        //int changes = EduPalContext.SaveChanges();
 
         return changes > 0;
     } 

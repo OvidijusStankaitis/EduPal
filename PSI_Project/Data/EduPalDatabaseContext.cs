@@ -16,8 +16,7 @@ public class EduPalDatabaseContext : DbContext
     public DbSet<Note> Notes { get; set; }
 
     public EduPalDatabaseContext(DbContextOptions options) : base(options)
-    {
-        
-    }
-    
+    { }
+    public EduPalDatabaseContext()
+    { }
 }

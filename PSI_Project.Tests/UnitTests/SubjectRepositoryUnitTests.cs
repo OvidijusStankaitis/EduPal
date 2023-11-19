@@ -96,7 +96,7 @@ public class SubjectRepositoryUnitTests
     }
     
     [Fact]
-    public void RemoveSubject_SubjectDoesNotExist_ReturnsFalse()
+    public void RemoveSubject_SubjectDoesNotExist_ThrowsObjectNotFoundException()
     {
         // Arrange
         var subject = new Subject("nonexistentTestRemoveSubject");
