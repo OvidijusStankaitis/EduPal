@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using PSI_Project.Hubs;
-using PSI_Project.Models;
+﻿using PSI_Project.Models;
 using PSI_Project.Repositories;
 
 namespace PSI_Project.Services;

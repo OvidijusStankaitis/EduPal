@@ -1,10 +1,8 @@
-﻿using System.Text.Json;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PSI_Project.DTO;
 using PSI_Project.Exceptions;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
-using PSI_Project.Responses;
 
 namespace PSI_Project.Controllers;
 
@@ -22,11 +20,11 @@ public class TopicController : ControllerBase
     }
 
     [HttpGet("get/{topicId}")]
-    public IActionResult GetTopicById(string topicId)
+    public async Task<IActionResult> GetTopicByIdAsync(string topicId)
     {
         try
         {
-            Topic topic = _topicRepository.Get(topicId);
+            Topic topic = await _topicRepository.GetAsync(topicId);
             return Ok(topic);
         }
         catch (ObjectNotFoundException)
@@ -42,25 +40,26 @@ public class TopicController : ControllerBase
     }
 
     [HttpGet("list/{subjectId}")]
-    public IActionResult ListTopics(string subjectId)
+    public async Task<IActionResult> ListTopicsAsync(string subjectId)
     {
         try
         {
-            return Ok(_topicRepository.GetTopicsListBySubjectId(subjectId));
+            var topics = await _topicRepository.GetTopicsListBySubjectIdAsync(subjectId);
+            return Ok(topics);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Couldn't list topics");
-            return BadRequest("An error occured while getting topic list");
+            return BadRequest("An error occurred while getting topic list");
         }
     }
 
     [HttpPost("upload")]
-    public IActionResult UploadTopic([FromBody] TopicUploadRequestDTO request)
+    public async Task<IActionResult> UploadTopicAsync([FromBody] TopicUploadRequestDTO request)
     {
         try
         {
-            Topic? topic = _topicRepository.Create(request.TopicName, request.SubjectId);
+            Topic? topic = await _topicRepository.CreateAsync(request.TopicName, request.SubjectId);
             if (topic != null)
             {
                 return Ok(topic);
@@ -76,7 +75,7 @@ public class TopicController : ControllerBase
     }
 
     [HttpPut("update-knowledge-level")]
-    public IActionResult UpdateKnowledgeLevel([FromBody] UpdateKnowledgeLevelRequestDTO request)
+    public async Task<IActionResult> UpdateKnowledgeLevelAsync([FromBody] UpdateKnowledgeLevelRequestDTO request)
     {
         try
         {
@@ -84,7 +83,7 @@ public class TopicController : ControllerBase
             if (Enum.TryParse<KnowledgeLevel>(request.KnowledgeLevel, true, out var level))
             {
                 // Update the knowledge level of the topic.
-                bool updated = _topicRepository.UpdateKnowledgeLevel(request.TopicId, level);
+                bool updated = await _topicRepository.UpdateKnowledgeLevelAsync(request.TopicId, level);
 
                 if (updated)
                 {
@@ -103,17 +102,17 @@ public class TopicController : ControllerBase
     }
 
     [HttpDelete("delete/{topicId}")]
-    public IActionResult RemoveTopic(string topicId)
+    public async Task<IActionResult> RemoveTopicAsync(string topicId)
     {
         try
         {
-            _topicRepository.Remove(topicId);
+            await _topicRepository.RemoveAsync(topicId);
             return Ok("Topic has been successfully deleted");
         }
         catch (Exception ex)
-        { 
+        {
             _logger.LogError(ex, "Couldn't delete topic {topicId}", topicId);
-            return BadRequest("An error occured while deleting the topic");
+            return BadRequest("An error occurred while deleting the topic");
         }
     }
 }

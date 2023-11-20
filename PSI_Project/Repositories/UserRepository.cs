@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+﻿using Microsoft.EntityFrameworkCore;
 using PSI_Project.Data;
 using PSI_Project.DTO;
 using PSI_Project.Models;
@@ -12,31 +12,30 @@ namespace PSI_Project.Repositories
         {
         }
         
-        public User? GetUserByEmail(string email)
+        public async Task<User?> GetUserByEmailAsync(string email)
         {
-            return EduPalContext.Users.FirstOrDefault(user => user.Email.Equals(email));
+            return await EduPalContext.Users.FirstOrDefaultAsync(user => user.Email.Equals(email));
         }
         
-        public string? CheckUserLogin(string email, string password)
+        public async Task<string?> CheckUserLoginAsync(string email, string password)
         {
-            User? user = GetUserByEmail(email);
+            User? user = await GetUserByEmailAsync(email);
             if (user != null && user.Password == password)
             {
                 return user.Id;
             }
-    
             return null;
         }
 
-        public string? CheckUserRegister(UserCreationDTO? newUserData)
+        public async Task<string?> CheckUserRegisterAsync(UserCreationDTO? newUserData)
         {
             if (newUserData is null)
             {
                 return null;
             }
-            
+
             string? email = newUserData.Email;
-            if (email == null || GetUserByEmail(email) != null)
+            if (email == null || await GetUserByEmailAsync(email) != null)
             {
                 return null;
             }
@@ -48,11 +47,11 @@ namespace PSI_Project.Repositories
             {
                 return null;
             }
-            
+
             User newUser = new User(email, password, name, surname);
-            
+
             Add(newUser);
-            int changes = EduPalContext.SaveChanges();
+            int changes = await EduPalContext.SaveChangesAsync();
             if (changes > 0)
             {
                 return newUser.Id;

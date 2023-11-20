@@ -4,7 +4,6 @@ using PSI_Project.DTO;
 using PSI_Project.Exceptions;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
-using PSI_Project.Responses;
 
 namespace PSI_Project.Controllers;
 
@@ -14,7 +13,7 @@ public class SubjectController : ControllerBase
 {
     private readonly SubjectRepository _subjectRepository;
     private readonly ILogger<SubjectController> _logger;
-    
+
     public SubjectController(ILogger<SubjectController> logger, SubjectRepository subjectRepository)
     {
         _logger = logger;
@@ -40,28 +39,29 @@ public class SubjectController : ControllerBase
             return BadRequest("An error occured while getting the subject");
         }
     }
-    
+
     [HttpGet("list")]
-    public IActionResult ListSubjects()
+    public async Task<IActionResult> ListSubjectsAsync()
     {
         try
         {
-            return Ok(_subjectRepository.GetSubjectsList());
+            var subjects = await _subjectRepository.GetSubjectsListAsync();
+            return Ok(subjects);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Couldn't list subjects");
-            return BadRequest("An error occured while listing the subjects");
+            return BadRequest("An error occurred while listing the subjects");
         }
     }
-    
+
     [HttpPost("upload")]
-    public IActionResult UploadSubject([FromBody] SubjectRequestDTO request)
+    public async Task<IActionResult> UploadSubjectAsync([FromBody] SubjectRequestDTO request)
     {
         try
         {
             // Use the properties of 'request' to create a new Subject
-            Subject? addedSubject = _subjectRepository.CreateSubject(request.SubjectName);
+            Subject? addedSubject = await _subjectRepository.CreateSubjectAsync(request.SubjectName);
             if (addedSubject != null)
             {
                 return Ok(addedSubject);
@@ -75,19 +75,24 @@ public class SubjectController : ControllerBase
             return BadRequest("An error occurred while uploading the subject");
         }
     }
-    
+
     [HttpDelete("delete/{subjectId}")]
-    public IActionResult RemoveSubject(string subjectId)
+    public async Task<IActionResult> RemoveSubjectAsync(string subjectId)
     {
         try
         {
-            _subjectRepository.RemoveSubject(subjectId);
-            return Ok("Subject has been successfully deleted");
+            bool removed = await _subjectRepository.RemoveSubjectAsync(subjectId);
+            if (removed)
+            {
+                return Ok("Subject has been successfully deleted");
+            }
+
+            return NotFound("Subject not found");
         }
         catch (Exception ex)
-        {   
+        {
             _logger.LogError(ex, "Couldn't delete subject {subjectId}", subjectId);
-            return BadRequest("An error occured while deleting the subject");
+            return BadRequest("An error occurred while deleting the subject");
         }
     }
 }
