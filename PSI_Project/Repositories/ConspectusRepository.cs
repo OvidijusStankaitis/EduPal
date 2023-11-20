@@ -12,7 +12,7 @@ namespace PSI_Project.Repositories;
 public class ConspectusRepository : Repository<Conspectus>
 {
     public EduPalDatabaseContext EduPalContext => Context as EduPalDatabaseContext;
-    private static readonly object _deleteLock = new object();
+    private readonly SemaphoreSlim _deleteLock = new SemaphoreSlim(1);
 
     public ConspectusRepository(EduPalDatabaseContext context) : base(context)
     {
@@ -47,64 +47,64 @@ public class ConspectusRepository : Repository<Conspectus>
         return new ConspectusFileContentDTO(conspectus.Name, fileContent);
     }
 
-public async Task<IEnumerable<Conspectus>> UploadAsync(string topicId, List<IFormFile> files)
-{
-    var uploadedConspectuses = new List<Conspectus>();
-
-    foreach (var formFile in files)
+    public async Task<IEnumerable<Conspectus>> UploadAsync(string topicId, List<IFormFile> files)
     {
-        string fileName = formFile.FileName;
-        if (!fileName.IsValidFileName())
-        {
-            Console.WriteLine($"The file {fileName} is not a valid PDF format.");
-            continue;
-        }
+        var uploadedConspectuses = new List<Conspectus>();
 
-        string filePath;
-        try
+        foreach (var formFile in files)
         {
-            filePath = Path.Combine(Directory.GetCurrentDirectory(), "Files", fileName);
-            using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+            string fileName = formFile.FileName;
+            if (!fileName.IsValidFileName())
             {
-                await formFile.CopyToAsync(fileStream); // Use asynchronous method
+                Console.WriteLine($"The file {fileName} is not a valid PDF format.");
+                continue;
             }
-        }
-        catch (Exception ex)
-        {
-            // Create at least 1 exception type and throw it; meaningfully deal with it; 
-            throw new EntityCreationException("Error occurred while uploading one of the files", ex);
-        }
 
-        try
-        {
-            Topic? topic = await EduPalContext.Topics.FindAsync(topicId); // Use asynchronous FindAsync
-            if (topic == null)
+            string filePath;
+            try
+            {
+                filePath = Path.Combine(Directory.GetCurrentDirectory(), "Files", fileName);
+                using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await formFile.CopyToAsync(fileStream); // Use asynchronous method
+                }
+            }
+            catch (Exception ex)
             {
                 // Create at least 1 exception type and throw it; meaningfully deal with it; 
-                throw new ObjectNotFoundException("Couldn't find topic with specified id");
+                throw new EntityCreationException("Error occurred while uploading one of the files", ex);
             }
 
-            Conspectus conspectus = new()
+            try
             {
-                Name = fileName,
-                Path = filePath,
-                Topic = topic
-            };
+                Topic? topic = await EduPalContext.Topics.FindAsync(topicId); // Use asynchronous FindAsync
+                if (topic == null)
+                {
+                    // Create at least 1 exception type and throw it; meaningfully deal with it; 
+                    throw new ObjectNotFoundException("Couldn't find topic with specified id");
+                }
 
-            Add(conspectus);
-            await EduPalContext.SaveChangesAsync(); // Use asynchronous SaveChangesAsync
-            uploadedConspectuses.Add(conspectus);
+                Conspectus conspectus = new()
+                {
+                    Name = fileName,
+                    Path = filePath,
+                    Topic = topic
+                };
+
+                Add(conspectus);
+                await EduPalContext.SaveChangesAsync(); // Use asynchronous SaveChangesAsync
+                uploadedConspectuses.Add(conspectus);
+            }
+            catch (Exception ex)
+            {
+                File.Delete(filePath);
+                // Create at least 1 exception type and throw it; meaningfully deal with it; 
+                throw new EntityCreationException("Error occurred while uploading one of the files", ex);
+            }
         }
-        catch (Exception ex)
-        {
-            File.Delete(filePath);
-            // Create at least 1 exception type and throw it; meaningfully deal with it; 
-            throw new EntityCreationException("Error occurred while uploading one of the files", ex);
-        }
+
+        return uploadedConspectuses;
     }
-
-    return uploadedConspectuses;
-}
 
     public async Task<Conspectus> ChangeRatingAsync(string conspectusId, bool toIncrease)
     {
@@ -119,8 +119,8 @@ public async Task<IEnumerable<Conspectus>> UploadAsync(string topicId, List<IFor
     {
         Conspectus conspectus = await GetAsync(conspectusId);
 
-        // Use Monitor for thread safety
-        Monitor.Enter(_deleteLock);
+        // Use SemaphoreSlim for asynchronous thread safety
+        await _deleteLock.WaitAsync();
         try
         {
             string filePath = conspectus.Path;
@@ -148,7 +148,7 @@ public async Task<IEnumerable<Conspectus>> UploadAsync(string topicId, List<IFor
         }
         finally
         {
-            Monitor.Exit(_deleteLock);
+            _deleteLock.Release(); // Release the semaphore
         }
     }
 }

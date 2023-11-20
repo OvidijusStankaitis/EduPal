@@ -40,7 +40,7 @@ public class CommentRepositoryUnitTests
         var topic = new Topic("testTopic", subject, KnowledgeLevel.Average);
         
         // Act
-        var result = _commentRepository.GetAllCommentsOfTopic(topic.Id);
+        var result = _commentRepository.GetAllCommentsOfTopicA(topic.Id);
         
         // Assert
         Assert.Empty(result);
