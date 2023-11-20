@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using PSI_Project.Requests;
 
 namespace PSI_Project.Controllers
 {
@@ -82,16 +82,5 @@ namespace PSI_Project.Controllers
             }
             return NotFound("No timer found for the user.");
         }
-    }
-
-    public class TimerRequest
-    {
-        public string UserId { get; set; }
-        public int Duration { get; set; }
-    }
-    
-    public class TimerStopRequest
-    {
-        public string UserId { get; set; }
     }
 }
