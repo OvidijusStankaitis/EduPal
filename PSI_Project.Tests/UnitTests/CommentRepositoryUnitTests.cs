@@ -33,21 +33,21 @@ public class CommentRepositoryUnitTests
     }
     
     [Fact]
-    public void GetAllCommentsOfTopic_GetsEmptyList_ReturnsEmptyList()
+    public async Task GetAllCommentsOfTopic_GetsEmptyList_ReturnsEmptyList()
     {
         // Arrange
         var subject = new Subject("testSubject");
         var topic = new Topic("testTopic", subject, KnowledgeLevel.Average);
         
         // Act
-        var result = _commentRepository.GetAllCommentsOfTopicA(topic.Id);
+        var result = await _commentRepository.GetAllCommentsOfTopicAsync(topic.Id);
         
         // Assert
         Assert.Empty(result);
     }
     
     [Fact]
-    public void GetAllCommentsOfTopic_GetsListOfOneTopicsOfOneSubject_ReturnsListWithOneElements()
+    public async Task GetAllCommentsOfTopic_GetsListOfOneTopicsOfOneSubject_ReturnsListWithOneElements()
     {
         // Arrange
         var subject = new Subject("testSubject");
@@ -63,10 +63,10 @@ public class CommentRepositoryUnitTests
         _context.SaveChanges();
         
         // Act
-        var result = _commentRepository.GetAllCommentsOfTopic(topic.Id);
-        _commentRepository.Remove(comment.Id);
-        _topicRepository.Remove(topic.Id); // removing topic so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
-        _subjectRepository.RemoveSubject(subject.Id); // removing subject so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
+        var result = await _commentRepository.GetAllCommentsOfTopicAsync(topic.Id);
+        await _commentRepository.RemoveAsync(comment.Id);
+        await _topicRepository.RemoveAsync(topic.Id); // removing topic so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
+        await _subjectRepository.RemoveSubjectAsync(subject.Id); // removing subject so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
         _userRepository.Remove(user);
         
         // Assert
@@ -75,7 +75,7 @@ public class CommentRepositoryUnitTests
     }
     
     [Fact]
-    public void GetAllCommentsOfTopic_GetsListOfTwoTopicsOfOneSubject_ReturnsListWithTwoElements()
+    public async Task GetAllCommentsOfTopic_GetsListOfTwoTopicsOfOneSubject_ReturnsListWithTwoElements()
     {
         // Arrange
         var user = new User("TestUserName", "TestUserSurname", "testmail@test.test", "userPassword");
@@ -92,11 +92,11 @@ public class CommentRepositoryUnitTests
         _context.SaveChanges();
         
         // Act
-        var result = _commentRepository.GetAllCommentsOfTopic(topic.Id);
-        _commentRepository.Remove(comment1.Id);
-        _commentRepository.Remove(comment2.Id);
-        _topicRepository.Remove(topic.Id); // removing topic so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
-        _subjectRepository.RemoveSubject(subject.Id); // removing subject so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
+        var result = await _commentRepository.GetAllCommentsOfTopicAsync(topic.Id);
+        await _commentRepository.RemoveAsync(comment1.Id);
+        await _commentRepository.RemoveAsync(comment2.Id);
+        await _topicRepository.RemoveAsync(topic.Id); // removing topic so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
+        await _subjectRepository.RemoveSubjectAsync(subject.Id); // removing subject so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
         _userRepository.Remove(user);
     
         // Assert
@@ -106,7 +106,7 @@ public class CommentRepositoryUnitTests
     }
     
     [Fact]
-    public void Remove_CommentExists_ReturnsTrue()
+    public async Task Remove_CommentExists_ReturnsTrue()
     {
         // Arrange
         var user = new User("TestUserName", "TestUserSurname", "testmail@test.test", "userPassword");
@@ -121,9 +121,9 @@ public class CommentRepositoryUnitTests
         _context.SaveChanges();
     
         // Act
-        var result = _commentRepository.Remove(comment.Id);
-        _topicRepository.Remove(topic.Id); // removing topic so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
-        _subjectRepository.RemoveSubject(subject.Id); // removing subject so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
+        var result = await _commentRepository.RemoveAsync(comment.Id);
+        await _topicRepository.RemoveAsync(topic.Id); // removing topic so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
+        await _subjectRepository.RemoveSubjectAsync(subject.Id); // removing subject so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
         _userRepository.Remove(user);
         
         // Assert
@@ -131,18 +131,18 @@ public class CommentRepositoryUnitTests
     }
     
     [Fact] 
-    public void Remove_CommentDoesNotExist_ThrowsObjectNotFoundException()
+    public async Task Remove_CommentDoesNotExist_ThrowsObjectNotFoundException()
     {
         // Arrange
         var user = new User("TestUserName", "TestUserSurname", "testmail@test.test", "userPassword");
         var subject = new Subject("nonexistentTestSubject");
         var topic = new Topic("nonexistentTestTopic", subject, KnowledgeLevel.Average);
         var comment = new Comment(user.Id, topic.Id, "nonexistentTestComment");
-        
+    
         // Act
-        
+    
         // Assert
-        var exception = Assert.Throws<ObjectNotFoundException>(() => _commentRepository.Remove(comment.Id));
+        var exception = await Assert.ThrowsAsync<ObjectNotFoundException>(async () => await _commentRepository.RemoveAsync(comment.Id));
         Assert.Equal("Couldn't get object with specified id", exception.Message);
     }
 }
