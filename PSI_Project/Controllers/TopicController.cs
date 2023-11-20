@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using PSI_Project.DTO;
 using PSI_Project.Exceptions;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
@@ -55,49 +56,44 @@ public class TopicController : ControllerBase
     }
 
     [HttpPost("upload")]
-    public IActionResult UploadTopic([FromBody] JsonElement request)
+    public IActionResult UploadTopic([FromBody] TopicUploadRequestDTO request)
     {
         try
         {
-            Topic? topic = _topicRepository.Create(request);
+            Topic? topic = _topicRepository.Create(request.TopicName, request.SubjectId);
             if (topic != null)
             {
-                //return Ok(new CreationResponseDTO<Topic>("Subject was successfully created", topic));
                 return Ok(topic);
             }
-            
+
             return BadRequest("Invalid topic name");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Couldn't add new topic");
-            return BadRequest($"An error occured while uploading topic");
+            return BadRequest($"An error occurred while uploading topic");
         }
     }
-    
+
     [HttpPut("update-knowledge-level")]
-    public IActionResult UpdateKnowledgeLevel([FromBody] JsonElement request)
+    public IActionResult UpdateKnowledgeLevel([FromBody] UpdateKnowledgeLevelRequestDTO request)
     {
         try
         {
-            string topicId = request.GetProperty("topicId").GetString();
-            string knowledgeLevel = request.GetProperty("knowledgeLevel").GetString();
-
             // Check if the knowledge level is valid (Good, Average, Poor).
-            if (Enum.TryParse<KnowledgeLevel>(knowledgeLevel, true, out var level))
+            if (Enum.TryParse<KnowledgeLevel>(request.KnowledgeLevel, true, out var level))
             {
                 // Update the knowledge level of the topic.
-                bool updated = _topicRepository.UpdateKnowledgeLevel(topicId, level);
+                bool updated = _topicRepository.UpdateKnowledgeLevel(request.TopicId, level);
 
                 if (updated)
                 {
                     return Ok("Knowledge level updated successfully");
                 }
-                
+
                 return BadRequest("Error updating knowledge level");
-                
-            } 
-            
+            }
+
             return BadRequest("Invalid knowledge level");
         }
         catch (Exception ex)

@@ -16,22 +16,13 @@ public class TopicRepository : Repository<Topic>
         return Find(topic => topic.Subject.Id == subjectId);
     }
 
-    public Topic? Create(JsonElement request)
+    public Topic? Create(string topicName, string subjectId)
     {
-        if (!request.TryGetProperty("topicName", out var topicNameProperty) ||
-            !request.TryGetProperty("subjectId", out var subjectNameProperty))
-            return null;
-            
-        string? topicName = topicNameProperty.GetString();
-        string? subjectId = subjectNameProperty.GetString();
-        if (subjectId is null || topicName is null)
-            return null;
-
         Subject subject = EduPalContext.Subjects.Find(subjectId);
         Topic newTopic = new Topic(topicName, subject);
         Add(newTopic);
         int changes = EduPalContext.SaveChanges();
-        
+
         return changes > 0 ? newTopic : null;
     }
     

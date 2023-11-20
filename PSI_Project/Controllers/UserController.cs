@@ -39,11 +39,11 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("login")]
-    public IActionResult Login([FromBody] JsonElement payload)
+    public IActionResult Login([FromBody] UserLoginRequestDTO request)
     {
         try
         {
-            string? userId = _userRepository.CheckUserLogin(payload);
+            string? userId = _userRepository.CheckUserLogin(request.Email, request.Password);
             if (userId != null)
             {
                 return Ok(new { success = true, message = "Login successful.", userId });

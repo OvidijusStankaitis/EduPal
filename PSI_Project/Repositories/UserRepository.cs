@@ -17,26 +17,14 @@ namespace PSI_Project.Repositories
             return EduPalContext.Users.FirstOrDefault(user => user.Email.Equals(email));
         }
         
-        public string? CheckUserLogin(JsonElement request)
+        public string? CheckUserLogin(string email, string password)
         {
-            if (request.TryGetProperty("email", out JsonElement emailElement) &&
-                request.TryGetProperty("password", out JsonElement passwordElement))
+            User? user = GetUserByEmail(email);
+            if (user != null && user.Password == password)
             {
-                string? email = emailElement.GetString();
-                string? password = passwordElement.GetString();
-                
-                if (email == null || password == null)
-                {
-                    return null;
-                }
-                
-                User? user = GetUserByEmail(email);
-                if (user != null && user.Password == password)
-                {
-                    return user.Id;
-                }
+                return user.Id;
             }
-            
+    
             return null;
         }
 

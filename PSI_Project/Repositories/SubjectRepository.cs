@@ -16,19 +16,15 @@ public class SubjectRepository : Repository<Subject>
         return EduPalContext.Subjects.ToList();
     }
 
-    public Subject? CreateSubject(JsonElement request)
+    public Subject? CreateSubject(string subjectName)
     {
-        if (!request.TryGetProperty("subjectName", out var subjectNameProperty))
-            return null;
-        
-        string? subjectName = subjectNameProperty.GetString();
         if (!subjectName.IsValidContainerName())
             return null;
-        
+
         Subject newSubject = new Subject(subjectName);
         Add(newSubject);
         int changes = EduPalContext.SaveChanges();
-       
+
         return changes > 0 ? newSubject : null;
     }
     

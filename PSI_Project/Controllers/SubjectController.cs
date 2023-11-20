@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using PSI_Project.DTO;
 using PSI_Project.Exceptions;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
@@ -55,14 +56,14 @@ public class SubjectController : ControllerBase
     }
     
     [HttpPost("upload")]
-    public IActionResult UploadSubject([FromBody] JsonElement request)
+    public IActionResult UploadSubject([FromBody] SubjectRequestDTO request)
     {
         try
         {
-            Subject? addedSubject = _subjectRepository.CreateSubject(request);
+            // Use the properties of 'request' to create a new Subject
+            Subject? addedSubject = _subjectRepository.CreateSubject(request.SubjectName);
             if (addedSubject != null)
             {
-                //return Ok(new CreationResponseDTO<Subject>("Subject was successfully created", addedSubject));
                 return Ok(addedSubject);
             }
 
@@ -71,7 +72,7 @@ public class SubjectController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Couldn't add new subject");
-            return BadRequest("An error occured while uploading the subject");
+            return BadRequest("An error occurred while uploading the subject");
         }
     }
     
