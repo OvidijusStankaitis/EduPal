@@ -1,18 +1,61 @@
 ﻿import React, { useState } from 'react';
 import './PomodoroDialog.css';
+import {useUserContext} from "../UserContext";
 
-export const PomodoroDialog = ({ show, onClose }) => {
+export const PomodoroDialog = ({ show, onClose, }) => {
+    const { userEmail, setUsername, username, setUserEmail } = useUserContext();
     const [intensity, setIntensity] = useState(localStorage.getItem('pomodoroIntensity') || '');
 
     const handleIntensityChange = (event) => {
         setIntensity(event.target.value);
     };
 
-    const handleConfirm = () => {
-        localStorage.setItem('pomodoroIntensity', intensity);
-        localStorage.setItem('shouldStartTimer', 'true');
+    const startTimer = async (userEmail, intensity) => {
+        try {
+            const response = await fetch('https://localhost:7283/Pomodoro/start-timer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userEmail, intensity })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Error starting timer: ", errorData);
+            }
+        } catch (error) {
+            console.error("Error: ", error);
+        }
+    };
+
+    const stopTimer = async () => {
+        try {
+            const response = await fetch('https://localhost:7283/Pomodoro/stop-timer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userEmail })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Error stopping timer: ", errorData);
+            }
+        } catch (error) {
+            console.error("Error: ", error);
+        }
+    };
+    
+    const handleConfirm = async () => {
+        await startTimer(userEmail, intensity);
         onClose();
-        window.location.reload();  // force reload to start the timer right away
+    };
+
+    const handleStop = async () => {
+        await stopTimer();
+        onClose();
     };
 
     if (!show) return null;
@@ -28,7 +71,8 @@ export const PomodoroDialog = ({ show, onClose }) => {
                     <option value="High">High</option>
                 </select>
                 <div>
-                    <button onClick={handleConfirm}>Confirm</button>
+                    <button onClick={handleConfirm}>Start Timer</button>
+                    <button onClick={handleStop}>Stop Timer</button>
                     <button onClick={onClose}>Cancel</button>
                 </div>
                 <p className="time-desc">
