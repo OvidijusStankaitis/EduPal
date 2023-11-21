@@ -1,62 +1,57 @@
-﻿using System.Text.Json;
+﻿using Microsoft.EntityFrameworkCore;
 using PSI_Project.Data;
 using PSI_Project.Models;
 
-namespace PSI_Project.Repositories;
-public class TopicRepository : Repository<Topic>
+namespace PSI_Project.Repositories
 {
-    public EduPalDatabaseContext EduPalContext => Context as EduPalDatabaseContext;
-    
-    public TopicRepository(EduPalDatabaseContext context) : base(context)
+    public class TopicRepository : Repository<Topic>
     {
-    }
-    
-    public IEnumerable<Topic> GetTopicsListBySubjectId(string subjectId)
-    {
-        return Find(topic => topic.Subject.Id == subjectId);
-    }
+        public EduPalDatabaseContext EduPalContext => Context as EduPalDatabaseContext;
 
-    public Topic? Create(JsonElement request)
-    {
-        if (!request.TryGetProperty("topicName", out var topicNameProperty) ||
-            !request.TryGetProperty("subjectId", out var subjectNameProperty))
-            return null;
-            
-        string? topicName = topicNameProperty.GetString();
-        string? subjectId = subjectNameProperty.GetString();
-        if (subjectId is null || topicName is null)
-            return null;
-
-        Subject subject = EduPalContext.Subjects.Find(subjectId);
-        Topic newTopic = new Topic(topicName, subject);
-        Add(newTopic);
-        int changes = EduPalContext.SaveChanges();
-        
-        return changes > 0 ? newTopic : null;
-    }
-    
-    public bool UpdateKnowledgeLevel(string topicId, KnowledgeLevel knowledgeLevel)
-    {
-        Topic? topic = Get(topicId);
-
-        if (topic == null)
+        public TopicRepository(EduPalDatabaseContext context) : base(context)
         {
-            return false; // Topic not found
         }
 
-        topic.KnowledgeRating = knowledgeLevel;
-        
-        EduPalContext.SaveChanges();
+        public async Task<List<Topic>> GetTopicsListBySubjectIdAsync(string subjectId)
+        {
+            return await EduPalContext.Topics
+                .Where(topic => topic.Subject.Id == subjectId)
+                .ToListAsync();
+        }
 
-        return true;
+        public async Task<Topic?> CreateAsync(string topicName, string subjectId)
+        {
+            Subject subject = await EduPalContext.Subjects.FindAsync(subjectId);
+            Topic newTopic = new Topic(topicName, subject);
+            Add(newTopic);
+            int changes = await EduPalContext.SaveChangesAsync();
+
+            return changes > 0 ? newTopic : null;
+        }
+
+        public async Task<bool> UpdateKnowledgeLevelAsync(string topicId, KnowledgeLevel knowledgeLevel)
+        {
+            Topic? topic = await GetAsync(topicId);
+
+            if (topic == null)
+            {
+                return false; // Topic not found
+            }
+
+            topic.KnowledgeRating = knowledgeLevel;
+
+            await EduPalContext.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> RemoveAsync(string topicId)
+        {
+            Topic topic = await GetAsync(topicId);
+            Remove(topic);
+            int changes = await EduPalContext.SaveChangesAsync();
+
+            return changes > 0;
+        }
     }
-    
-    public bool Remove(string topicId)
-    {
-        Topic topic = Get(topicId);
-        Remove(topic);
-        int changes = EduPalContext.SaveChanges();
-
-        return changes > 0;
-    } 
 }

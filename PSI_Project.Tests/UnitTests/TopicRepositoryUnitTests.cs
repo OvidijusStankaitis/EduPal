@@ -29,7 +29,7 @@ public class TopicRepositoryUnitTests
     }
 
     [Fact]
-    public void GetTopicsListBySubjectId_GetsListOfOneTopicsOfOneSubject_ReturnsListWithOneElements()
+    public async Task GetTopicsListBySubjectId_GetsListOfOneTopicsOfOneSubject_ReturnsListWithOneElements()
     {
         // Arrange
         var subject = new Subject("testSubject");
@@ -40,7 +40,7 @@ public class TopicRepositoryUnitTests
         _context.SaveChanges();
         
         // Act
-        var result = _topicRepository.GetTopicsListBySubjectId(subject.Id);
+        var result = await _topicRepository.GetTopicsListBySubjectIdAsync(subject.Id);
         //_topicRepository.Remove(topic1.Id); // removing topic so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
         //_subjectRepository.RemoveSubject(subject.Id); // removing subject so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
         
@@ -50,7 +50,7 @@ public class TopicRepositoryUnitTests
     }
     
     [Fact]
-    public void GetTopicsListBySubjectId_GetsListOfTwoTopicsOfOneSubject_ReturnsListWithTwoElements()
+    public async Task GetTopicsListBySubjectId_GetsListOfTwoTopicsOfOneSubject_ReturnsListWithTwoElements()
     {
         // Arrange
         var subject = new Subject("testSubject");
@@ -64,7 +64,7 @@ public class TopicRepositoryUnitTests
         _context.SaveChanges();
         
         // Act
-        var result = _topicRepository.GetTopicsListBySubjectId(subject.Id);
+        var result = await _topicRepository.GetTopicsListBySubjectIdAsync(subject.Id);
        // _topicRepository.Remove(topic1.Id); // removing topic so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
        // _topicRepository.Remove(topic2.Id); // removing topic so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
        // _subjectRepository.RemoveSubject(subject.Id); // removing subject so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
@@ -76,7 +76,7 @@ public class TopicRepositoryUnitTests
     }
     
     [Fact]
-    public void Remove_TopicExists_ReturnsTrue()
+    public async Task Remove_TopicExists_ReturnsTrue()
     {
         // Arrange
         var subject = new Subject("testSubject");
@@ -87,24 +87,23 @@ public class TopicRepositoryUnitTests
         _context.SaveChanges();
         
         // Act
-        var result = _topicRepository.Remove(topic.Id);
-        _subjectRepository.RemoveSubject(subject.Id);
+        var result = await _topicRepository.RemoveAsync(topic.Id);
+        await _subjectRepository.RemoveSubjectAsync(subject.Id);
 
         // Assert
         Assert.True(result);
     }
     
     [Fact]
-    public void Remove_TopicDoesNotExist_ThrowsException()
+    public async Task Remove_TopicDoesNotExist_ThrowsException()
     {
         // Arrange
         var topic = new Topic("nonexistentTestRemove", new Subject("nonexistentTestRemoveSubject"), KnowledgeLevel.Average);
-        
+    
         // Act
 
         // Assert
-        var exception = Assert.Throws<ObjectNotFoundException>(() => _topicRepository.Remove(topic.Id));
+        var exception = await Assert.ThrowsAsync<ObjectNotFoundException>(() => _topicRepository.RemoveAsync(topic.Id));
         Assert.Equal("Couldn't get object with specified id", exception.Message);
     }
-    
 }

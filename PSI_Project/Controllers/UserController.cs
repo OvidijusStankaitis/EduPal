@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PSI_Project.Repositories;
-using System.Text.Json;
 using PSI_Project.DTO;
-using PSI_Project.Models;
 
 namespace PSI_Project.Controllers;
 
@@ -20,11 +18,11 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("register")]
-    public IActionResult Register([FromBody] UserCreationDTO newUser)
+    public async Task<IActionResult> RegisterAsync([FromBody] UserCreationDTO newUser)
     {
         try
         {
-            string? userId = _userRepository.CheckUserRegister(newUser);
+            string? userId = await _userRepository.CheckUserRegisterAsync(newUser);
             if (userId != null)
             {
                 return Ok(new { success = true, message = "Registration successful.", userId });
@@ -38,12 +36,13 @@ public class UserController : ControllerBase
         return BadRequest(new { success = false, message = "Invalid payload." });
     }
 
+
     [HttpPost("login")]
-    public IActionResult Login([FromBody] JsonElement payload)
+    public async Task<IActionResult> LoginAsync([FromBody] UserLoginRequestDTO request)
     {
         try
         {
-            string? userId = _userRepository.CheckUserLogin(payload);
+            string? userId = await _userRepository.CheckUserLoginAsync(request.Email, request.Password);
             if (userId != null)
             {
                 return Ok(new { success = true, message = "Login successful.", userId });
@@ -56,14 +55,14 @@ public class UserController : ControllerBase
 
         return BadRequest(new { success = false, message = "Invalid payload." });
     }
-    
+
     [HttpGet("get-name")]
     public IActionResult GetName(string email)
     {
-        var user = _userRepository.GetUserByEmail(email);
+        var user = _userRepository.GetUserByEmailAsync(email);
         if (user != null)
         {
-            return Ok(new { name = user.Name });
+            return Ok(new { name = user.Result.Name });
         }
 
         return NotFound(new { message = "User not found." });
