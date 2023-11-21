@@ -1,94 +1,51 @@
-﻿using System.Collections.Concurrent;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using PSI_Project.Requests;
+using PSI_Project.Services;
 
-namespace PSI_Project.Controllers
+[ApiController]
+[Route("[controller]")]
+public class PomodoroController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class PomodoroController : ControllerBase
+    private readonly PomodoroService _pomodoroService;
+    private readonly ILogger<PomodoroController> _logger;
+
+    public PomodoroController(PomodoroService pomodoroService, ILogger<PomodoroController> logger)
     {
-        private static ConcurrentDictionary<string, Thread>
-            userTimers = new ConcurrentDictionary<string, Thread>(); // 6. Usage of threading via Thread class;
+        _pomodoroService = pomodoroService;
+        _logger = logger;
+    }
+    
+    [HttpPost("start-timer")]
+    public IActionResult StartTimer([FromBody] StartTimerRequest request)
+    {
+        _logger.LogInformation($"Starting timer for {request.UserEmail} with intensity {request.Intensity}");
+        _pomodoroService.StartTimer(request.UserEmail, request.Intensity);
+        return Ok();
+    }
+    
+    [HttpPost("stop-timer")]
+    public IActionResult StopTimer([FromBody] StopTimerRequest request)
+    {
+        _logger.LogInformation($"Stopping timer for {request.UserEmail}");
+        _pomodoroService.StopTimer(request.UserEmail);
+        return Ok();
+    }
 
-        private void
-            RunTimer(string userId, int duration) // duration from front-end should be passed as milliseconds!!!
+    [HttpGet("get-timer-state")]
+    public ActionResult GetTimerState(string userEmail)
+    {
+        _logger.LogInformation($"Getting timer state for {userEmail}");
+        var state = _pomodoroService.GetTimerState(userEmail);
+        _logger.LogInformation($"Timer state for {userEmail}: {state}");
+
+        var response = new 
         {
-            try
-            {
-                Thread.Sleep(duration);
+            RemainingTime = state.RemainingTime,
+            Mode = state.Mode,
+            IsActive = state.IsActive
+        };
 
-                // When the timer finishes, send notifications, stop the website etc.
-                // code for it goes here.
-                Console.WriteLine($"Timer for user {userId} completed!");
-
-                if (userTimers.ContainsKey(userId))
-                {
-                    userTimers.TryRemove(userId, out _);
-                }
-            }
-            catch (ThreadInterruptedException)
-            {
-                Console.WriteLine($"Timer for user {userId} was interrupted.");
-            }
-            catch
-            {
-                //TODO: Logging for other errors goes here
-            }
-        }
-
-        [HttpPost("start-timer")]
-        public IActionResult StartTimer([FromBody] TimerRequest request)
-        {
-            if (string.IsNullOrEmpty(request.UserId))
-            {
-                return BadRequest("UserId is required.");
-            }
-
-            if (request.Duration <= 0)
-            {
-                return BadRequest("Invalid duration.");
-            }
-
-            if (userTimers.ContainsKey(request.UserId))
-            {
-                userTimers[request.UserId].Interrupt();
-                if (!userTimers.TryRemove(request.UserId, out _))
-                {
-                    return Conflict(
-                        $"the operation is impossible because some other thread modified the dictionary (UserId:{request.UserId})");
-                }
-            }
-
-            Thread timerThread =
-                new Thread(() => RunTimer(request.UserId, request.Duration)); // 6. Usage of threading via Thread class;
-            timerThread.Start();
-
-            if (!userTimers.TryAdd(request.UserId, timerThread))
-            {
-                return Conflict(
-                    $"the operation is impossible because some other thread modified the dictionary (UserId:{request.UserId})");
-            }
-
-            return Ok("Timer started");
-        }
-
-        [HttpPost("stop-timer")]
-        public IActionResult StopTimer([FromBody] TimerStopRequest request)
-        {
-            if (userTimers.ContainsKey(request.UserId))
-            {
-                userTimers[request.UserId].Interrupt();
-                if (!userTimers.TryRemove(request.UserId, out _))
-                {
-                    return Conflict(
-                        $"the operation is impossible because some other thread modified the dictionary (UserId:{request.UserId})");
-                }
-
-                return Ok("Timer stopped");
-            }
-
-            return NotFound("No timer found for the user.");
-        }
+        return Ok(response);
     }
 }
