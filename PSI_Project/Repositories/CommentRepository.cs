@@ -18,8 +18,7 @@ public class CommentRepository : Repository<Comment>
     
     public Comment? GetItemById(string itemId)  
     {
-        return EduPalContext.Comments
-            .FirstOrDefault(comment => comment.Id.Equals(itemId));
+        return Find(comment => comment.Id.Equals(itemId)).FirstOrDefault();
     }
     
     public bool Remove(string commentId) 

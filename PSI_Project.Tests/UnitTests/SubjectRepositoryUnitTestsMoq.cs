@@ -111,7 +111,7 @@ public class SubjectRepositoryUnitTestsMoq
         var mockRepository = new Mock<SubjectRepository>(mockDbContext.Object);
 
         mockRepository.Setup(repo => repo.Get(subject.Id)).Throws<ObjectNotFoundException>();
-        mockRepository.Setup(repo => repo.Remove(subject)).Returns(2);
+        mockRepository.Setup(repo => repo.Remove(subject)).Returns(0);
         
         var subjectRepository = mockRepository.Object;
         

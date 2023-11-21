@@ -59,7 +59,8 @@ namespace PSI_Project.Repositories
         public Goal? GetTodaysGoalForUser(string userId)
         {
             DateTime today = DateTime.Now.Date;
-            return EduPalContext.Goals.FirstOrDefault(g => g.User.Id == userId && g.GoalDate == today);
+            //return EduPalContext.Goals.FirstOrDefault(g => g.User.Id == userId && g.GoalDate == today);
+            return Find(g => g.User.Id == userId && g.GoalDate == today).FirstOrDefault();
         }
 
         // Given a user ID, retrieve all goals for that user.

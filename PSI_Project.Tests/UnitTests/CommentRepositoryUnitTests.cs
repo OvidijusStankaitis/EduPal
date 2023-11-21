@@ -47,7 +47,7 @@ public class CommentRepositoryUnitTests
     }
     
     [Fact]
-    public void GetAllCommentsOfTopic_GetsListOfOneTopicsOfOneSubject_ReturnsListWithOneElements()
+    public void GetAllCommentsOfTopic_GetsListOfOneTopicsOfOneSubject_ReturnsListWithOneElement()
     {
         // Arrange
         var subject = new Subject("testSubject");
