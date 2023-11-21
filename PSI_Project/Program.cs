@@ -27,10 +27,12 @@ builder.Services.AddHttpClient();
 // Add CORS services to the container.
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
-        builder.WithOrigins("https://localhost:44402") // Updated with your React app's URL
+    options.AddDefaultPolicy(policy =>
+        policy.WithOrigins("https://localhost:44402")
+            .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowAnyHeader());
+            .AllowCredentials()
+        );
 });
 
 builder.Services.AddDbContext<EduPalDatabaseContext>(options =>
@@ -97,11 +99,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-// Use CORS middleware here after UseRouting and before UseEndpoints
-app.UseCors();
-
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors();
 
 app.MapControllerRoute(
     name: "default",
@@ -112,3 +112,4 @@ app.MapFallbackToFile("index.html");
 app.MapHub<ChatHub>("/chat-hub");
 
 app.Run();
+

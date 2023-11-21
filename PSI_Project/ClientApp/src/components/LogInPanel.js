@@ -51,8 +51,9 @@ export const LogInPanel = () => {
         const response = await fetch(`https://localhost:7283/User/login`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
+            credentials: 'include',
             body: JSON.stringify({ email, password }),
         });
         const data = await response.json();

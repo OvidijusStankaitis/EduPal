@@ -5,7 +5,6 @@ using PSI_Project.Services;
 
 namespace PSI_Project.Controllers;
 
-[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class OpenAIController : ControllerBase
@@ -21,6 +20,7 @@ public class OpenAIController : ControllerBase
         _openAIRepository = openAIRepository;
     }
 
+    [Authorize]
     [HttpPost("send-message")]
     public async Task<IActionResult> SendMessage([FromBody] string userMessage, [FromQuery] string userEmail)
     {
@@ -40,6 +40,7 @@ public class OpenAIController : ControllerBase
         return BadRequest(new { error = "Failed to get response from OpenAI." });
     }
 
+    [Authorize]
     [HttpGet("get-messages")]
     public IActionResult GetMessages([FromQuery] string userEmail)
     {

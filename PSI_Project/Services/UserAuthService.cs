@@ -25,7 +25,7 @@ public class UserAuthService
                                             && user.Password == userData.Password).FirstOrDefault();
     }
 
-    public async Task<string> GenerateToken(User user)
+    public string GenerateToken(User user)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtKey"] ?? String.Empty));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);

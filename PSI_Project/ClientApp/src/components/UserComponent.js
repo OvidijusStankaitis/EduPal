@@ -32,7 +32,11 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) =>
                 setUsername(cachedUsername);
             } else {
                 console.log("Fetching username from server");
-                const response = await fetch(`https://localhost:7283/User/get-name?email=${userEmail}`);
+                
+                const response = await fetch(`https://localhost:7283/User/get-name?email=${userEmail}`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
                 if (response.ok) {
                     const data = await response.json();
                     setUsername(data.name);

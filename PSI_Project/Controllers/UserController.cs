@@ -26,7 +26,7 @@ public class UserController : ControllerBase
     
     [AllowAnonymous]
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequest loginData)
+    public IActionResult Login([FromBody] LoginRequest loginData)
     {
         try
         {
@@ -34,7 +34,7 @@ public class UserController : ControllerBase
             
             if (user != null)
             {
-                string token = await _userAuthService.GenerateToken(user);
+                string token = _userAuthService.GenerateToken(user);
                 Response.Cookies.Append("token", token, new CookieOptions
                 {
                     Expires = DateTimeOffset.Now.AddMinutes(15),
@@ -57,7 +57,7 @@ public class UserController : ControllerBase
 
     [AllowAnonymous]
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterRequest registerData)
+    public IActionResult Register([FromBody] RegisterRequest registerData)
     {
         try
         {
@@ -65,7 +65,7 @@ public class UserController : ControllerBase
             
             if (user != null)
             {
-                string token = await _userAuthService.GenerateToken(user);
+                string token = _userAuthService.GenerateToken(user);
                 Response.Cookies.Append("token", token, new CookieOptions
                 {
                     Expires = DateTimeOffset.Now.AddMinutes(15),

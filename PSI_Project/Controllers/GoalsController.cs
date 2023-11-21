@@ -6,7 +6,6 @@ using Serilog;
 
 namespace PSI_Project.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class GoalsController : ControllerBase

@@ -11,7 +11,10 @@ export const OpenAIDialogue = ({ show, onClose }) => {
 
     const fetchMessages = async () => {
         try {
-            const response = await fetch(`https://localhost:7283/OpenAI/get-messages?userEmail=${userEmail}`);
+            const response = await fetch(`https://localhost:7283/OpenAI/get-messages?userEmail=${userEmail}`, {
+                method: 'GET',
+                credentials: 'include'
+            });
             if (response.ok) {
                 const data = await response.json();
                 setMessages(data);
@@ -42,6 +45,7 @@ export const OpenAIDialogue = ({ show, onClose }) => {
                     headers: {
                         'Content-Type': 'application/json',
                     },
+                    credentials: 'include',
                     body: JSON.stringify(userMessage),
                 });
                 if (response.ok) {

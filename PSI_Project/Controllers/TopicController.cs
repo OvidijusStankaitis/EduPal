@@ -8,7 +8,6 @@ using PSI_Project.Responses;
 
 namespace PSI_Project.Controllers;
 
-[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class TopicController : ControllerBase
@@ -22,6 +21,7 @@ public class TopicController : ControllerBase
         _topicRepository = topicRepository;
     }
 
+    [Authorize]
     [HttpGet("get/{topicId}")]
     public IActionResult GetTopicById(string topicId)
     {
@@ -42,6 +42,7 @@ public class TopicController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet("list/{subjectId}")]
     public IActionResult ListTopics(string subjectId)
     {
@@ -56,6 +57,7 @@ public class TopicController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpPost("upload")]
     public IActionResult UploadTopic([FromBody] JsonElement request)
     {
@@ -77,6 +79,7 @@ public class TopicController : ControllerBase
         }
     }
     
+    [Authorize]
     [HttpPut("update-knowledge-level")]
     public IActionResult UpdateKnowledgeLevel([FromBody] JsonElement request)
     {
@@ -108,6 +111,7 @@ public class TopicController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpDelete("delete/{topicId}")]
     public IActionResult RemoveTopic(string topicId)
     {

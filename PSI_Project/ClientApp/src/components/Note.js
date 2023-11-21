@@ -14,6 +14,7 @@ export const Note = ({ show, onClose, topicId }) => {
                 headers: {
                     "Content-Type": "application/json"
                 },
+                credentials: 'include',
                 body: JSON.stringify(note) // 'note' should have properties 'Name' and 'Content'
             });
 

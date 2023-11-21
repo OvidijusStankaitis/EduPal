@@ -8,8 +8,6 @@ using PSI_Project.Services;
 
 namespace PSI_Project.Controllers;
 
-
-[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class ConspectusController : ControllerBase
@@ -25,6 +23,7 @@ public class ConspectusController : ControllerBase
         _conspectusRepository = conspectusRepository;
     }
 
+    [Authorize]
     [HttpGet("get/{conspectusId}")]
     public IActionResult GetConspectus(string conspectusId)
     {
@@ -40,6 +39,7 @@ public class ConspectusController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet("list/{topicId}")]
     public IActionResult GetTopicFiles(string topicId)
     {
@@ -54,6 +54,7 @@ public class ConspectusController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpPost("upload/{topicId}")]
     public IActionResult UploadFiles(string topicId, List<IFormFile> files)
     {
@@ -68,6 +69,7 @@ public class ConspectusController : ControllerBase
         }
     }
     
+    [Authorize]
     [HttpGet("download/{conspectusId}")]
     public IActionResult DownloadFile(string conspectusId)
     {
@@ -84,6 +86,7 @@ public class ConspectusController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpDelete("delete/{conspectusId}")]
     public IActionResult DeleteFile(string conspectusId)
     {
@@ -99,6 +102,7 @@ public class ConspectusController : ControllerBase
         }
     }
     
+    [Authorize]
     [HttpPost("rate-up/{conspectusId}")]
     public IActionResult RateConspectusUp(string conspectusId)
     {
@@ -115,6 +119,7 @@ public class ConspectusController : ControllerBase
         return NotFound(new { error = "File not found in database." });
     }
     
+    [Authorize]
     [HttpPost("rate-down/{conspectusId}")]
     public IActionResult RateConspectusDown(string conspectusId)
     {

@@ -18,7 +18,10 @@ export const Topics = () => {
     const navigate = useNavigate();
     
     useEffect(() => {
-        fetch(`https://localhost:7283/Subject/get/${subjectId}`)
+        fetch(`https://localhost:7283/Subject/get/${subjectId}`, {
+            method: 'GET',
+            credentials: 'include'
+        })
             .then(response => response.json())
             .then(data => setSubjectName(data.name))
             .catch(error => console.error('Error getting subject name:', error))
@@ -26,7 +29,10 @@ export const Topics = () => {
 
     useEffect(() => {
         const fetchTopics = async () => {
-            const response = await fetch(`https://localhost:7283/Topic/list/${subjectId}`);
+            const response = await fetch(`https://localhost:7283/Topic/list/${subjectId}`, {
+                method: 'GET', 
+                credentials: 'include'
+            });
 
             if (response.ok) {
                 const data = await response.json();
@@ -69,6 +75,7 @@ export const Topics = () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify(requestBody)
             });
 

@@ -8,7 +8,6 @@ using PSI_Project.Responses;
 
 namespace PSI_Project.Controllers;
 
-[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class SubjectController : ControllerBase
@@ -22,6 +21,7 @@ public class SubjectController : ControllerBase
         _subjectRepository = subjectRepository;
     }
 
+    [Authorize]
     [HttpGet("get/{subjectId}")]
     public IActionResult GetSubject(string subjectId)
     {
@@ -42,6 +42,7 @@ public class SubjectController : ControllerBase
         }
     }
     
+    [Authorize]
     [HttpGet("list")]
     public IActionResult ListSubjects()
     {
@@ -56,6 +57,7 @@ public class SubjectController : ControllerBase
         }
     }
     
+    [Authorize]
     [HttpPost("upload")]
     public IActionResult UploadSubject([FromBody] JsonElement request)
     {
@@ -77,6 +79,7 @@ public class SubjectController : ControllerBase
         }
     }
     
+    [Authorize]
     [HttpDelete("delete/{subjectId}")]
     public IActionResult RemoveSubject(string subjectId)
     {

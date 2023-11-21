@@ -45,7 +45,10 @@ export const Comments = ({ show, onClose, topicId }) => {
                 .catch(e => console.log('Connection failed: ', e));
 
             // Fetch initial comments
-            fetch(`https://localhost:7283/Comment/get/${topicId}`)
+            fetch(`https://localhost:7283/Comment/get/${topicId}`, {
+                method: 'GET',
+                credentials: 'include'
+            })
                 .then(response => response.json())
                 .then(data => setComments(data))
                 .catch(error => console.error("Error fetching comments:", error));

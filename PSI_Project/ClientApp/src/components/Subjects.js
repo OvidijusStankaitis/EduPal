@@ -17,7 +17,10 @@ export const Subjects = () => {
 
     useEffect(() => {
         const fetchSubjects = async () => {
-            const response = await fetch('https://localhost:7283/Subject/list');
+            const response = await fetch('https://localhost:7283/Subject/list', {
+                method: 'GET',
+                credentials: 'include'
+            });
 
             if(response.ok) {
                 const data = await response.json();
