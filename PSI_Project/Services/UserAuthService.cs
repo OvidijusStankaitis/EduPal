@@ -54,7 +54,7 @@ public class UserAuthService
         {
             var userClaims = identity.Claims;
             var userId = userClaims
-                .FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?
+                .FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?
                 .Value;
             
             return _userRepository.Get(userId);

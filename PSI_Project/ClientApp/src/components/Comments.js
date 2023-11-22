@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import './Comments.css';
 import { HttpTransportType, HubConnectionBuilder } from "@microsoft/signalr";
-import { useUserContext } from "../UserContext";
+import { useUserContext } from '../contexts/UserContext';
 
 export const Comments = ({ show, onClose, topicId }) => {
     const { userId } = useUserContext();

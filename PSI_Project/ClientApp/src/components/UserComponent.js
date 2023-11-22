@@ -3,7 +3,7 @@ import './UserComponent.css';
 import tomato from "../assets/tomato.webp";
 import gpt from "../assets/gpt.webp";
 import user from "../assets/user.webp";
-import { useUserContext } from '../UserContext';
+import { useUserContext } from '../contexts/UserContext';
 
 const DURATIONS = {
     Low: { study: 5, shortBreak: 2, longBreak: 3 },
@@ -12,7 +12,7 @@ const DURATIONS = {
 };
 
 export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) => {
-    const { userEmail, setUsername, username, setUserEmail } = useUserContext();
+    const { userName, setUserName } = useUserContext();
     const [remainingTime, setRemainingTime] = useState(
         parseInt(localStorage.getItem('remainingTime'), 10) || 0
     );
@@ -23,47 +23,31 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) =>
     const [mode, setMode] = useState('study');
     const [completedStudySessions, setCompletedStudySessions] = useState(0);
 
-
-    const fetchUsername = async () => {
+    const getUserName = async () => {
         try {
-            const cachedUsername = localStorage.getItem('username');
-            if (cachedUsername) {
-                console.log("Setting username from cache: ", cachedUsername);
-                setUsername(cachedUsername);
-            } else {
-                console.log("Fetching username from server");
-                
-                const response = await fetch(`https://localhost:7283/User/get-name?email=${userEmail}`, {
-                    method: 'GET',
-                    credentials: 'include'
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    setUsername(data.name);
-                    localStorage.setItem('username', data.name);
-                }
-            }
-        } catch (error) {
-            console.error("Error fetching username: ", error);
-        }
-    };
+            const userName = localStorage.getItem('userName')
 
+            if (userName != null) {
+                setUserName(userName)
+                return
+            }
+
+            const response = await  fetch(`https://localhost:7283/User/get-user-name`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+            
+            const data = await response.json()
+            localStorage.setItem('userName', data.name)
+            setUserName(data.name)
+        } catch(err) {
+            console.error('error fetching user name: ' + err)
+        }
+    }
+    
     useEffect(() => {
-        if (!userEmail) {
-            const cachedEmail = localStorage.getItem('userEmail');
-            if (cachedEmail) {
-                console.log("Setting userEmail from cache: ", cachedEmail);
-                setUserEmail(cachedEmail); // Set it in the context
-            }
-        }
-
-        if (userEmail) {
-            console.log("User email exists, fetching username");
-            fetchUsername();
-        } else {
-            console.log("No user email found");
-        }
-    }, [userEmail, setUsername, setUserEmail]);
+        getUserName()
+    }, [userName])
 
 
     useEffect(() => {
@@ -153,7 +137,7 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) =>
 
     return (
         <div className="user-component">
-            <span className="username">{username}</span>
+            <span className="username">{userName}</span>
             <img src={user} alt="User" className="user-picture" />
             <span className="pomodoro-time">{formatTime(remainingTime)}</span>
             <img src={tomato} alt="Start Pomodoro" className="tomato" onClick={handleStartPomodoro} />

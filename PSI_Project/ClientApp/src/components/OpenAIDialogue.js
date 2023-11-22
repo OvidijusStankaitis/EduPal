@@ -1,7 +1,7 @@
 ﻿import React, {useEffect, useRef, useState} from 'react';
 import './OpenAIDialogue.css';
 import gpt from "../assets/gpt.webp";
-import {useUserContext} from "../UserContext";
+import {useUserContext} from '../contexts/UserContext';
 
 export const OpenAIDialogue = ({ show, onClose }) => {
     const { userEmail } = useUserContext();

@@ -44,7 +44,7 @@ public class UserController : ControllerBase
                     SameSite = SameSiteMode.None
                 });
                 
-                return Ok(new { success = true, message = "Login successful.", user.Id});
+                return Ok(new {message = "Login was successful"});
             }
         }
         catch (Exception ex)
@@ -52,7 +52,7 @@ public class UserController : ControllerBase
             _logger.LogError(ex, "Couldn't check user login information");
         }
 
-        return BadRequest(new { success = false, message = "Invalid payload." });
+        return BadRequest(new {message = "Invalid login information"});
     }
 
     [AllowAnonymous]
@@ -87,15 +87,18 @@ public class UserController : ControllerBase
     }
     
     [Authorize]
-    [HttpGet("get-name")]
-    public IActionResult GetName([FromQuery] string email)
+    [HttpGet("get-user-name")]
+    public IActionResult GetName()
     {
-        var user = _userRepository.GetUserByEmail(email);
-        if (user != null)
+        try
         {
-            return Ok(new { name = user.Name });
+            User? user = _userAuthService.GetUser(HttpContext);
+            return Ok(new { message = "User was successfully found", user?.Name });
         }
-
-        return NotFound(new { message = "User not found." });
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Couldn't found user");
+            return NotFound(new { message = "User not found." });
+        }
     }
 }
