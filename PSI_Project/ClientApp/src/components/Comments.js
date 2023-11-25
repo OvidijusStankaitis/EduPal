@@ -4,7 +4,6 @@ import { HttpTransportType, HubConnectionBuilder } from "@microsoft/signalr";
 import { useUserContext } from '../contexts/UserContext';
 
 export const Comments = ({ show, onClose, topicId }) => {
-    const { userId } = useUserContext();
     const [comments, setComments] = useState([]);
     const [currentComment, setCurrentComment] = useState('');
     const chatContentRef = useRef(null);
@@ -21,16 +20,28 @@ export const Comments = ({ show, onClose, topicId }) => {
                 .withAutomaticReconnect()
                 .build();
 
-            newConnection.on("ReceiveMessage", (realId, senderId, messageContent) => {
-                setComments(prevComments => {
-                    // Replace the optimistic comment with the real one from the server
-                    return prevComments.map(comment => {
-                        if (comment.isOptimistic && comment.userId === userId && comment.commentText === messageContent) {
-                            return { ...comment, id: realId, isOptimistic: false };
-                        }
-                        return comment;
-                    });
-                });
+            newConnection.on("ReceiveMessage", (realId, messageContent, isFromCurrentUser) => {
+                if (isFromCurrentUser) {
+                    setComments(prevComments => {
+                        return prevComments.map(comment => {
+                            if (comment.isOptimistic && comment.isFromCurrentUser && comment.content === messageContent) {  // TODO: resolve
+                                return { ...comment, id: realId, isOptimistic: false };
+                            }
+
+                            return comment;
+                        })
+                    })
+                } 
+                else {
+                    const newComment = {
+                        id: realId,
+                        content: messageContent,
+                        isFromCurrentUser: isFromCurrentUser,
+                        isOptimistic: false
+                    }
+
+                    setComments(prevComments => [...prevComments, newComment]);
+                }
             });
 
             newConnection.on("DeleteMessage", (messageId) => {
@@ -50,7 +61,10 @@ export const Comments = ({ show, onClose, topicId }) => {
                 credentials: 'include'
             })
                 .then(response => response.json())
-                .then(data => setComments(data))
+                .then(data => {
+                    console.log(data)
+                    setComments(data)}
+                )
                 .catch(error => console.error("Error fetching comments:", error));
         }
 
@@ -68,7 +82,6 @@ export const Comments = ({ show, onClose, topicId }) => {
             if (connection) {
                 connection.stop()
                     .then(() => {
-                        console.log('Connection stopped');
                         setConnection(null); // Reset the connection state to null
                     })
                     .catch(e => console.log('Failed to stop connection', e));
@@ -88,8 +101,8 @@ export const Comments = ({ show, onClose, topicId }) => {
             const optimisticId = `temp-${Date.now()}`;
             const optimisticComment = {
                 id: optimisticId,
-                userId: userId,
-                commentText: currentComment,
+                content: currentComment,
+                isFromCurrentUser: true,
                 isOptimistic: true // Mark this comment as optimistic
             };
 
@@ -98,7 +111,7 @@ export const Comments = ({ show, onClose, topicId }) => {
 
             try {
                 // Send the message to the server
-                await connection.invoke("SendMessage", userId, topicId, currentComment);
+                await connection.invoke("SendMessage", topicId, currentComment);
                 // Clear the input field
                 setCurrentComment('');
             } catch (error) {
@@ -108,7 +121,7 @@ export const Comments = ({ show, onClose, topicId }) => {
         }
     };
 
-    const handleDelete = async (commentId) => {
+    const handleDelete = async (commentId) => { // TODO: check
         // Ensure we're using real IDs when attempting to delete
         if (commentId && !commentId.startsWith('temp-') && connection && connection.state === "Connected") {
             try {
@@ -122,8 +135,7 @@ export const Comments = ({ show, onClose, topicId }) => {
             console.error("Cannot delete an optimistic or non-existing comment.");
         }
     };
-
-    // If the component is not supposed to show, don't render anything
+    
     if (!show) {
         return null;
     }
@@ -139,10 +151,10 @@ export const Comments = ({ show, onClose, topicId }) => {
                         {comments.map((comment, index) => (
                             <div key={index} className="comment">
                                 <div className="comment-text-content">
-                                    {comment.commentText}
+                                    {comment.content}
                                 </div>
 
-                                {comment.userId === userId
+                                { comment.isFromCurrentUser
                                     ? (<button
                                         className="delete-button1"
                                         onClick={() => handleDelete(comment.id)}>
