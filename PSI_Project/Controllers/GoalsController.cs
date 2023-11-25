@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PSI_Project.Services;
 using PSI_Project.Models;
-using Serilog;
 
 namespace PSI_Project.Controllers
 {
@@ -18,6 +17,7 @@ namespace PSI_Project.Controllers
             _logger = logger;
             _goalService = goalService;
         }
+
         // DTO object specific to Goals class only (specifically POST update-study-time endpoint)
         // so that's why it is here rather than Models folder.
         public class StudyTimeUpdateRequest

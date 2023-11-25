@@ -17,7 +17,8 @@ public class NoteController : ControllerBase
     private readonly NoteService _noteService;
     private readonly ILogger<NoteController> _logger;
 
-    public NoteController(ILogger<NoteController> logger, NoteRepository noteRepository, NoteService noteService)  // Dependency injection
+    public NoteController(ILogger<NoteController> logger, NoteRepository noteRepository,
+        NoteService noteService) // Dependency injection
     {
         _logger = logger;
         _noteService = noteService;

@@ -5,25 +5,41 @@ import gpt from "../assets/gpt.webp";
 import user from "../assets/user.webp";
 import { useUserContext } from '../contexts/UserContext';
 
-const DURATIONS = {
-    Low: { study: 5, shortBreak: 2, longBreak: 3 },
-    Medium: { study: 6, shortBreak: 3, longBreak: 4 },
-    High: { study: 7, shortBreak: 4, longBreak: 5 },
-};
-
 export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) => {
-    const { userName, setUserName } = useUserContext();
-    const [remainingTime, setRemainingTime] = useState(
-        parseInt(localStorage.getItem('remainingTime'), 10) || 0
-    );
-    const [isActive, setIsActive] = useState(
-        localStorage.getItem('shouldStartTimer') === 'true' ||
-        localStorage.getItem('isActive') === 'true'
-    );
+    const { setUserName, userName } = useUserContext();
+    const [remainingTime, setRemainingTime] = useState(0);
     const [mode, setMode] = useState('study');
-    const [completedStudySessions, setCompletedStudySessions] = useState(0);
 
-    const getUserName = async () => {
+    const fetchTimerState = async () => {
+        try {
+            const response = await fetch(`https://localhost:7283/Pomodoro/get-timer-state`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                const { remainingTime, mode } = data;
+                setRemainingTime(remainingTime);
+                console.log("Remaining time: ", remainingTime);
+                setMode(mode);
+            }
+        } catch (error) {
+            console.error("Error fetching timer state: ", error);
+        }
+    };
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            (async () => {
+                await fetchTimerState();
+            })();
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, [fetchTimerState]);
+
+    const fetchUserName = async () => {
         try {
             const userName = localStorage.getItem('userName')
 
@@ -44,82 +60,10 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) =>
             console.error('error fetching user name: ' + err)
         }
     }
-    
+
     useEffect(() => {
-        getUserName()
+        fetchUserName()
     }, [userName])
-
-
-    useEffect(() => {
-        startTimerBasedOnLocalStorage();
-        window.addEventListener('storage', startTimerBasedOnLocalStorage);
-        return () => {
-            window.removeEventListener('storage', startTimerBasedOnLocalStorage);
-        };
-    }, []);
-
-    const startTimerBasedOnLocalStorage = () => {
-        const shouldStart = localStorage.getItem('shouldStartTimer') === 'true';
-        const storedRemainingTime = parseInt(localStorage.getItem('remainingTime'), 10);
-        const intensity = localStorage.getItem('pomodoroIntensity');
-
-        if (storedRemainingTime) {
-            setRemainingTime(storedRemainingTime);
-            setIsActive(true);
-        } else if (shouldStart) {
-            if (intensity) {
-                setMode('study');
-                setRemainingTime(DURATIONS[intensity].study);
-                setIsActive(true);
-                localStorage.setItem('shouldStartTimer', 'false');
-            }
-        } else if (intensity && !shouldStart && !isActive && remainingTime === 0) {
-            setRemainingTime(DURATIONS[intensity].study);
-        }
-    };
-
-    useEffect(() => {
-        if (!isActive) return;
-
-        const interval = setInterval(() => {
-            setRemainingTime(prev => {
-                if (prev <= 0) {
-                    localStorage.setItem('isActive', 'false');
-                    switch (mode) {
-                        case 'study':
-                            if (completedStudySessions >= 3) {
-                                setCompletedStudySessions(0);
-                                setMode('longBreak');
-                                return DURATIONS[localStorage.getItem('pomodoroIntensity')].longBreak;
-                            } else {
-                                setCompletedStudySessions(prevCount => prevCount + 1);
-                                setMode('shortBreak');
-                                return DURATIONS[localStorage.getItem('pomodoroIntensity')].shortBreak;
-                            }
-                        case 'shortBreak':
-                            setMode('study');
-                            return DURATIONS[localStorage.getItem('pomodoroIntensity')].study;
-                        case 'longBreak':
-                            setMode('study');
-                            return DURATIONS[localStorage.getItem('pomodoroIntensity')].study;
-                        default:
-                            setIsActive(false);
-                            return 0;
-                    }
-                }
-                return prev - 1;
-            });
-        }, 1000);
-
-        return () => clearInterval(interval);
-    }, [isActive, mode, completedStudySessions]);
-
-    useEffect(() => {
-        if (isActive) {
-            localStorage.setItem('remainingTime', remainingTime);
-            localStorage.setItem('isActive', 'true');
-        }
-    }, [remainingTime, isActive]);
 
     const handleStartPomodoro = () => {
         setShowPomodoroDialog(true);
@@ -128,8 +72,13 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) =>
     const handleStartOpenAI = () => {
         setShowOpenAIDialog(true);
     };
-    
+
     const formatTime = (time) => {
+        if (typeof time !== 'number' || isNaN(time)) {
+            // Return a default or placeholder value if time is not a number
+            return "00:00";
+        }
+
         const minutes = Math.floor(time / 60);
         const seconds = time % 60;
         return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;

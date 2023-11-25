@@ -1,99 +1,65 @@
-﻿using System.Collections.Concurrent;
+using System.Net;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using PSI_Project.Models;
+using PSI_Project.Requests;
+using PSI_Project.Services;
 
-namespace PSI_Project.Controllers
+namespace PSI_Project.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class PomodoroController : ControllerBase
 {
-    [Authorize]
-    [ApiController]
-    [Route("[controller]")]
-    public class PomodoroController : ControllerBase
+    private readonly PomodoroService _pomodoroService;
+    private readonly UserAuthService _userAuthService;
+    private readonly ILogger<PomodoroController> _logger;
+
+    public PomodoroController(PomodoroService pomodoroService, UserAuthService userAuthService, ILogger<PomodoroController> logger)
     {
-        private static ConcurrentDictionary<string, Thread> userTimers = new ConcurrentDictionary<string, Thread>(); // 6. Usage of threading via Thread class;
-
-        private void RunTimer(string userId, int duration) // duration from front-end should be passed as milliseconds!!!
-        {
-            try
-            {
-                Thread.Sleep(duration);
-                
-                // When the timer finishes, send notifications, stop the website etc.
-                // code for it goes here.
-                Console.WriteLine($"Timer for user {userId} completed!");
-                
-                if (userTimers.ContainsKey(userId))
-                {
-                    userTimers.TryRemove(userId, out _);
-                }
-            }
-            catch (ThreadInterruptedException)
-            {
-                Console.WriteLine($"Timer for user {userId} was interrupted.");
-            }
-            catch
-            {
-                //TODO: Logging for other errors goes here
-            }
-        }
-
-        [HttpPost("start-timer")]
-        public IActionResult StartTimer([FromBody] TimerRequest request)
-        {
-            if (string.IsNullOrEmpty(request.UserId))
-            {
-                return BadRequest("UserId is required.");
-            }
-
-            if (request.Duration <= 0)
-            {
-                return BadRequest("Invalid duration.");
-            }
-
-            if (userTimers.ContainsKey(request.UserId))
-            {
-                userTimers[request.UserId].Interrupt();
-                if(!userTimers.TryRemove(request.UserId, out _))
-                {
-                    return Conflict($"the operation is impossible because some other thread modified the dictionary (UserId:{request.UserId})");
-                }
-            }
-
-            Thread timerThread = new Thread(() => RunTimer(request.UserId, request.Duration)); // 6. Usage of threading via Thread class;
-            timerThread.Start();
-
-            if (!userTimers.TryAdd(request.UserId, timerThread))
-            {
-                return Conflict($"the operation is impossible because some other thread modified the dictionary (UserId:{request.UserId})");
-            }
-
-            return Ok("Timer started");
-        }
-
-        [HttpPost("stop-timer")]
-        public IActionResult StopTimer([FromBody] TimerStopRequest request)
-        {
-            if (userTimers.ContainsKey(request.UserId))
-            {
-                userTimers[request.UserId].Interrupt();
-                if(!userTimers.TryRemove(request.UserId, out _))
-                {
-                    return Conflict($"the operation is impossible because some other thread modified the dictionary (UserId:{request.UserId})");
-                }
-                return Ok("Timer stopped");
-            }
-            return NotFound("No timer found for the user.");
-        }
-    }
-
-    public class TimerRequest
-    {
-        public string UserId { get; set; }
-        public int Duration { get; set; }
+        _pomodoroService = pomodoroService;
+        _userAuthService = userAuthService;
+        _logger = logger;
     }
     
-    public class TimerStopRequest
+    [Authorize]
+    [HttpPost("start-timer")]
+    public IActionResult StartTimer([FromBody] StartTimerRequest request)
     {
-        public string UserId { get; set; }
+        User user = _userAuthService.GetUser(HttpContext)!;
+        _logger.LogInformation($"Starting timer for {user.Id} with intensity {request.Intensity}");
+        _pomodoroService.StartTimer(user.Id, request.Intensity);
+        return Ok();
+    }
+    
+    [Authorize]
+    [HttpPost("stop-timer")]
+    public IActionResult StopTimer()
+    {
+        User user = _userAuthService.GetUser(HttpContext)!;
+        _pomodoroService.StopTimer(user.Id);
+        
+        _logger.LogInformation($"Stopping timer for {user!.Id}");
+        
+        return Ok();
+    }
+
+    [Authorize]
+    [HttpGet("get-timer-state")]
+    public ActionResult GetTimerState()
+    {
+        User user = _userAuthService.GetUser(HttpContext)!;
+        _logger.LogInformation($"Getting timer state for {user.Id}");
+        var state = _pomodoroService.GetTimerState(user.Id);
+        _logger.LogInformation($"Timer state for {user.Id}: {state}");
+
+        var response = new 
+        {
+            RemainingTime = state.RemainingTime,
+            Mode = state.Mode,
+            IsActive = state.IsActive
+        };
+
+        return Ok(response);
     }
 }

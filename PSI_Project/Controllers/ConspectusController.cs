@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PSI_Project.DTO;
-using PSI_Project.Exceptions;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
 using PSI_Project.Services;
@@ -15,8 +14,9 @@ public class ConspectusController : ControllerBase
     private readonly ConspectusService _conspectusService;
     private readonly ConspectusRepository _conspectusRepository;
     private readonly ILogger<ConspectusController> _logger;
-    
-    public ConspectusController(ILogger<ConspectusController> logger, ConspectusRepository conspectusRepository, ConspectusService conspectusService)
+
+    public ConspectusController(ILogger<ConspectusController> logger, ConspectusRepository conspectusRepository,
+        ConspectusService conspectusService)
     {
         _logger = logger;
         _conspectusService = conspectusService;
@@ -25,11 +25,11 @@ public class ConspectusController : ControllerBase
 
     [Authorize]
     [HttpGet("get/{conspectusId}")]
-    public IActionResult GetConspectus(string conspectusId)
+    public async Task<IActionResult> GetConspectusAsync(string conspectusId)
     {
         try
         {
-            Stream pdfStream = _conspectusRepository.GetPdfStream(conspectusId);
+            Stream pdfStream = await _conspectusRepository.GetPdfStreamAsync(conspectusId);
             return File(pdfStream, "application/pdf");
         }
         catch (Exception ex)
@@ -41,41 +41,58 @@ public class ConspectusController : ControllerBase
 
     [Authorize]
     [HttpGet("list/{topicId}")]
-    public IActionResult GetTopicFiles(string topicId)
+    public async Task<IActionResult> GetTopicFilesAsync(string topicId)
     {
         try
-        {
-            return Ok(_conspectusRepository.GetConspectusListByTopicId(topicId));
+        { 
+            return Ok(await _conspectusService.GetConspectusesAsync(topicId));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Couldn't list topic {topicId} conspectuses", topicId);            
-            return BadRequest("An error occured while uploading file");
+            _logger.LogError(ex, "Couldn't list topic {topicId} conspectuses", topicId);
+            return BadRequest("An error occurred while listing conspectuses");
         }
     }
 
     [Authorize]
     [HttpPost("upload/{topicId}")]
-    public IActionResult UploadFiles(string topicId, List<IFormFile> files)
+    public async Task<IActionResult> UploadFilesAsync(string topicId, List<IFormFile> files)
     {
         try
         {
-            return Ok(_conspectusRepository.Upload(topicId, files).ToList());
+            var uploadedConspectuses = await _conspectusRepository.UploadAsync(topicId, files);
+            return Ok(uploadedConspectuses.ToList());
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Couldn't add new conspectus(es)");
-            return BadRequest("An error occured while uploading file");
+            return BadRequest("An error occurred while uploading conspectuses");
+        }
+    }
+
+    [Authorize]
+    [HttpDelete("delete/{conspectusId}")]
+    public async Task<IActionResult> DeleteFileAsync(string conspectusId)
+    {
+        try
+        {
+            await _conspectusRepository.RemoveAsync(conspectusId);
+            return Ok("File has been successfully deleted");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Couldn't delete conspectus {conspectusId}", conspectusId);
+            return BadRequest("An error occurred while deleting file");
         }
     }
     
     [Authorize]
     [HttpGet("download/{conspectusId}")]
-    public IActionResult DownloadFile(string conspectusId)
+    public async Task<IActionResult> DownloadFileAsync(string conspectusId)
     {
         try
         {
-            ConspectusFileContentDTO response = _conspectusRepository.Download(conspectusId);
+            ConspectusFileContentDTO response = await _conspectusRepository.DownloadAsync(conspectusId);
             Response.Headers.Add("Content-Disposition", "attachment; filename=" + response.Name);
             return response.FileContent;
         }
@@ -85,53 +102,38 @@ public class ConspectusController : ControllerBase
             return BadRequest("An error occured while downloading file");
         }
     }
-
-    [Authorize]
-    [HttpDelete("delete/{conspectusId}")]
-    public IActionResult DeleteFile(string conspectusId)
-    {
-        try
-        {
-            _conspectusRepository.Remove(conspectusId);
-            return Ok("File has been successfully deleted");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Couldn't delete conspectus {conspectusId}", conspectusId);
-            return BadRequest("An error occured while deleting file");
-        }
-    }
+    
     
     [Authorize]
     [HttpPost("rate-up/{conspectusId}")]
-    public IActionResult RateConspectusUp(string conspectusId)
+    public async Task<IActionResult> RateConspectusUpAsync(string conspectusId)
     {
         try
         {
-            Conspectus ratedConspectus = _conspectusRepository.ChangeRating(conspectusId, true);
+            Conspectus ratedConspectus = await _conspectusRepository.ChangeRatingAsync(conspectusId, true);
             return Ok(ratedConspectus);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Couldn't rate up conspectus {conspectusId}", conspectusId);
         }
-        
+
         return NotFound(new { error = "File not found in database." });
     }
     
     [Authorize]
     [HttpPost("rate-down/{conspectusId}")]
-    public IActionResult RateConspectusDown(string conspectusId)
+    public async Task<IActionResult> RateConspectusDownAsync(string conspectusId)
     {
         try
         {
-            Conspectus ratedConspectus = _conspectusRepository.ChangeRating(conspectusId, false);
+            Conspectus ratedConspectus = await _conspectusRepository.ChangeRatingAsync(conspectusId, false);
             return Ok(ratedConspectus);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Couldn't rate down conspectus {conspectusId}", conspectusId);
-            return NotFound(new { error = "File not found in database." }); 
+            return NotFound(new { error = "File not found in database." });
         }
     }
 

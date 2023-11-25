@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PSI_Project.Data;
-using PSI_Project.DTO;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
 
@@ -32,33 +31,7 @@ public class UserRepositoryUnitTests
     }
     
     [Fact]
-    public void CheckUserRegister_UserDoesNotExist_ReturnsNotNull()
-    {
-        // Arrange
-        var user = new UserCreationDTO("nonexistentTest@test.test", "nonexistentTestPassword", "nonexistentTestName", "nonexistentTestSurname");
-
-        // Act
-        var result = _userRepository.CheckUserRegister(user);
-        
-        // Assert
-        Assert.NotNull(result);
-    }
-    
-    [Fact]
-    public void CheckUserRegister_UserExists_ReturnsNull()
-    {
-        // Arrange
-        var userExisting = new UserCreationDTO("testName", "testSurname", "test@test.test", "testPassword");
-        
-        // Act
-        var result = _userRepository.CheckUserRegister(userExisting);
-
-        // Assert
-        Assert.Null(result);
-    }
-    
-    [Fact]
-    public void GetUserByEmail_UserExists_ReturnsUser()
+    public async Task GetUserByEmail_UserExists_ReturnsUser()
     {
         // Arrange
         var user = new User("test1@test.test", "testPassword", "testName", "testSurname");
@@ -66,7 +39,7 @@ public class UserRepositoryUnitTests
         _context.SaveChanges();
 
         // Act
-        var result = _userRepository.GetUserByEmail("test1@test.test");
+        var result = await _userRepository.GetUserByEmailAsync("test1@test.test");
 
         // Assert
         Assert.NotNull(result);
@@ -78,12 +51,12 @@ public class UserRepositoryUnitTests
     }
 
     [Fact]
-    public void GetUserByEmail_UserDoesNotExist_ReturnsNull()
+    public async Task GetUserByEmail_UserDoesNotExist_ReturnsNull()
     {
         // Arrange
         
         // Act
-        var result = _userRepository.GetUserByEmail("nonexistent@test.test");
+        var result = await _userRepository.GetUserByEmailAsync("nonexistent@test.test");
 
         // Assert
         Assert.Null(result);

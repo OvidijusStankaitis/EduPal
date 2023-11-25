@@ -13,7 +13,8 @@ public class OpenAIController : ControllerBase
     private readonly OpenAIRepository _openAIRepository;
     private readonly ILogger<OpenAIController> _logger;
 
-    public OpenAIController(ILogger<OpenAIController> logger, OpenAIService openAIService, OpenAIRepository openAIRepository)
+    public OpenAIController(ILogger<OpenAIController> logger, OpenAIService openAIService,
+        OpenAIRepository openAIRepository)
     {
         _logger = logger;
         _openAIService = openAIService;
@@ -32,11 +33,11 @@ public class OpenAIController : ControllerBase
                 return Ok(new { response });
             }
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             _logger.LogError(ex, "Couldn't send message to OpenAI {userEmail}", userEmail);
         }
-        
+
         return BadRequest(new { error = "Failed to get response from OpenAI." });
     }
 

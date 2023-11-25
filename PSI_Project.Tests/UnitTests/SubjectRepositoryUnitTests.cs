@@ -28,19 +28,19 @@ public class SubjectRepositoryUnitTests
     }
 
     [Fact]
-    public void GetSubjectsList_DBIsEmpty_ReturnsEmpty()
+    public async Task GetSubjectsList_DBIsEmpty_ReturnsEmpty()
     {
         // Arrange
         
         // Act
-        var result = _subjectRepository.GetSubjectsList();
+        var result = await _subjectRepository.GetSubjectsListAsync();
 
         // Assert
         Assert.Empty(result);
     }
     
     [Fact]
-    public void GetSubjectsList_DBContainsOneElement_ReturnsAListOfOneElement()
+    public async Task GetSubjectsList_DBContainsOneElement_ReturnsAListOfOneElement()
     {
         // Arrange
         var subject = new Subject("testSubject");
@@ -48,8 +48,8 @@ public class SubjectRepositoryUnitTests
         _context.SaveChanges();
         
         // Act
-        var result = _subjectRepository.GetSubjectsList();
-        _subjectRepository.RemoveSubject(subject.Id); // removing subject so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
+        var result = await _subjectRepository.GetSubjectsListAsync();
+        _subjectRepository.RemoveSubjectAsync(subject.Id); // removing subject so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
         
         // Assert
         Assert.Single(result);
@@ -57,7 +57,7 @@ public class SubjectRepositoryUnitTests
     }
     
     [Fact]
-    public void GetSubjectsList_DBContainsTwoElement_ReturnsAListOfTwoElements()
+    public async Task GetSubjectsList_DBContainsTwoElement_ReturnsAListOfTwoElements()
     {
         // Arrange
         var subject1 = new Subject("testSubject1");
@@ -69,9 +69,9 @@ public class SubjectRepositoryUnitTests
         _context.SaveChanges();
         
         // Act
-        var result = _subjectRepository.GetSubjectsList();
-        _subjectRepository.RemoveSubject(subject1.Id); // removing subject so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
-        _subjectRepository.RemoveSubject(subject2.Id); // removing subject so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
+        var result = await _subjectRepository.GetSubjectsListAsync();
+        await _subjectRepository.RemoveSubjectAsync(subject1.Id); // removing subject so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
+        await _subjectRepository.RemoveSubjectAsync(subject2.Id); // removing subject so DB would be empty for the GetSubjectsList_ListIsEmpty_ReturnsNull() method
         
         // Assert
         Assert.NotEmpty(result);
@@ -81,7 +81,7 @@ public class SubjectRepositoryUnitTests
     }
     
     [Fact]
-    public void RemoveSubject_SubjectExists_ReturnsTrue()
+    public async Task RemoveSubject_SubjectExists_ReturnsTrue()
     {
         // Arrange
         var subject = new Subject("removeSubjectTestName");
@@ -89,22 +89,22 @@ public class SubjectRepositoryUnitTests
         _context.SaveChanges();
         
         // Act
-        var result = _subjectRepository.RemoveSubject(subject.Id);
+        var result = await _subjectRepository.RemoveSubjectAsync(subject.Id);
 
         // Assert
         Assert.True(result);
     }
     
     [Fact]
-    public void RemoveSubject_SubjectDoesNotExist_ReturnsFalse()
+    public async Task RemoveSubject_SubjectDoesNotExist_ReturnsFalse()
     {
         // Arrange
         var subject = new Subject("nonexistentTestRemoveSubject");
-        
+    
         // Act
-
+    
         // Assert
-        var exception = Assert.Throws<ObjectNotFoundException>(() => _subjectRepository.RemoveSubject(subject.Id));
+        var exception = await Assert.ThrowsAsync<ObjectNotFoundException>(async () => await _subjectRepository.RemoveSubjectAsync(subject.Id));
         Assert.Equal("Couldn't get object with specified id", exception.Message);
     }
 }

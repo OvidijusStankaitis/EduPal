@@ -15,12 +15,16 @@ public class Repository<TEntity> where TEntity : BaseEntity // 2: generic constr
         Context = context;
     }
     
+    public async Task<TEntity?> GetAsync(object id)
+    {
+        return await Context.Set<TEntity>().FindAsync(id);
+    }
+    
     public TEntity Get(string id)
     {
         TEntity? item = Context.Set<TEntity>().Find(id);
         if (item == null)
         {
-            // Create at least 1 exception type and throw it; meaningfully deal with it; 
             throw new ObjectNotFoundException("Couldn't get object with specified id");
         }
         return item;
@@ -31,9 +35,9 @@ public class Repository<TEntity> where TEntity : BaseEntity // 2: generic constr
         return Context.Set<TEntity>().ToList();
     }
 
-    public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate) // 2, 3: generic delegate
+    public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
     {
-        return Context.Set<TEntity>().Where(predicate);
+        return await Context.Set<TEntity>().Where(predicate).ToListAsync();
     }
 
     public TEntity Add(TEntity entity)
@@ -41,8 +45,14 @@ public class Repository<TEntity> where TEntity : BaseEntity // 2: generic constr
         return Context.Set<TEntity>().Add(entity).Entity;
     }
 
-    public TEntity Remove(TEntity entity)
+    public void Remove(TEntity entity)
     {
-        return Context.Set<TEntity>().Remove(entity).Entity;
+        Context.Set<TEntity>().Remove(entity);
+    }
+
+    public void Remove(string entityId)
+    {
+        TEntity entity = Get(entityId);
+        Remove(entity);
     }
 }

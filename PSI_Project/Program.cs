@@ -75,6 +75,7 @@ builder.Services.AddTransient<NoteService>();
 builder.Services.AddTransient<ChatService>();
 builder.Services.AddTransient<ConspectusService>();
 builder.Services.AddTransient<UserAuthService>();
+builder.Services.AddSingleton<PomodoroService>();
 
 // repositories dependency injections
 builder.Services.AddTransient<GoalsRepository>();
@@ -112,4 +113,3 @@ app.MapFallbackToFile("index.html");
 app.MapHub<ChatHub>("/chat-hub");
 
 app.Run();
-

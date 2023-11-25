@@ -28,7 +28,10 @@ export const Note = ({ show, onClose, topicId }) => {
 
     const loadNotesFromServer = async () => {
         try {
-            const response = await fetch("https://localhost:7283/Note");
+            const response = await fetch("https://localhost:7283/Note", {
+                method: 'GET',
+                credentials: 'include'
+            });
             if (!response.ok) throw new Error("Error loading notes");
             const data = await response.json();
             return data;
@@ -43,6 +46,7 @@ export const Note = ({ show, onClose, topicId }) => {
             headers: {
                 "Content-Type": "application/json"
             },
+            credentials: 'include',
             body: JSON.stringify({ Content: noteContent, Name: noteName })
         });
         if (!response.ok) {
@@ -64,6 +68,7 @@ export const Note = ({ show, onClose, topicId }) => {
                 headers: {
                     "Content-Type": "application/json"
                 },
+                credentials: 'include',
                 body: JSON.stringify({ Content: noteContent, Name: noteName })
             });
 
@@ -77,7 +82,8 @@ export const Note = ({ show, onClose, topicId }) => {
 
             const uploadResponse = await fetch(`https://localhost:7283/Conspectus/upload/${topicId}`, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                credentials: 'include'
             });
 
             if (!uploadResponse.ok) {

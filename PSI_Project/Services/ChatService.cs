@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.SignalR;
 using PSI_Project.DTO;
 using PSI_Project.Hubs;
 using PSI_Project.Models;

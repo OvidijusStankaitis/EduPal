@@ -21,8 +21,8 @@ public class UserAuthService
 
     public User? Authenticate(LoginRequest userData)
     {
-        return _userRepository.Find(user => user.Email == userData.Email 
-                                            && user.Password == userData.Password).FirstOrDefault();
+        return _userRepository.FindAsync(user => user.Email == userData.Email 
+                                            && user.Password == userData.Password).Result.FirstOrDefault();
     }
 
     public string GenerateToken(User user)
