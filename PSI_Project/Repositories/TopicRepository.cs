@@ -14,9 +14,11 @@ namespace PSI_Project.Repositories
         
         public async Task<List<Topic>> GetTopicsListBySubjectIdAsync(string subjectId)
         {
-            return await EduPalContext.Topics
-                .Where(topic => topic.Subject.Id == subjectId)
-                .ToListAsync();
+            // return await EduPalContext.Topics
+            //     .Where(topic => topic.Subject.Id == subjectId)
+            //     .ToListAsync();
+            var topics = await FindAsync(topic => topic.Subject.Id == subjectId);
+            return topics.ToList();
         }
 
         public async Task<Topic?> CreateAsync(string topicName, string subjectId)

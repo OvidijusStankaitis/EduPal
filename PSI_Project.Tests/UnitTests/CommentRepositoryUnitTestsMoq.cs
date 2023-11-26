@@ -10,7 +10,7 @@ namespace PSI_Project.Tests.UnitTests;
 public class CommentRepositoryUnitTestsMoq
 {
     [Fact]
-    public void GetAllCommentsOfTopic_GetsEmptyList_ReturnsEmptyList()
+    public async Task GetAllCommentsOfTopicAsync_GetsEmptyList_ReturnsEmptyList()
     {
         // Arrange
         var topic = new Topic("testTopic", new Subject("testSubject"), KnowledgeLevel.Average);
@@ -18,19 +18,19 @@ public class CommentRepositoryUnitTestsMoq
         var mockDbContext = new Mock<EduPalDatabaseContext>();
         var mockRepository = new Mock<CommentRepository>(mockDbContext.Object);
         
-        mockRepository.Setup(repo => repo.Find(It.IsAny<Expression<Func<Comment, bool>>>())).Returns(new List<Comment>());
+        mockRepository.Setup(repo => repo.FindAsync(It.IsAny<Expression<Func<Comment, bool>>>())).ReturnsAsync(new List<Comment>());
         
         var commentRepository = mockRepository.Object;
         
         // Act
-        var result = commentRepository.GetAllCommentsOfTopic(topic.Id);
+        var result = await commentRepository.GetAllCommentsOfTopicAsync(topic.Id);
         
         // Assert
         Assert.Empty(result);
     }
     
     [Fact]
-    public void GetAllCommentsOfTopic_GetsListOfOneTopicsOfOneSubject_ReturnsListWithOneElement()
+    public async Task GetAllCommentsOfTopicAsync_GetsListOfOneTopicsOfOneSubject_ReturnsListWithOneElement()
     {
         // Arrange
         var topic = new Topic("testTopic", new Subject("testSubject"), KnowledgeLevel.Average);
@@ -40,12 +40,12 @@ public class CommentRepositoryUnitTestsMoq
         var mockDbContext = new Mock<EduPalDatabaseContext>();
         var mockRepository = new Mock<CommentRepository>(mockDbContext.Object);
         
-        mockRepository.Setup(repo => repo.Find(It.IsAny<Expression<Func<Comment, bool>>>())).Returns(new List<Comment>{comment});
+        mockRepository.Setup(repo => repo.FindAsync(It.IsAny<Expression<Func<Comment, bool>>>())).ReturnsAsync(new List<Comment>{comment});
         
         var commentRepository = mockRepository.Object;
         
         // Act
-        var result = commentRepository.GetAllCommentsOfTopic(topic.Id);
+        var result = await commentRepository.GetAllCommentsOfTopicAsync(topic.Id);
         
         // Assert
         Assert.Single(result);
@@ -53,7 +53,7 @@ public class CommentRepositoryUnitTestsMoq
     }
     
     [Fact]
-    public void GetAllCommentsOfTopic_GetsListOfTwoTopicsOfOneSubject_ReturnsListWithTwoElements()
+    public async Task GetAllCommentsOfTopicAsync_GetsListOfTwoTopicsOfOneSubject_ReturnsListWithTwoElements()
     {
         // Arrange
         var topic = new Topic("testTopic", new Subject("testSubject"), KnowledgeLevel.Average);
@@ -64,12 +64,12 @@ public class CommentRepositoryUnitTestsMoq
         var mockDbContext = new Mock<EduPalDatabaseContext>();
         var mockRepository = new Mock<CommentRepository>(mockDbContext.Object);
         
-        mockRepository.Setup(repo => repo.Find(It.IsAny<Expression<Func<Comment, bool>>>())).Returns(new List<Comment>{comment1, comment2});
+        mockRepository.Setup(repo => repo.FindAsync(It.IsAny<Expression<Func<Comment, bool>>>())).ReturnsAsync(new List<Comment>{comment1, comment2});
         
         var commentRepository = mockRepository.Object;
         
         // Act
-        var result = commentRepository.GetAllCommentsOfTopic(topic.Id);
+        var result = await commentRepository.GetAllCommentsOfTopicAsync(topic.Id);
         
         // Assert
         Assert.Collection(result,
@@ -78,7 +78,7 @@ public class CommentRepositoryUnitTestsMoq
     }
     
     [Fact]
-    public void Remove_CommentExists_ReturnsTrue()
+    public async Task RemoveAsync_CommentExists_ReturnsTrue()
     {
         // Arrange
         var user = new User("TestUserName", "TestUserSurname", "testmail@test.test", "userPassword");
@@ -88,20 +88,20 @@ public class CommentRepositoryUnitTestsMoq
         var mockDbContext = new Mock<EduPalDatabaseContext>();
         var mockRepository = new Mock<CommentRepository>(mockDbContext.Object);
         
-        mockRepository.Setup(repo => repo.Get(comment.Id)).Returns(comment);
+        mockRepository.Setup(repo => repo.GetAsync(comment.Id)).ReturnsAsync(comment);
         mockRepository.Setup(repo => repo.Remove(comment)).Returns(1);
 
         var commentRepository = mockRepository.Object;
     
         // Act
-        var result = commentRepository.Remove(comment.Id);
+        var result = await commentRepository.RemoveAsync(comment.Id);
         
         // Assert
         Assert.True(result);
     }
     
     [Fact] 
-    public void Remove_CommentDoesNotExist_ThrowsObjectNotFoundException()
+    public async Task RemoveAsync_CommentDoesNotExist_ThrowsObjectNotFoundException()
     {
         // Arrange
         var user = new User("TestUserName", "TestUserSurname", "testmail@test.test", "userPassword");
@@ -111,36 +111,36 @@ public class CommentRepositoryUnitTestsMoq
         var mockDbContext = new Mock<EduPalDatabaseContext>();
         var mockRepository = new Mock<CommentRepository>(mockDbContext.Object);
         
-        mockRepository.Setup(repo => repo.Get(comment.Id)).Throws<ObjectNotFoundException>();
+        mockRepository.Setup(repo => repo.GetAsync(comment.Id)).ThrowsAsync(new ObjectNotFoundException());
 
         var commentRepository = mockRepository.Object;
         // Act
         
         // Assert
-        var exception = Assert.Throws<ObjectNotFoundException>(() => commentRepository.Remove(comment.Id));
+        var exception = await Assert.ThrowsAsync<ObjectNotFoundException>(async () => await commentRepository.RemoveAsync(comment.Id));
         Assert.Contains("Exception of type 'PSI_Project.Exceptions", exception.Message);
     }
     
     [Fact]
-    public void GetItemById_GetsIdOfNonexistentComment_ReturnsNull()
+    public async Task GetItemByIdAsync_GetsIdOfNonexistentComment_ReturnsNull()
     {
         // Arrange
         var mockDbContext = new Mock<EduPalDatabaseContext>();
         var mockRepository = new Mock<CommentRepository>(mockDbContext.Object);
         
-        mockRepository.Setup(repo => repo.Find(It.IsAny<Expression<Func<Comment, bool>>>()))
-            .Returns(new List<Comment>());        
+        mockRepository.Setup(repo => repo.FindAsync(It.IsAny<Expression<Func<Comment, bool>>>()))
+            .ReturnsAsync(new List<Comment>());        
         var commentRepository = mockRepository.Object;
         
         // Act
-        var result = commentRepository.GetItemById("nonexistentId");
+        var result = await commentRepository.GetItemByIdAsync("nonexistentId");
         
         // Assert
         Assert.Null(result);
     }
     
     [Fact]
-    public void GetItemById_GetsIdOfComment_ReturnsComment()
+    public async Task GetItemByIdAsync_GetsIdOfComment_ReturnsComment()
     {
         // Arrange
         var user = new User("TestUserName", "TestUserSurname", "testmail@test.test", "userPassword");
@@ -150,12 +150,12 @@ public class CommentRepositoryUnitTestsMoq
         var mockDbContext = new Mock<EduPalDatabaseContext>();
         var mockRepository = new Mock<CommentRepository>(mockDbContext.Object);
         
-        mockRepository.Setup(repo => repo.Find(It.IsAny<Expression<Func<Comment, bool>>>()))
-            .Returns(new List<Comment>{comment});        
+        mockRepository.Setup(repo => repo.FindAsync(It.IsAny<Expression<Func<Comment, bool>>>()))
+            .ReturnsAsync(new List<Comment>{comment});        
         var commentRepository = mockRepository.Object;
         
         // Act
-        var result = commentRepository.GetItemById(comment.Id);
+        var result = await commentRepository.GetItemByIdAsync(comment.Id);
         
         // Assert
         Assert.NotNull(result);

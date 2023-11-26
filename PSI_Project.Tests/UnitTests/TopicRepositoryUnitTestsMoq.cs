@@ -10,7 +10,7 @@ namespace PSI_Project.Tests.UnitTests;
 public class TopicRepositoryUnitTestsMoq
 {
     [Fact]
-    public void GetTopicsListBySubjectId_GetsListOfOneTopicsOfOneSubject_ReturnsListWithOneElements()
+    public async Task GetTopicsListBySubjectIdAsync_GetsListOfOneTopicsOfOneSubject_ReturnsListWithOneElements()
     {
         // Arrange
         var subject = new Subject("testSubject");
@@ -22,12 +22,12 @@ public class TopicRepositoryUnitTestsMoq
         var mockDbContext = new Mock<EduPalDatabaseContext>();
         var mockRepository = new Mock<TopicRepository>(mockDbContext.Object);
         
-        mockRepository.Setup(repo => repo.Find(It.IsAny<Expression<Func<Topic, bool>>>())).Returns(topics);
+        mockRepository.Setup(repo => repo.FindAsync(It.IsAny<Expression<Func<Topic, bool>>>())).ReturnsAsync(topics);
         
         var topicRepository = mockRepository.Object;
 
         // Act
-        var result = topicRepository.GetTopicsListBySubjectId(subject.Id);
+        var result = await topicRepository.GetTopicsListBySubjectIdAsync(subject.Id);
         
         // Assert
         Assert.Single(result);
@@ -35,7 +35,7 @@ public class TopicRepositoryUnitTestsMoq
     }
 
     [Fact]
-    public void GetTopicsListBySubjectId_GetsListOfTwoTopicsOfOneSubject_ReturnsListWithTwoElements()
+    public async Task GetTopicsListBySubjectIdAsync_GetsListOfTwoTopicsOfOneSubject_ReturnsListWithTwoElements()
     {
         // Arrange
         var subject = new Subject("testSubject");
@@ -48,12 +48,12 @@ public class TopicRepositoryUnitTestsMoq
         var mockDbContext = new Mock<EduPalDatabaseContext>();
         var mockRepository = new Mock<TopicRepository>(mockDbContext.Object);
 
-        mockRepository.Setup(repo => repo.Find(It.IsAny<Expression<Func<Topic, bool>>>())).Returns(topics);
+        mockRepository.Setup(repo => repo.FindAsync(It.IsAny<Expression<Func<Topic, bool>>>())).ReturnsAsync(topics);
 
         var topicRepository = mockRepository.Object;
 
         // Act
-        var result = topicRepository.GetTopicsListBySubjectId(subject.Id);
+        var result = await topicRepository.GetTopicsListBySubjectIdAsync(subject.Id);
 
         // Assert
         Assert.Collection(result, 
@@ -62,7 +62,7 @@ public class TopicRepositoryUnitTestsMoq
     }
 
     [Fact]
-    public void Remove_TopicExists_ReturnsTrue()
+    public async Task RemoveAsync_TopicExists_ReturnsTrue()
     {
         // Arrange
         var topic = new Topic("removeTestName", new Subject("testSubject"), KnowledgeLevel.Average);
@@ -70,34 +70,34 @@ public class TopicRepositoryUnitTestsMoq
         var mockDbContext = new Mock<EduPalDatabaseContext>();
         var mockRepository = new Mock<TopicRepository>(mockDbContext.Object);
         
-        mockRepository.Setup(repo => repo.Get(topic.Id)).Returns(topic);
+        mockRepository.Setup(repo => repo.GetAsync(topic.Id)).ReturnsAsync(topic);
         mockRepository.Setup(repo => repo.Remove(topic)).Returns(1);
         
         var topicRepository = mockRepository.Object;
 
         // Act
-        var result = topicRepository.Remove(topic.Id);
+        var result = await topicRepository.RemoveAsync(topic.Id);
 
         // Assert
         Assert.True(result);
     }
     
     [Fact]
-    public void Remove_TopicDoesNotExist_ThrowsObjectNotFoundException()
+    public async Task RemoveAsync_TopicDoesNotExist_ThrowsObjectNotFoundException()
     {
         // Arrange
         var topic = new Topic("nonexistentTestRemove", new Subject("nonexistentTestRemoveSubject"), KnowledgeLevel.Average);
         
         var mockDbContext = new Mock<EduPalDatabaseContext>();
         var mockRepository = new Mock<TopicRepository>(mockDbContext.Object);
-        
-        mockRepository.Setup(repo => repo.Get(topic.Id)).Throws<ObjectNotFoundException>();
+
+        mockRepository.Setup(repo => repo.GetAsync(topic.Id)).ThrowsAsync(new ObjectNotFoundException());
         mockRepository.Setup(repo => repo.Remove(topic)).Returns(1);
        
         var topicRepository = mockRepository.Object;
 
         // Act
-        var exception = Assert.Throws<ObjectNotFoundException>(() => topicRepository.Remove(topic.Id));
+        var exception = await Assert.ThrowsAsync<ObjectNotFoundException>(async () => await topicRepository.RemoveAsync(topic.Id));
 
         // Assert
         Assert.Contains("Exception of type 'PSI_Project.Exceptions", exception.Message);

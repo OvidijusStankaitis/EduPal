@@ -15,9 +15,14 @@ public class Repository<TEntity> where TEntity : BaseEntity
         Context = context;
     }
     
-    public async Task<TEntity?> GetAsync(object id)
+    public virtual async Task<TEntity?> GetAsync(object id)
     {
-        return await Context.Set<TEntity>().FindAsync(id);
+        TEntity? item = await Context.Set<TEntity>().FindAsync(id);
+        if (item == null)
+        {
+            throw new ObjectNotFoundException("Couldn't get object with specified id");
+        }
+        return item;
     }
     
     public virtual TEntity Get(string id)
@@ -25,7 +30,6 @@ public class Repository<TEntity> where TEntity : BaseEntity
         TEntity? item = Context.Set<TEntity>().Find(id);
         if (item == null)
         {
-            // Create at least 1 exception type and throw it; meaningfully deal with it; 
             throw new ObjectNotFoundException("Couldn't get object with specified id");
         }
         return item;
@@ -39,6 +43,10 @@ public class Repository<TEntity> where TEntity : BaseEntity
     public virtual async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
     {
         return await Context.Set<TEntity>().Where(predicate).ToListAsync();
+    }
+    public virtual IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate) 
+    {
+        return Context.Set<TEntity>().Where(predicate);
     }
 
     public virtual int Add(TEntity entity)

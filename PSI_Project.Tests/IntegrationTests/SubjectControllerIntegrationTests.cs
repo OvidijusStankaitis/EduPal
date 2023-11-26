@@ -131,7 +131,7 @@ public class SubjectControllerIntegrationTests : IDisposable
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.Equal("An error occured while deleting the subject", responseString);
+        Assert.Equal("An error occurred while deleting the subject", responseString);
     }
         
     public void Dispose()

@@ -41,11 +41,12 @@ public class SubjectController : ControllerBase
     }
 
     [HttpGet("list")]
-    public async Task<IActionResult> ListSubjectsAsync()
+    public IActionResult ListSubjectsAsync()
     {
         try
         {
-            var subjects = await _subjectRepository.GetSubjectsListAsync();
+            //var subjects = await _subjectRepository.GetSubjectsListAsync();
+            var subjects =  _subjectRepository.GetSubjectsList();
             return Ok(subjects);
         }
         catch (Exception ex)
@@ -56,12 +57,12 @@ public class SubjectController : ControllerBase
     }
 
     [HttpPost("upload")]
-    public async Task<IActionResult> UploadSubjectAsync([FromBody] SubjectRequestDTO request)
+    public IActionResult UploadSubjectAsync([FromBody] SubjectRequestDTO request)
     {
         try
         {
             // Use the properties of 'request' to create a new Subject
-            Subject? addedSubject = await _subjectRepository.CreateSubjectAsync(request.SubjectName);
+            Subject? addedSubject = _subjectRepository.CreateSubject(request.SubjectName);
             if (addedSubject != null)
             {
                 return Ok(addedSubject);

@@ -57,12 +57,12 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("get-name")]
-    public IActionResult GetName(string email)
+    public async Task<IActionResult> GetName(string email)
     {
-        var user = _userRepository.GetUserByEmailAsync(email);
+        var user = await _userRepository.GetUserByEmailAsync(email);
         if (user != null)
         {
-            return Ok(new { name = user.Result.Name });
+            return Ok(new { name = user.Name });
         }
 
         return NotFound(new { message = "User not found." });

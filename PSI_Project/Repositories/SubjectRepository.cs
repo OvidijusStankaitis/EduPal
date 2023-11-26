@@ -12,12 +12,13 @@ namespace PSI_Project.Repositories
         {
         }
 
-        public async Task<List<Subject>> GetSubjectsListAsync()
+        public List<Subject> GetSubjectsList()
         {
-            return await EduPalContext.Subjects.ToListAsync(); //need to be changed for tests
+            //return await EduPalContext.Subjects.ToListAsync(); //need to be changed for tests
+            return GetAll().ToList();
         }
 
-        public async Task<Subject?> CreateSubjectAsync(string subjectName)
+        public Subject? CreateSubject(string subjectName)
         {
             if (!subjectName.IsValidContainerName())
                 return null;

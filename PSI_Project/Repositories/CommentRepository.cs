@@ -14,15 +14,19 @@ namespace PSI_Project.Repositories
         
         public async Task<List<Comment>> GetAllCommentsOfTopicAsync(string topicId)
         {
-            return await EduPalContext.Comments
-                .Where(comment => comment.TopicId == topicId)
-                .ToListAsync(); // need to be changed for tests
+            // return await EduPalContext.Comments
+            //     .Where(comment => comment.TopicId == topicId)
+            //     .ToListAsync(); // need to be changed for tests
+            var comments = await FindAsync(comment => comment.TopicId == topicId);
+            return comments.ToList();
         }
         
         public async Task<Comment?> GetItemByIdAsync(string itemId)  
         {
-            return await EduPalContext.Comments
-                .FirstOrDefaultAsync(comment => comment.Id.Equals(itemId)); // need to be changed for tests
+            // return await EduPalContext.Comments
+            //     .FirstOrDefaultAsync(comment => comment.Id.Equals(itemId)); // need to be changed for tests
+            var comments = await FindAsync(comment => comment.Id == itemId);
+            return comments.FirstOrDefault();
         }
         
         public async Task<bool> RemoveAsync(string commentId) 
