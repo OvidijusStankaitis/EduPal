@@ -15,6 +15,11 @@ public class Repository<TEntity> where TEntity : BaseEntity
         Context = context;
     }
     
+    public async Task<TEntity?> GetAsync(object id)
+    {
+        return await Context.Set<TEntity>().FindAsync(id);
+    }
+    
     public virtual TEntity Get(string id)
     {
         TEntity? item = Context.Set<TEntity>().Find(id);
@@ -31,9 +36,9 @@ public class Repository<TEntity> where TEntity : BaseEntity
         return Context.Set<TEntity>().ToList();
     }
 
-    public virtual IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate) // 2, 3: generic delegate
+    public virtual async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
     {
-        return Context.Set<TEntity>().Where(predicate);
+        return await Context.Set<TEntity>().Where(predicate).ToListAsync();
     }
 
     public virtual int Add(TEntity entity)

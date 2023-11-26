@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
-using PSI_Project.DTO;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
 using PSI_Project.Services;
@@ -16,7 +15,8 @@ public class NoteController : ControllerBase
     private readonly NoteService _noteService;
     private readonly ILogger<NoteController> _logger;
 
-    public NoteController(ILogger<NoteController> logger, NoteRepository noteRepository, NoteService noteService)  // Dependency injection
+    public NoteController(ILogger<NoteController> logger, NoteRepository noteRepository,
+        NoteService noteService) // Dependency injection
     {
         _logger = logger;
         _noteService = noteService;
@@ -52,7 +52,7 @@ public class NoteController : ControllerBase
             return StatusCode(500, "An error occured while listing notes");
         }
     }
-    
+
     [HttpPost]
     public IActionResult AddNote([FromBody] Note note)
     {

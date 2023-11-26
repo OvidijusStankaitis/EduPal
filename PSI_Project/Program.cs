@@ -44,6 +44,7 @@ builder.Services.AddTransient<OpenAIService>();
 builder.Services.AddTransient<NoteService>();
 builder.Services.AddTransient<ChatService>();
 builder.Services.AddTransient<ConspectusService>();
+builder.Services.AddSingleton<PomodoroService>();
 
 // repositories dependency injections
 builder.Services.AddTransient<GoalsRepository>();

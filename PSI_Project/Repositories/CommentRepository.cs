@@ -1,31 +1,39 @@
-﻿using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using PSI_Project.Data;
-using PSI_Project.Exceptions;
 using PSI_Project.Models;
-namespace PSI_Project.Repositories;
-public class CommentRepository : Repository<Comment>
-{
-    public EduPalDatabaseContext EduPalContext => Context as EduPalDatabaseContext;
 
-    public CommentRepository(EduPalDatabaseContext context) : base(context)
+namespace PSI_Project.Repositories
+{
+    public class CommentRepository : Repository<Comment>
     {
-    }
-    
-    public List<Comment> GetAllCommentsOfTopic(string topicId)
-    {
-        return Find(comment => comment.TopicId == topicId).ToList();
-    }
-    
-    public Comment? GetItemById(string itemId)  
-    {
-        return Find(comment => comment.Id.Equals(itemId)).FirstOrDefault();
-    }
-    
-    public bool Remove(string commentId) 
-    {
-        Comment comment = Get(commentId);
-        int changes = Remove(comment);
-        //int changes = EduPalContext.SaveChanges();
-        return changes > 0;
+        public EduPalDatabaseContext EduPalContext => Context as EduPalDatabaseContext;
+
+        public CommentRepository(EduPalDatabaseContext context) : base(context)
+        {
+        }
+        
+        public async Task<List<Comment>> GetAllCommentsOfTopicAsync(string topicId)
+        {
+            return await EduPalContext.Comments
+                .Where(comment => comment.TopicId == topicId)
+                .ToListAsync(); // need to be changed for tests
+        }
+        
+        public async Task<Comment?> GetItemByIdAsync(string itemId)  
+        {
+            return await EduPalContext.Comments
+                .FirstOrDefaultAsync(comment => comment.Id.Equals(itemId)); // need to be changed for tests
+        }
+        
+        public async Task<bool> RemoveAsync(string commentId) 
+        {
+            Comment comment = await GetAsync(commentId);
+            if (comment == null)
+                return false; // Comment not found
+
+            int changes = Remove(comment);
+            //int changes = await EduPalContext.SaveChangesAsync();
+            return changes > 0;
+        }
     }
 }
