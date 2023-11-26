@@ -68,7 +68,7 @@ public class TopicControllerIntegrationTests : IDisposable
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 
-        var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(responseString);
+        var errorResponse = JsonConvert.DeserializeObject<ErrorResponseDTO>(responseString);
         Assert.Equal("The TopicName field is required.", errorResponse.Errors["TopicName"].First());
     }
     
@@ -224,7 +224,7 @@ public class TopicControllerIntegrationTests : IDisposable
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         
-        var errorResponse = JsonConvert.DeserializeObject<ErrorResponse>(responseString);
+        var errorResponse = JsonConvert.DeserializeObject<ErrorResponseDTO>(responseString);
         Assert.Equal("The request field is required.", errorResponse.Errors["request"].First());
     }
     

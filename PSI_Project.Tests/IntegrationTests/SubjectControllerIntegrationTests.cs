@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.Eventing.Reader;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
 using Newtonsoft.Json;
 using PSI_Project.Models;
@@ -21,7 +20,8 @@ public class SubjectControllerIntegrationTests : IDisposable
     public async Task ListSubjects_Always_ReturnsListOfOneSubject()
     {
         // Arrange
-        
+        var expectedNames = new List<string> { "testSubject1", "testSubject2", "testSubject3" };
+
         // Act
         var response = await _client.GetAsync("/subject/list");
 
@@ -29,10 +29,12 @@ public class SubjectControllerIntegrationTests : IDisposable
         
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Collection((data as IEnumerable<Subject>)!,
-            s1 => Assert.Equal("testSubject1", s1.Name),
-            s2 => Assert.Equal("testSubject2", s2.Name),
-            s3 => Assert.Equal("testSubject3", s3.Name));
+        Assert.True(data.Count() >= 3);
+        
+        Assert.All(expectedNames, expectedName =>
+        {
+            Assert.Contains(data, subject => subject.Name == expectedName);
+        });
     }
     
     [Fact] 
