@@ -21,10 +21,7 @@ export const Conspectus = () => {
     const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
 
     useEffect(() => {
-        fetch(`https://localhost:7283/Topic/get/${topicId}`, {
-            method: 'GET',
-            credentials: 'include'
-        })
+        fetch(`https://localhost:7283/Topic/get/${topicId}`)
             .then(response => response.json())
             .then(data => {
                 setTopicName(data.name);
@@ -34,10 +31,7 @@ export const Conspectus = () => {
     }, []);
 
     useEffect(() => {
-        fetch(`https://localhost:7283/Conspectus/list/${topicId}`, {
-            method: 'GET',
-            credentials: 'include'
-        })
+        fetch(`https://localhost:7283/Conspectus/list/${topicId}`)
             .then(response => response.json())
             .then(data => {
                 const fileList = data.map(fileObj => {
@@ -70,35 +64,28 @@ export const Conspectus = () => {
 
         fetch(`https://localhost:7283/Conspectus/upload/${topicId}`, {
             method: 'POST',
-            credentials: 'include',
             body: formData
         })
             .then(response => response.json())
             .then(data => {
-                setFiles(prevFiles => {
-                    const updatedFiles = [...prevFiles];
-                    
-                    data.forEach(file => {
-                        updatedFiles.push({
-                            id: file.id,
-                            name: file.name,
-                            rating: file.rating,
-                            truncatedName: file.name.length > 11 ? file.name.substring(0, 11) + "..." : file.name,
-                            isSelected: false
-                        });
-                    });
-                    
-                    return updatedFiles;
-                })
+                const updatedFiles = data.map(fileObj => {
+                    const fullPath = fileObj.path;
+                    const fileName = fullPath.split('\\').pop();
+                    return {
+                        id: fileObj.id,
+                        name: fileName,
+                        rating: fileObj.rating,
+                        truncatedName: fileName.length > 11 ? fileName.substring(0, 11) + "..." : fileName, // add truncatedName here
+                        isSelected: false
+                    };
+                });
+                setFiles(updatedFiles);
             })
             .catch(error => console.error('Error uploading files:', error));
     };
 
     const handleFileClick = (fileId) => {
-        fetch(`https://localhost:7283/Conspectus/get/${fileId}`, {
-            method: 'GET',
-            credentials: 'include'
-        })
+        fetch(`https://localhost:7283/Conspectus/get/${fileId}`)
             .then(response => response.blob())
             .then(blob => {
                 const url = window.URL.createObjectURL(blob);
@@ -125,8 +112,7 @@ export const Conspectus = () => {
     const handleFileDelete = (fileId) => {
         console.log('handleFileDelete - fileId:', fileId);
         fetch(`https://localhost:7283/Conspectus/delete/${fileId}`, {
-            method: 'DELETE',
-            credentials: 'include'
+            method: 'DELETE'
         })
             .then(response => {
                 if (response.ok) {
@@ -142,8 +128,7 @@ export const Conspectus = () => {
     const handleVote = (id, voteType) => {
         console.log('handleVote - fileId:', id, 'voteType:', voteType);
         fetch(`https://localhost:7283/Conspectus/${voteType ? 'rate-up' : 'rate-down'}/${id}`, {
-            method: 'POST',
-            credentials: 'include'
+            method: 'POST'
         })
             .then(response => response.json())
             .then(data => {

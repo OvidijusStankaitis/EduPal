@@ -3,20 +3,16 @@ import './UserComponent.css';
 import tomato from "../assets/tomato.webp";
 import gpt from "../assets/gpt.webp";
 import user from "../assets/user.webp";
-import { useUserContext } from '../contexts/UserContext';
+import { useUserContext } from '../UserContext';
 
 export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) => {
-    const { setUserName, userName } = useUserContext();
+    const { userEmail, setUsername, username, setUserEmail } = useUserContext();
     const [remainingTime, setRemainingTime] = useState(0);
     const [mode, setMode] = useState('study');
 
     const fetchTimerState = async () => {
         try {
-            const response = await fetch(`https://localhost:7283/Pomodoro/get-timer-state`, {
-                method: 'GET',
-                credentials: 'include'
-            });
-            
+            const response = await fetch(`https://localhost:7283/Pomodoro/get-timer-state?userEmail=${encodeURIComponent(userEmail)}`);
             if (response.ok) {
                 const data = await response.json();
                 const { remainingTime, mode } = data;
@@ -37,34 +33,45 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) =>
         }, 1000);
 
         return () => clearInterval(intervalId);
-    }, [fetchTimerState]);
+    }, [userEmail, fetchTimerState]); 
 
-    const fetchUserName = async () => {
+    const fetchUsername = async () => {
         try {
-            const userName = localStorage.getItem('userName')
-
-            if (userName != null) {
-                setUserName(userName)
-                return
+            const cachedUsername = localStorage.getItem('username');
+            if (cachedUsername) {
+                console.log("Setting username from cache: ", cachedUsername);
+                setUsername(cachedUsername);
+            } else {
+                console.log("Fetching username from server");
+                const response = await fetch(`https://localhost:7283/User/get-name?email=${userEmail}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setUsername(data.name);
+                    localStorage.setItem('username', data.name);
+                }
             }
-
-            const response = await  fetch(`https://localhost:7283/User/get-user-name`, {
-                method: 'GET',
-                credentials: 'include'
-            });
-            
-            const data = await response.json()
-            localStorage.setItem('userName', data.name)
-            setUserName(data.name)
-        } catch(err) {
-            console.error('error fetching user name: ' + err)
+        } catch (error) {
+            console.error("Error fetching username: ", error);
         }
-    }
+    };
 
     useEffect(() => {
-        fetchUserName()
-    }, [userName])
+        if (!userEmail) {
+            const cachedEmail = localStorage.getItem('userEmail');
+            if (cachedEmail) {
+                console.log("Setting userEmail from cache: ", cachedEmail);
+                setUserEmail(cachedEmail); // Set it in the context
+            }
+        }
 
+        if (userEmail) {
+            console.log("User email exists, fetching username");
+            fetchUsername();
+        } else {
+            console.log("No user email found");
+        }
+    }, [userEmail, setUsername, setUserEmail]);
+    
     const handleStartPomodoro = () => {
         setShowPomodoroDialog(true);
     };
@@ -81,12 +88,14 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) =>
 
         const minutes = Math.floor(time / 60);
         const seconds = time % 60;
+        console.log("Minutes: ", minutes);
+        console.log("Seconds: ", seconds);
         return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     };
 
     return (
         <div className="user-component">
-            <span className="username">{userName}</span>
+            <span className="username">{username}</span>
             <img src={user} alt="User" className="user-picture" />
             <span className="pomodoro-time">{formatTime(remainingTime)}</span>
             <img src={tomato} alt="Start Pomodoro" className="tomato" onClick={handleStartPomodoro} />

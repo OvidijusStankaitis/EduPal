@@ -1,45 +1,35 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using PSI_Project.DTO;
+﻿using Microsoft.AspNetCore.Mvc;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
-using PSI_Project.Services;
 
-namespace PSI_Project.Controllers;
-
-[ApiController]
-[Route("[controller]")]
-public class CommentController : ControllerBase
+namespace PSI_Project.Controllers
 {
-    private readonly CommentRepository _commentRepository;
-    private readonly ILogger<CommentController> _logger;
-    private readonly ChatService _chatService;
-    private readonly UserAuthService _userAuthService;
+    [ApiController]
+    [Route("[controller]")]
+    public class CommentController : ControllerBase
+    {
+        private readonly CommentRepository _commentRepository;
+        private readonly ILogger<CommentController> _logger;
 
-    public CommentController(ILogger<CommentController> logger, CommentRepository commentRepository, ChatService chatService, UserAuthService userAuthService)
-    {
-        _logger = logger; 
-        _commentRepository = commentRepository;
-        _chatService = chatService;
-        _userAuthService = userAuthService;
-    }
-    
-    [Authorize]
-    [HttpGet("get/{topicId}")]
-    public IActionResult GetCommentsForUser(string topicId)
-    {
-        try
+        public CommentController(ILogger<CommentController> logger, CommentRepository commentRepository)
         {
-            User user = _userAuthService.GetUser(HttpContext)!;
-            Console.WriteLine("Helou?");
-            List<CommentDTO> comments = _chatService.GetMessagesForUser(user, topicId).ToList();
-            return Ok(comments);
+            _logger = logger;
+            _commentRepository = commentRepository;
         }
-        catch (Exception ex)
+
+        [HttpGet("get/{topicId}")]
+        public async Task<IActionResult> GetAllCommentsFromTopicAsync(string topicId)
         {
-            _logger.LogError(ex, "Couldn't list topic {topicId} comments", topicId);
+            try
+            {
+                List<Comment> comments = await _commentRepository.GetAllCommentsOfTopicAsync(topicId);
+                return Ok(comments);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Couldn't list topic {topicId} comments", topicId);
+                return BadRequest("An error occurred while getting all topic comments");
+            }
         }
-        
-        return BadRequest("An error occured while getting all topic comments");
     }
 }

@@ -6,44 +6,33 @@ namespace PSI_Project.Hubs;
 
 public class ChatHub : Hub
 {
-    private readonly UserAuthService _userAuthService;
-    private readonly ChatService _chatService;
-    private readonly ILogger<ChatHub> _logger;
+    private readonly ChatService _chatService; 
     
-    public ChatHub(ChatService chatService, UserAuthService userAuthService, ILogger<ChatHub> logger)
+    public ChatHub(ChatService chatService)
     {
-        _userAuthService = userAuthService;
         _chatService = chatService;
-        _logger = logger;
     }
-    
-    public async Task SendMessage(string topicId, string message)
+
+    public async Task SendMessage(string userId, string topicId, string message)
     {
-        try
+        Comment? addedComment = _chatService.SaveSentMessage(userId, topicId, message);
+        if (addedComment is null)
         {
-            HttpContext? context = Context.GetHttpContext();
-            User? user = _userAuthService.GetUser(context!);            
-            Comment? addedComment = _chatService.SaveSentMessage(user!.Id, topicId, message);
-            await Clients.OthersInGroup(addedComment!.TopicId).SendAsync("ReceiveMessage", addedComment.Id, addedComment.Content, addedComment.Timestamp, false);
-            await Clients.Client(Context.ConnectionId).SendAsync("ReceiveMessage", addedComment.Id, addedComment.Content,addedComment.Timestamp, true);
+            return;
         }
-        catch(Exception ex)
-        {
-            _logger.LogError(ex, "Error while sending message (messageID: {message}) in topic - {topicId}", message, topicId);
-        }
+        
+        await Clients.Group(addedComment.TopicId).SendAsync("ReceiveMessage", addedComment.Id, userId, addedComment.CommentText);
     }
 
     public async Task DeleteMessage(string messageId)
     {
-        try
+        Comment? deletedMessage = _chatService.DeleteMessage(messageId);
+        if (deletedMessage is null)
         {
-            Comment deletedMessage = _chatService.DeleteMessage(messageId);
-            await Clients.Group(deletedMessage.TopicId).SendAsync("DeleteMessage", deletedMessage.Id);
+            return;
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error while deleting message {messageId}", messageId);
-        }
+        
+        await Clients.Group(deletedMessage.TopicId).SendAsync("DeleteMessage", deletedMessage.Id);
     }
     
     public async Task AddToBroadcastGroup(string topicId)

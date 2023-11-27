@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PSI_Project.Repositories;
 using PSI_Project.Services;
 
@@ -21,7 +20,6 @@ public class OpenAIController : ControllerBase
         _openAIRepository = openAIRepository;
     }
 
-    [Authorize]
     [HttpPost("send-message")]
     public async Task<IActionResult> SendMessage([FromBody] string userMessage, [FromQuery] string userEmail)
     {
@@ -41,7 +39,6 @@ public class OpenAIController : ControllerBase
         return BadRequest(new { error = "Failed to get response from OpenAI." });
     }
 
-    [Authorize]
     [HttpGet("get-messages")]
     public IActionResult GetMessages([FromQuery] string userEmail)
     {
