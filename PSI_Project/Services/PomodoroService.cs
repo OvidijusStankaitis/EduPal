@@ -6,31 +6,31 @@ public class PomodoroService
 {
     private readonly Dictionary<string, PomodoroSession> _sessions = new();
 
-    public void StartTimer(string userId, string intensity)
+    public void StartTimer(string userEmail, string intensity)
     {
-        if (_sessions.TryGetValue(userId, out var session))
+        if (_sessions.TryGetValue(userEmail, out var session))
         {
             session.Start(intensity);
         }
         else
         {
-            session = new PomodoroSession(userId, intensity);
-            _sessions.Add(userId, session);
+            session = new PomodoroSession(userEmail, intensity);
+            _sessions.Add(userEmail, session);
             session.Start(intensity);
         }
     }
 
-    public void StopTimer(string userId)
+    public void StopTimer(string userEmail)
     {
-        if (_sessions.TryGetValue(userId, out var session))
+        if (_sessions.TryGetValue(userEmail, out var session))
         {
             session.Stop();
         }
     }
 
-    public (int RemainingTime, string Mode, bool IsActive) GetTimerState(string userId)
+    public (int RemainingTime, string Mode, bool IsActive) GetTimerState(string userEmail)
     {
-        if (_sessions.TryGetValue(userId, out var session))
+        if (_sessions.TryGetValue(userEmail, out var session))
         {
             return session.GetState();
         }

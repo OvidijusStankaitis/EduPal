@@ -6,7 +6,7 @@ import { UserComponent } from './components/UserComponent';
 import { Conspectus } from './components/Conspectus';
 import { Subjects } from './components/Subjects';
 import { Topics } from './components/Topics';
-import { UserProvider } from './contexts/UserContext';
+import { UserProvider } from './UserContext'; // Import UserProvider
 
 function App() {
     return (

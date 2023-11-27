@@ -25,6 +25,7 @@ public class Repository<TEntity> where TEntity : BaseEntity // 2: generic constr
         TEntity? item = Context.Set<TEntity>().Find(id);
         if (item == null)
         {
+            // Create at least 1 exception type and throw it; meaningfully deal with it; 
             throw new ObjectNotFoundException("Couldn't get object with specified id");
         }
         return item;
@@ -45,14 +46,21 @@ public class Repository<TEntity> where TEntity : BaseEntity // 2: generic constr
         return Context.Set<TEntity>().Add(entity).Entity;
     }
 
-    public void Remove(TEntity entity)
+    public TEntity Remove(TEntity entity)
     {
-        Context.Set<TEntity>().Remove(entity);
+        return Context.Set<TEntity>().Remove(entity).Entity;
     }
 
-    public void Remove(string entityId)
+    public bool Exists(string id)
     {
-        TEntity entity = Get(entityId);
-        Remove(entity);
+        try
+        {
+            Get(id);
+            return true;
+        }
+        catch (ObjectNotFoundException)
+        {
+            return false;
+        }
     }
 }

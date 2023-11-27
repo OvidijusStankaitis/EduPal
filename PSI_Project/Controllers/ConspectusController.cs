@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PSI_Project.DTO;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
@@ -23,7 +22,6 @@ public class ConspectusController : ControllerBase
         _conspectusRepository = conspectusRepository;
     }
 
-    [Authorize]
     [HttpGet("get/{conspectusId}")]
     public async Task<IActionResult> GetConspectusAsync(string conspectusId)
     {
@@ -39,13 +37,13 @@ public class ConspectusController : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpGet("list/{topicId}")]
     public async Task<IActionResult> GetTopicFilesAsync(string topicId)
     {
         try
-        { 
-            return Ok(await _conspectusService.GetConspectusesAsync(topicId));
+        {
+            var conspectusList = await _conspectusRepository.GetConspectusListByTopicIdAsync(topicId);
+            return Ok(conspectusList);
         }
         catch (Exception ex)
         {
@@ -54,7 +52,6 @@ public class ConspectusController : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpPost("upload/{topicId}")]
     public async Task<IActionResult> UploadFilesAsync(string topicId, List<IFormFile> files)
     {
@@ -70,7 +67,6 @@ public class ConspectusController : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpDelete("delete/{conspectusId}")]
     public async Task<IActionResult> DeleteFileAsync(string conspectusId)
     {
@@ -85,8 +81,7 @@ public class ConspectusController : ControllerBase
             return BadRequest("An error occurred while deleting file");
         }
     }
-    
-    [Authorize]
+
     [HttpGet("download/{conspectusId}")]
     public async Task<IActionResult> DownloadFileAsync(string conspectusId)
     {
@@ -99,12 +94,10 @@ public class ConspectusController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError("Couldn't download conspectus {conspectusId}", conspectusId);
-            return BadRequest("An error occured while downloading file");
+            return BadRequest("An error occurred while downloading file");
         }
     }
-    
-    
-    [Authorize]
+
     [HttpPost("rate-up/{conspectusId}")]
     public async Task<IActionResult> RateConspectusUpAsync(string conspectusId)
     {
@@ -120,8 +113,7 @@ public class ConspectusController : ControllerBase
 
         return NotFound(new { error = "File not found in database." });
     }
-    
-    [Authorize]
+
     [HttpPost("rate-down/{conspectusId}")]
     public async Task<IActionResult> RateConspectusDownAsync(string conspectusId)
     {
@@ -136,5 +128,4 @@ public class ConspectusController : ControllerBase
             return NotFound(new { error = "File not found in database." });
         }
     }
-
 }

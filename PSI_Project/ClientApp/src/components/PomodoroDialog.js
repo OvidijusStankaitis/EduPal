@@ -1,22 +1,23 @@
 ﻿import React, { useState } from 'react';
 import './PomodoroDialog.css';
+import {useUserContext} from "../UserContext";
 
 export const PomodoroDialog = ({ show, onClose, }) => {
+    const { userEmail, setUsername, username, setUserEmail } = useUserContext();
     const [intensity, setIntensity] = useState(localStorage.getItem('pomodoroIntensity') || '');
 
     const handleIntensityChange = (event) => {
         setIntensity(event.target.value);
     };
 
-    const startTimer = async (intensity) => {
+    const startTimer = async (userEmail, intensity) => {
         try {
             const response = await fetch('https://localhost:7283/Pomodoro/start-timer', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                credentials: 'include',
-                body: JSON.stringify({ intensity })
+                body: JSON.stringify({ userEmail, intensity })
             });
 
             if (!response.ok) {
@@ -35,7 +36,7 @@ export const PomodoroDialog = ({ show, onClose, }) => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                credentials: 'include',
+                body: JSON.stringify({ userEmail })
             });
 
             if (!response.ok) {
@@ -48,7 +49,7 @@ export const PomodoroDialog = ({ show, onClose, }) => {
     };
     
     const handleConfirm = async () => {
-        await startTimer(intensity);
+        await startTimer(userEmail, intensity);
         onClose();
     };
 
