@@ -31,8 +31,9 @@ public class CommentController : ControllerBase
         try
         {
             User user = _userAuthService.GetUser(HttpContext)!;
-            List<CommentDTO> comment = _chatService.GetMessagesForUser(user, topicId).ToList();
-            return Ok(comment);
+            Console.WriteLine("Helou?");
+            List<CommentDTO> comments = _chatService.GetMessagesForUser(user, topicId).ToList();
+            return Ok(comments);
         }
         catch (Exception ex)
         {

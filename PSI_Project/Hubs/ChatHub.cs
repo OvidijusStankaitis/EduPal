@@ -24,8 +24,8 @@ public class ChatHub : Hub
             HttpContext? context = Context.GetHttpContext();
             User? user = _userAuthService.GetUser(context!);            
             Comment? addedComment = _chatService.SaveSentMessage(user!.Id, topicId, message);
-            await Clients.OthersInGroup(addedComment!.TopicId).SendAsync("ReceiveMessage", addedComment.Id, addedComment.CommentText, false);
-            await Clients.Client(Context.ConnectionId).SendAsync("ReceiveMessage", addedComment.Id, addedComment.CommentText, true);
+            await Clients.OthersInGroup(addedComment!.TopicId).SendAsync("ReceiveMessage", addedComment.Id, addedComment.Content, addedComment.Timestamp, false);
+            await Clients.Client(Context.ConnectionId).SendAsync("ReceiveMessage", addedComment.Id, addedComment.Content,addedComment.Timestamp, true);
         }
         catch(Exception ex)
         {

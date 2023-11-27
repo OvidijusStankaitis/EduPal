@@ -26,25 +26,16 @@ public class ChatService
         {
             if (comment.TopicId == topicId)
             {
-                CommentDTO commentDto = new CommentDTO(comment.Id, comment.CommentText, comment.UserId == user.Id);
+                CommentDTO commentDto = new CommentDTO(comment.Id, comment.Content, comment.Timestamp, comment.UserId == user.Id);
                 commentDtoList = commentDtoList.Append(commentDto);
             }
         }
-
-        return commentDtoList;
+        
+        return commentDtoList.OrderBy(comment => comment.TimeStamp);
     }
 
     public Comment? SaveSentMessage(string userId, string topicId, string message)
     {
-        // Check if User exists
-        var userExists = _commentRepository.EduPalContext.Users.Any(u => u.Id == userId);
-        if (!userExists)
-        {
-            // Log the error or handle it as per your error handling policy
-            _logger.LogError("User with ID {UserId} does not exist.", userId);
-            return null; // or throw an exception as per your design
-        }
-
         Comment newComment = new Comment(userId, topicId, message);
         _commentRepository.Add(newComment);
         _commentRepository.EduPalContext.SaveChanges();
