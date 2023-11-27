@@ -23,7 +23,7 @@ public class UserControllerIntegrationTests : IDisposable
     }
     
     [Fact] 
-    public async Task Register_GetsNewUser_ReturnsOk()
+    public async Task RegisterAsync_GetsNewUser_ReturnsOk()
     {
         // Arrange
         var newUser = new User("test2@test.test", "testPassword2", "newUserName", "newUserSurname");
@@ -43,7 +43,7 @@ public class UserControllerIntegrationTests : IDisposable
     }
     
     [Fact] 
-    public async Task Register_GetsExistingUser_ReturnsBadRequest()
+    public async Task RegisterAsync_GetsExistingUser_ReturnsBadRequest()
     {
         // Arrange
         var existingUser = new User("test1@test.test", "testPassword1", "testName", "testSurname");
@@ -62,7 +62,7 @@ public class UserControllerIntegrationTests : IDisposable
     }
     
     [Fact] 
-    public async Task Login_GetsValidExistingUserLogin_ReturnsOk()
+    public async Task LoginAsync_GetsValidExistingUserLogin_ReturnsOk()
     {
         // Arrange
         var validUserLogin = new
@@ -86,7 +86,7 @@ public class UserControllerIntegrationTests : IDisposable
     }
     
     [Fact] 
-    public async Task Login_GetsNonexistentUserLogin_ReturnsBadRequest()
+    public async Task LoginAsync_GetsNonexistentUserLogin_ReturnsBadRequest()
     {
         // Arrange
         var invalidUserLogin = new

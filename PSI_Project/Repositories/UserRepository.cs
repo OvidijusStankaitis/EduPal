@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using PSI_Project.Data;
 using PSI_Project.DTO;
 using PSI_Project.Models;
@@ -49,9 +49,10 @@ namespace PSI_Project.Repositories
             }
 
             User newUser = new User(email, password, name, surname);
+            
+            int changes = Add(newUser);
+            //int changes = EduPalContext.SaveChanges();
 
-            Add(newUser);
-            int changes = await EduPalContext.SaveChangesAsync();
             if (changes > 0)
             {
                 return newUser.Id;

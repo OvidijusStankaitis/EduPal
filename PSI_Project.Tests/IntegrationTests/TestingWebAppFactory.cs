@@ -57,7 +57,7 @@ internal class TestingWebAppFactory : WebApplicationFactory<Program>
                     Subject subject3 = new Subject("testSubject3");
                     appContext.Subjects.Add(subject1);
                     appContext.Subjects.Add(subject2);
-                    appContext.Subjects.Add(subject3);
+                    appContext.Subjects.Add(subject3);  
 
                     Topic topic1 = new Topic("testTopic1", subject2, KnowledgeLevel.Good);
                     Topic topic2 = new Topic("testTopic2", subject2);

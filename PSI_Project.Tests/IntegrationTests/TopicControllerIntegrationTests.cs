@@ -17,7 +17,7 @@ public class TopicControllerIntegrationTests : IDisposable
     }
 
     [Fact]
-    public async Task UploadTopic_GetsValidTopic_ReturnsOkAndNewTopic()
+    public async Task UploadTopicAsync_GetsValidTopic_ReturnsOkAndNewTopic()
     {
         // Arrange
         var responseForSubject = await _client.GetAsync("/subject/list");
@@ -38,7 +38,7 @@ public class TopicControllerIntegrationTests : IDisposable
     }
     
     [Fact]
-    public async Task UploadTopic_GetsValidTopicButNotValidSubjectId_ReturnsBadRequest()
+    public async Task UploadTopicAsync_GetsValidTopicButNotValidSubjectId_ReturnsBadRequest()
     {
         // Arrange
         var invalidTopic = new { topicName = "validTopicNameTest", subjectId = "nonexistentId"}; 
@@ -49,11 +49,11 @@ public class TopicControllerIntegrationTests : IDisposable
         
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.Equal("An error occured while uploading topic", responseString);
+        Assert.Equal("An error occurred while uploading topic", responseString);
     }
     
     [Fact]
-    public async Task UploadTopic_GetsTopicWithInvalidName_ReturnsBadRequest()
+    public async Task UploadTopicAsync_GetsTopicWithInvalidName_ReturnsBadRequest()
     {
         // Arrange
         var responseForSubject = await _client.GetAsync("/subject/list");
@@ -67,11 +67,13 @@ public class TopicControllerIntegrationTests : IDisposable
         
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.Equal("Invalid topic name", responseString);
+
+        var errorResponse = JsonConvert.DeserializeObject<ErrorResponseDTO>(responseString);
+        Assert.Equal("The TopicName field is required.", errorResponse.Errors["TopicName"].First());
     }
     
     [Fact]
-    public async Task RemoveTopic_GetsExistingTopic_ReturnsOk()
+    public async Task RemoveTopicAsync_GetsExistingTopic_ReturnsOk()
     {
         // Arrange
         var responseForSubject = await _client.GetAsync("/subject/list");
@@ -91,7 +93,7 @@ public class TopicControllerIntegrationTests : IDisposable
     }
     
     [Fact]
-    public async Task RemoveTopic_GetsNonexistentTopic_ReturnsOk()
+    public async Task RemoveTopicAsync_GetsNonexistentTopic_ReturnsOk()
     {
         // Arrange
         
@@ -101,12 +103,12 @@ public class TopicControllerIntegrationTests : IDisposable
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.Equal("An error occured while deleting the topic", responseString);
+        Assert.Equal("An error occurred while deleting the topic", responseString);
     }
 
 
     [Fact]
-    public async Task ListTopics_GetsValidSubjectId_ReturnsOkAndListOfTopics()
+    public async Task ListTopicsAsync_GetsValidSubjectId_ReturnsOkAndListOfTopics()
     {
         // Arrange
         var responseForSubject = await _client.GetAsync("/subject/list");
@@ -124,7 +126,7 @@ public class TopicControllerIntegrationTests : IDisposable
     }
     
     [Fact]
-    public async Task ListTopics_GetsInvalidSubjectId_ReturnsOkAndEmptyList()
+    public async Task ListTopicsAsync_GetsInvalidSubjectId_ReturnsOkAndEmptyList()
     {
         // Arrange
         
@@ -139,7 +141,7 @@ public class TopicControllerIntegrationTests : IDisposable
     }
     
     [Fact]
-    public async Task GetTopicById_GetsValidTopicId_ReturnsOkAndTopic()
+    public async Task GetTopicByIdAsync_GetsValidTopicId_ReturnsOkAndTopic()
     {
         // Arrange
         var responseForSubjects = await _client.GetAsync("/subject/list");
@@ -161,7 +163,7 @@ public class TopicControllerIntegrationTests : IDisposable
     }
     
     [Fact]
-    public async Task GetTopicById_GetsInvalidTopicId_NotFound()
+    public async Task GetTopicByIdAsync_GetsInvalidTopicId_NotFound()
     {
         // Arrange
         
@@ -175,7 +177,7 @@ public class TopicControllerIntegrationTests : IDisposable
     }
 
     [Fact]
-    public async Task UpdateKnowledgeLevel_GetsValidTopicIdAndKnowledgeLevel_ReturnsOk()
+    public async Task UpdateKnowledgeLevelAsync_GetsValidTopicIdAndKnowledgeLevel_ReturnsOk()
     {
         // Arrange
         // creating a new topic for the test (then deleting it)
@@ -200,7 +202,7 @@ public class TopicControllerIntegrationTests : IDisposable
     }
     
     [Fact]
-    public async Task UpdateKnowledgeLevel_GetsValidTopicIdAndInvalidKnowledgeLevel_ReturnsBadRequest()
+    public async Task UpdateKnowledgeLevelAsync_GetsValidTopicIdAndInvalidKnowledgeLevel_ReturnsBadRequest()
     {
         // Arrange
         // creating a new topic for the test (then deleting it)
@@ -221,11 +223,13 @@ public class TopicControllerIntegrationTests : IDisposable
         
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.Contains("Invalid request body:", responseString);
+        
+        var errorResponse = JsonConvert.DeserializeObject<ErrorResponseDTO>(responseString);
+        Assert.Equal("The request field is required.", errorResponse.Errors["request"].First());
     }
     
     [Fact]
-    public async Task UpdateKnowledgeLevel_GetsInvalidTopicId_ReturnsBadRequest()
+    public async Task UpdateKnowledgeLevelAsync_GetsInvalidTopicId_ReturnsBadRequest()
     {
         // Arrange
         var invalidData = new { topicId = "nonexistentId", knowledgeLevel = KnowledgeLevel.Good.ToString()};
@@ -240,7 +244,7 @@ public class TopicControllerIntegrationTests : IDisposable
     }
     
     [Fact]
-    public async Task UpdateKnowledgeLevel_GetsNonexistentKnowledgeLevel_ReturnsBadRequest()
+    public async Task UpdateKnowledgeLevelAsync_GetsNonexistentKnowledgeLevel_ReturnsBadRequest()
     {
         // Arrange
         // creating a new topic for the test (then deleting it)

@@ -6,7 +6,7 @@ using PSI_Project.Models;
 
 namespace PSI_Project.Repositories;
 
-public class Repository<TEntity> where TEntity : BaseEntity // 2: generic constraint
+public class Repository<TEntity> where TEntity : BaseEntity
 {
     protected readonly DbContext Context;
     
@@ -15,43 +15,55 @@ public class Repository<TEntity> where TEntity : BaseEntity // 2: generic constr
         Context = context;
     }
     
-    public async Task<TEntity?> GetAsync(object id)
+    public virtual async Task<TEntity?> GetAsync(object id)
     {
-        return await Context.Set<TEntity>().FindAsync(id);
+        TEntity? item = await Context.Set<TEntity>().FindAsync(id);
+        if (item == null)
+        {
+            throw new ObjectNotFoundException("Couldn't get object with specified id");
+        }
+        return item;
     }
     
-    public TEntity Get(string id)
+    public virtual TEntity Get(string id)
     {
         TEntity? item = Context.Set<TEntity>().Find(id);
         if (item == null)
         {
-            // Create at least 1 exception type and throw it; meaningfully deal with it; 
             throw new ObjectNotFoundException("Couldn't get object with specified id");
         }
         return item;
     }
 
-    public IEnumerable<TEntity> GetAll()
+    public virtual IEnumerable<TEntity> GetAll()
     {
         return Context.Set<TEntity>().ToList();
     }
 
-    public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
+    public virtual async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
     {
         return await Context.Set<TEntity>().Where(predicate).ToListAsync();
     }
-
-    public TEntity Add(TEntity entity)
+    public virtual IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate) 
     {
-        return Context.Set<TEntity>().Add(entity).Entity;
+        return Context.Set<TEntity>().Where(predicate);
     }
 
-    public TEntity Remove(TEntity entity)
+    public virtual int Add(TEntity entity)
     {
-        return Context.Set<TEntity>().Remove(entity).Entity;
+        //return Context.Set<TEntity>().Add(entity).Entity;
+        Context.Set<TEntity>().Add(entity);
+        return Context.SaveChanges();
     }
 
-    public bool Exists(string id)
+    public virtual int Remove(TEntity entity)
+    {
+        //return Context.Set<TEntity>().Remove(entity).Entity;
+        Context.Set<TEntity>().Remove(entity);
+        return Context.SaveChanges();
+    }
+
+    public virtual bool Exists(string id)
     {
         try
         {

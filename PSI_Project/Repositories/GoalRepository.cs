@@ -17,8 +17,8 @@ namespace PSI_Project.Repositories
             {
                 // var goalString = ItemToDbString(goal);
                 // File.AppendAllText(DbFilePath, goalString + Environment.NewLine);
-                Add(goal);
-                int changes = EduPalContext.SaveChanges();
+                int changes = Add(goal);
+                //int changes = EduPalContext.SaveChanges();
 
                 return changes > 0;
             }
@@ -59,7 +59,9 @@ namespace PSI_Project.Repositories
         public Goal? GetTodaysGoalForUser(string userId)
         {
             DateTime today = DateTime.Now.Date;
-            return EduPalContext.Goals.FirstOrDefault(g => g.User.Id == userId && g.GoalDate == today);
+            return Find(g => g.User.Id == userId && g.GoalDate == today).FirstOrDefault();
+            /*var goals = await FindAsync(g => g.User.Id == userId && g.GoalDate == today);
+            return goals.FirstOrDefault();*/
         }
 
         // Given a user ID, retrieve all goals for that user.

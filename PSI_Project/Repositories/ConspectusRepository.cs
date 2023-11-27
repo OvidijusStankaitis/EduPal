@@ -92,7 +92,7 @@ public class ConspectusRepository : Repository<Conspectus>
                 };
 
                 Add(conspectus);
-                await EduPalContext.SaveChangesAsync(); // Use asynchronous SaveChangesAsync
+                //await EduPalContext.SaveChangesAsync(); // Use asynchronous SaveChangesAsync
                 uploadedConspectuses.Add(conspectus);
             }
             catch (Exception ex)
@@ -127,7 +127,7 @@ public class ConspectusRepository : Repository<Conspectus>
 
             // Remove the conspectus from the context
             Remove(conspectus);
-            await EduPalContext.SaveChangesAsync();
+            //await EduPalContext.SaveChangesAsync();
 
             // Try to delete the file
             if (File.Exists(filePath))
