@@ -75,18 +75,21 @@ export const Conspectus = () => {
         })
             .then(response => response.json())
             .then(data => {
-                const updatedFiles = data.map(fileObj => {
-                    const fullPath = fileObj.path;
-                    const fileName = fullPath.split('\\').pop();
-                    return {
-                        id: fileObj.id,
-                        name: fileName,
-                        rating: fileObj.rating,
-                        truncatedName: fileName.length > 11 ? fileName.substring(0, 11) + "..." : fileName, // add truncatedName here
-                        isSelected: false
-                    };
-                });
-                setFiles(updatedFiles);
+                setFiles(prevFiles => {
+                    const updatedFiles = [...prevFiles];
+                    
+                    data.forEach(file => {
+                        updatedFiles.push({
+                            id: file.id,
+                            name: file.name,
+                            rating: file.rating,
+                            truncatedName: file.name.length > 11 ? file.name.substring(0, 11) + "..." : file.name,
+                            isSelected: false
+                        });
+                    });
+                    
+                    return updatedFiles;
+                })
             })
             .catch(error => console.error('Error uploading files:', error));
     };
