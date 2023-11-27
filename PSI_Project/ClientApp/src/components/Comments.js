@@ -1,16 +1,27 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import './Comments.css';
 import { HttpTransportType, HubConnectionBuilder } from "@microsoft/signalr";
-import { useUserContext } from "../UserContext";
+import { useUserContext } from '../contexts/UserContext';
+import {initialize} from "workbox-google-analytics";
 
 export const Comments = ({ show, onClose, topicId }) => {
-    const { userId } = useUserContext();
     const [comments, setComments] = useState([]);
     const [currentComment, setCurrentComment] = useState('');
     const chatContentRef = useRef(null);
-    const [connection, setConnection] = useState(null);
-
-    // Initialize WebSocket connection
+    const connectionRef = useRef(null);
+    
+    const fetchComments = () => {
+        fetch(`https://localhost:7283/Comment/get/${topicId}`, {
+            method: 'GET',
+            credentials: 'include'
+        })
+            .then(response => response.json())
+            .then(data => {
+                setComments(data)}
+            )
+            .catch(error => console.error("Error fetching comments:", error));
+    }
+    
     useEffect(() => {
         const initializeConnection = async () => {
             const newConnection = new HubConnectionBuilder()
@@ -21,57 +32,63 @@ export const Comments = ({ show, onClose, topicId }) => {
                 .withAutomaticReconnect()
                 .build();
 
-            newConnection.on("ReceiveMessage", (realId, senderId, messageContent) => {
-                setComments(prevComments => {
-                    // Replace the optimistic comment with the real one from the server
-                    return prevComments.map(comment => {
-                        if (comment.isOptimistic && comment.userId === userId && comment.commentText === messageContent) {
-                            return { ...comment, id: realId, isOptimistic: false };
-                        }
-                        return comment;
-                    });
-                });
+            newConnection.on("ReceiveMessage", (realId, messageContent, timeStamp, isFromCurrentUser) => {
+                if (isFromCurrentUser) {
+                    setComments(prevComments => {
+                        return prevComments.map(comment => {
+                            if (comment.isOptimistic && comment.isFromCurrentUser && comment.content === messageContent) {
+                                return { ...comment, id: realId, timeStamp: timeStamp, isOptimistic: false };
+                            }
+
+                            return comment;
+                        })
+                    })
+                }
+                else {
+                    const newComment = {
+                        id: realId,
+                        content: messageContent,
+                        timeStamp: timeStamp,
+                        isFromCurrentUser: isFromCurrentUser,
+                        isOptimistic: false
+                    }
+
+                    setComments(prevComments => [...prevComments, newComment]);
+                }
+                
+                console.log(comments)
             });
 
             newConnection.on("DeleteMessage", (messageId) => {
                 setComments(prevComments => prevComments.filter(comment => comment.id !== messageId));
             });
-
+            
             newConnection.start()
                 .then(() => {
                     newConnection.invoke("AddToBroadcastGroup", topicId);
-                    setConnection(newConnection);
+                    connectionRef.current = newConnection;
+                    console.log("KONESHION: ", connectionRef.current)
                 })
                 .catch(e => console.log('Connection failed: ', e));
-
-            // Fetch initial comments
-            fetch(`https://localhost:7283/Comment/get/${topicId}`)
-                .then(response => response.json())
-                .then(data => setComments(data))
-                .catch(error => console.error("Error fetching comments:", error));
+            
+            fetchComments();
         }
-
-        if (show && (!connection || connection.state !== "Connected")) {
-            initializeConnection()
-                .then(newConnection => {
-                    setConnection(newConnection); // Set the new connection
-                })
-                .catch(e => console.error('Connection initialization failed: ', e));
+        
+        if (show && !connectionRef.current) {
+            initializeConnection();
         }
-
-
-        // Clean up function to close WebSocket connection
+        
         return () => {
-            if (connection) {
-                connection.stop()
+            if(connectionRef.current && connectionRef.current.state === 'Connected') {
+                connectionRef.current.stop()
                     .then(() => {
-                        console.log('Connection stopped');
-                        setConnection(null); // Reset the connection state to null
+                        connectionRef.current = null;
                     })
                     .catch(e => console.log('Failed to stop connection', e));
             }
-        };
-    }, [show, connection, topicId]); // Adjust the dependencies as needed
+        }
+
+    }, [show, topicId]);
 
     // Scroll to the bottom of the chat whenever comments update
     useEffect(() => {
@@ -81,21 +98,24 @@ export const Comments = ({ show, onClose, topicId }) => {
     }, [comments]);
 
     const handleSend = async () => {
-        if (currentComment.trim() !== '' && connection) {
+        if (currentComment.trim() !== '' && connectionRef.current.state === 'Connected') {
             const optimisticId = `temp-${Date.now()}`;
             const optimisticComment = {
                 id: optimisticId,
-                userId: userId,
-                commentText: currentComment,
-                isOptimistic: true // Mark this comment as optimistic
+                content: currentComment,
+                timeStamp: Date.now(),
+                isFromCurrentUser: true,
+                isOptimistic: true
             };
-
+            
+            console.log("optimistic:: ", optimisticComment)
+            
             // Add the optimistic comment to the local state
             setComments(prevComments => [...prevComments, optimisticComment]);
 
             try {
                 // Send the message to the server
-                await connection.invoke("SendMessage", userId, topicId, currentComment);
+                await connectionRef.current.invoke("SendMessage", topicId, currentComment);
                 // Clear the input field
                 setCurrentComment('');
             } catch (error) {
@@ -105,11 +125,11 @@ export const Comments = ({ show, onClose, topicId }) => {
         }
     };
 
-    const handleDelete = async (commentId) => {
+    const handleDelete = async (commentId) => { 
         // Ensure we're using real IDs when attempting to delete
-        if (commentId && !commentId.startsWith('temp-') && connection && connection.state === "Connected") {
+        if (commentId && !commentId.startsWith('temp-') && connectionRef.current && connectionRef.current.state === "Connected") {
             try {
-                await connection.invoke("DeleteMessage", commentId);
+                await connectionRef.current.invoke("DeleteMessage", commentId);
                 // Optimistically remove the comment from the local state
                 setComments(prevComments => prevComments.filter(comment => comment.id !== commentId));
             } catch (error) {
@@ -119,8 +139,7 @@ export const Comments = ({ show, onClose, topicId }) => {
             console.error("Cannot delete an optimistic or non-existing comment.");
         }
     };
-
-    // If the component is not supposed to show, don't render anything
+    
     if (!show) {
         return null;
     }
@@ -136,10 +155,10 @@ export const Comments = ({ show, onClose, topicId }) => {
                         {comments.map((comment, index) => (
                             <div key={index} className="comment">
                                 <div className="comment-text-content">
-                                    {comment.commentText}
+                                    {comment.content}
                                 </div>
 
-                                {comment.userId === userId
+                                { comment.isFromCurrentUser
                                     ? (<button
                                         className="delete-button1"
                                         onClick={() => handleDelete(comment.id)}>

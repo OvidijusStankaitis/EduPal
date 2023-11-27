@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
+using PSI_Project.DTO;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
 using PSI_Project.Services;
@@ -23,6 +25,7 @@ public class NoteController : ControllerBase
         _noteRepository = noteRepository;
     }
 
+    [Authorize]
     [HttpGet("{id}")]
     public IActionResult GetNoteById(int id)
     {
@@ -38,6 +41,7 @@ public class NoteController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet]
     public IActionResult GetAllNotes()
     {
@@ -52,7 +56,8 @@ public class NoteController : ControllerBase
             return StatusCode(500, "An error occured while listing notes");
         }
     }
-
+    
+    [Authorize]
     [HttpPost]
     public IActionResult AddNote([FromBody] Note note)
     {
@@ -69,6 +74,7 @@ public class NoteController : ControllerBase
         return StatusCode(500, "An error occured while creating new note");
     }
 
+    [Authorize]
     [HttpPost("create-pdf")]
     public async Task<IActionResult> CreatePdfAsync([FromBody] Note note)
     {

@@ -1,19 +1,17 @@
-﻿using System;
-
-namespace PSI_Project.Models;
+﻿namespace PSI_Project.Models;
 
 public class PomodoroSession
 {
-    public string UserEmail { get; private set; }
+    public string UserId { get; private set; }
     public bool IsActive { get; private set; }
     private DateTime _startTime;
     private PomodoroIntensity _currentIntensity;
     private int _phaseCounter = 0; // Keeps track of completed study/break phases
     private string _currentMode; // Current mode: "Study", "Short Break", "Long Break"
 
-    public PomodoroSession(string userEmail, string intensity)
+    public PomodoroSession(string userId, string intensity)
     {
-        UserEmail = userEmail;
+        UserId = userId;
         SetIntensity(intensity);
         IsActive = false;
         _currentMode = "Study"; // Start with Study mode

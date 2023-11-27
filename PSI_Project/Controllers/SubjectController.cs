@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PSI_Project.DTO;
 using PSI_Project.Exceptions;
@@ -20,6 +21,7 @@ public class SubjectController : ControllerBase
         _subjectRepository = subjectRepository;
     }
 
+    [Authorize]
     [HttpGet("get/{subjectId}")]
     public IActionResult GetSubject(string subjectId)
     {
@@ -39,7 +41,8 @@ public class SubjectController : ControllerBase
             return BadRequest("An error occured while getting the subject");
         }
     }
-
+    
+    [Authorize]
     [HttpGet("list")]
     public async Task<IActionResult> ListSubjectsAsync()
     {
@@ -54,7 +57,8 @@ public class SubjectController : ControllerBase
             return BadRequest("An error occurred while listing the subjects");
         }
     }
-
+    
+    [Authorize]
     [HttpPost("upload")]
     public async Task<IActionResult> UploadSubjectAsync([FromBody] SubjectRequestDTO request)
     {
@@ -75,7 +79,8 @@ public class SubjectController : ControllerBase
             return BadRequest("An error occurred while uploading the subject");
         }
     }
-
+    
+    [Authorize]
     [HttpDelete("delete/{subjectId}")]
     public async Task<IActionResult> RemoveSubjectAsync(string subjectId)
     {

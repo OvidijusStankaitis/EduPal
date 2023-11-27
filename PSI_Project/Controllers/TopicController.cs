@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PSI_Project.DTO;
 using PSI_Project.Exceptions;
 using PSI_Project.Models;
@@ -19,6 +21,7 @@ public class TopicController : ControllerBase
         _topicRepository = topicRepository;
     }
 
+    [Authorize]
     [HttpGet("get/{topicId}")]
     public async Task<IActionResult> GetTopicByIdAsync(string topicId)
     {
@@ -39,6 +42,7 @@ public class TopicController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet("list/{subjectId}")]
     public async Task<IActionResult> ListTopicsAsync(string subjectId)
     {
@@ -54,6 +58,7 @@ public class TopicController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpPost("upload")]
     public async Task<IActionResult> UploadTopicAsync([FromBody] TopicUploadRequestDTO request)
     {
@@ -73,7 +78,8 @@ public class TopicController : ControllerBase
             return BadRequest($"An error occurred while uploading topic");
         }
     }
-
+    
+    [Authorize]
     [HttpPut("update-knowledge-level")]
     public async Task<IActionResult> UpdateKnowledgeLevelAsync([FromBody] UpdateKnowledgeLevelRequestDTO request)
     {
@@ -101,6 +107,7 @@ public class TopicController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpDelete("delete/{topicId}")]
     public async Task<IActionResult> RemoveTopicAsync(string topicId)
     {

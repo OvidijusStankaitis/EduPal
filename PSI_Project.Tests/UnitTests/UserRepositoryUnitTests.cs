@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PSI_Project.Data;
-using PSI_Project.DTO;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
 
@@ -29,32 +28,6 @@ public class UserRepositoryUnitTests
         return new DbContextOptionsBuilder<EduPalDatabaseContext>()
             .UseInMemoryDatabase(databaseName: dbName)
             .Options;
-    }
-    
-    [Fact]
-    public async Task CheckUserRegister_UserDoesNotExist_ReturnsNotNull()
-    {
-        // Arrange
-        var user = new UserCreationDTO("nonexistentTest@test.test", "nonexistentTestPassword", "nonexistentTestName", "nonexistentTestSurname");
-
-        // Act
-        var result = await _userRepository.CheckUserRegisterAsync(user);
-        
-        // Assert
-        Assert.NotNull(result);
-    }
-    
-    [Fact]
-    public async Task CheckUserRegister_UserExists_ReturnsNull()
-    {
-        // Arrange
-        var userExisting = new UserCreationDTO("testName", "testSurname", "test@test.test", "testPassword");
-        
-        // Act
-        var result = await _userRepository.CheckUserRegisterAsync(userExisting);
-
-        // Assert
-        Assert.Null(result);
     }
     
     [Fact]
