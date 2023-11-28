@@ -56,7 +56,7 @@ public class PomodoroSession
     {
         _currentIntensity = intensity switch
         {
-            "Low" => new PomodoroIntensity("Study", 15, 3, 10),
+            "Low" => new PomodoroIntensity("Study", 1, 1, 1),
             "Medium" => new PomodoroIntensity("Study", 25, 5, 15),
             "High" => new PomodoroIntensity("Study", 30, 5, 20),
             _ => throw new ArgumentException("Invalid intensity level.")
@@ -84,15 +84,25 @@ public class PomodoroSession
             _phaseCounter++;
             _startTime = DateTime.Now; // Reset start time for the next phase
 
-            if (_currentMode == "Study" && _phaseCounter % 3 != 0)
+            // Reset the counter after completing one full cycle
+            if (_phaseCounter >= 6) 
             {
-                _currentMode = "Short Break";
+                _phaseCounter = 0;
             }
-            else if (_currentMode == "Study" && _phaseCounter % 3 == 0)
+
+            if (_currentMode == "Study")
             {
-                _currentMode = "Long Break";
+                // Switch to "Long Break" after the 5th phase (3rd Study session)
+                if (_phaseCounter == 5)
+                {
+                    _currentMode = "Long Break";
+                }
+                else
+                {
+                    _currentMode = "Short Break";
+                }
             }
-            else
+            else // Current mode is either "Short Break" or "Long Break"
             {
                 _currentMode = "Study";
             }
