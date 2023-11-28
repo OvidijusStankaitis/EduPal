@@ -4,6 +4,7 @@ import './Topics.css';
 import {UserComponent} from "./UserComponent";
 import { PomodoroDialog } from './PomodoroDialog';
 import {OpenAIDialogue} from "./OpenAIDialogue";
+import { CreateGoalDialog } from './CreateGoalDialog';
 
 export const Topics = () => {
     const { subjectId } = useParams();
@@ -15,6 +16,7 @@ export const Topics = () => {
     const [newTopicName, setNewTopicName] = useState('');
     const [showPomodoroDialog, setShowPomodoroDialog] = useState(false)
     const [showOpenAIDialog, setShowOpenAIDialog] = useState(false);
+    const [showCreateGoalDialog, setShowCreateGoalDialog] = useState(false);
     const navigate = useNavigate();
     
     useEffect(() => {
@@ -136,6 +138,7 @@ export const Topics = () => {
                     <UserComponent
                         setShowPomodoroDialog={setShowPomodoroDialog}
                         setShowOpenAIDialog={setShowOpenAIDialog}
+                        setShowCreateGoalDialog={setShowCreateGoalDialog}
                     />
                 </div>
                 <div className="topics-grid">
@@ -179,6 +182,10 @@ export const Topics = () => {
                 <OpenAIDialogue
                     show={showOpenAIDialog}
                     onClose={() => setShowOpenAIDialog(false)}
+                />
+                <CreateGoalDialog // Render the CreateGoalDialog
+                    show={showCreateGoalDialog}
+                    onClose={() => setShowCreateGoalDialog(false)}
                 />
             </div>
         </div>

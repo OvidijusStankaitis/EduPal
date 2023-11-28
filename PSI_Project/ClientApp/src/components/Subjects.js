@@ -4,6 +4,7 @@ import './Subjects.css';
 import { UserComponent } from "./UserComponent";
 import { PomodoroDialog } from './PomodoroDialog';
 import {OpenAIDialogue} from "./OpenAIDialogue";
+import { CreateGoalDialog } from './CreateGoalDialog';
 
 export const Subjects = () => {
     const [subjects, setSubjects] = useState([]);
@@ -13,6 +14,7 @@ export const Subjects = () => {
     const [newSubjectName, setNewSubjectName] = useState('');
     const [showPomodoroDialog, setShowPomodoroDialog] = useState(false);
     const [showOpenAIDialog, setShowOpenAIDialog] = useState(false);
+    const [showCreateGoalDialog, setShowCreateGoalDialog] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -88,6 +90,7 @@ export const Subjects = () => {
                     <UserComponent 
                         setShowPomodoroDialog={setShowPomodoroDialog}
                         setShowOpenAIDialog={setShowOpenAIDialog}
+                        setShowCreateGoalDialog={setShowCreateGoalDialog}
                     />
                 </div>
                 <div className="subjects-grid">
@@ -124,6 +127,10 @@ export const Subjects = () => {
                 <OpenAIDialogue
                     show={showOpenAIDialog}
                     onClose={() => setShowOpenAIDialog(false)}
+                />
+                <CreateGoalDialog // Render the CreateGoalDialog
+                    show={showCreateGoalDialog}
+                    onClose={() => setShowCreateGoalDialog(false)}
                 />
             </div>
         </div>

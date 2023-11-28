@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@microsoft/signalr": "^7.0.12",
+    "@syncfusion/ej2-react-dropdowns": "^23.2.5",
     "pdfjs-dist": "^3.11.174",
     "react-pdf": "^7.3.3"
   }

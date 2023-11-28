@@ -6,7 +6,7 @@ import gpt from "../assets/gpt.webp";
 import user from "../assets/user.webp";
 import { useUserContext } from '../UserContext';
 
-export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) => {
+export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog, setShowCreateGoalDialog }) => {
     const { userEmail, setUsername, username, setUserEmail } = useUserContext();
     const [remainingTime, setRemainingTime] = useState(0);
     const [mode, setMode] = useState('study');
@@ -102,9 +102,9 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) =>
     const handleMouseLeave = () => {
         setShowDropdown(false);
     };
-    
+
     const handleCreateGoal = () => {
-        console.log("Functionality to create a new goal will be implemented here");
+        setShowCreateGoalDialog(true);
         setShowDropdown(false);
     };
 
@@ -112,7 +112,7 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) =>
         console.log("Functionality to view existing goals will be implemented here");
         setShowDropdown(false);
     };
-    
+
     const updateDropdownPosition = () => {
         if (userComponentRef.current) {
             const rect = userComponentRef.current.getBoundingClientRect();
@@ -124,7 +124,7 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) =>
             });
         }
     };
-    
+
     useEffect(() => {
         updateDropdownPosition();
         window.addEventListener('resize', updateDropdownPosition);
@@ -135,7 +135,7 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) =>
             window.removeEventListener('scroll', updateDropdownPosition, true);
         };
     }, []);
-    
+
     useEffect(() => {
         const handleOutsideClick = (event) => {
             if (showDropdown && userIconRef.current && !userIconRef.current.contains(event.target)) {
