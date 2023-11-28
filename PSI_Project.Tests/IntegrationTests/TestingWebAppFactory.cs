@@ -65,7 +65,14 @@ internal class TestingWebAppFactory : WebApplicationFactory<Program>
                     appContext.Topics.Add(topic1);
                     appContext.Topics.Add(topic2);
                     appContext.Topics.Add(topic3);
-                    
+
+                    Conspectus conspectus1 = new Conspectus
+                    {
+                        Id = "id1", Name = "conspectus1.pdf", Path = "some/path/conspectus1.pdf", Topic = topic3,
+                        Rating = -250
+                    };
+                    appContext.Conspectuses.Add(conspectus1);
+                        
                     appContext.SaveChanges();
                 }
             }

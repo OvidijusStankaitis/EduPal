@@ -4,6 +4,7 @@ using PSI_Project.Repositories;
 using PSI_Project.Services;
 using System.Text;
 using PSI_Project.Hubs;
+using PSI_Project.Repositories.For_tests;
 using Serilog;
 
 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -55,6 +56,8 @@ builder.Services.AddTransient<ConspectusRepository>();
 builder.Services.AddTransient<CommentRepository>();
 builder.Services.AddTransient<OpenAIRepository>();
 builder.Services.AddTransient<NoteRepository>();
+
+builder.Services.AddTransient<IFileOperations, FileOperations>(); // for tests
 
 var app = builder.Build();
 

@@ -109,9 +109,9 @@ public class ConspectusController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Couldn't rate up conspectus {conspectusId}", conspectusId);
+            return NotFound(new { error = "File not found in database." });
         }
 
-        return NotFound(new { error = "File not found in database." });
     }
 
     [HttpPost("rate-down/{conspectusId}")]

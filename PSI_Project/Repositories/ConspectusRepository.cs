@@ -6,6 +6,7 @@ using PSI_Project.Data;
 using PSI_Project.DTO;
 using PSI_Project.Exceptions;
 using PSI_Project.Models;
+using PSI_Project.Repositories.For_tests;
 
 namespace PSI_Project.Repositories;
 
@@ -14,8 +15,10 @@ public class ConspectusRepository : Repository<Conspectus>
     public EduPalDatabaseContext EduPalContext => Context as EduPalDatabaseContext;
     private readonly SemaphoreSlim _deleteLock = new SemaphoreSlim(1);
 
-    public ConspectusRepository(EduPalDatabaseContext context) : base(context)
+    private readonly IFileOperations _fileOperations;
+    public ConspectusRepository(EduPalDatabaseContext context, IFileOperations fileOperations) : base(context)
     {
+        _fileOperations = fileOperations;
     }
 
     public async Task<IEnumerable<Conspectus>> GetConspectusListByTopicIdAsync(string topicId)
@@ -115,7 +118,7 @@ public class ConspectusRepository : Repository<Conspectus>
         return conspectus;
     }
 
-    public async Task RemoveAsync(string conspectusId)
+    public async Task<string> RemoveAsync(string conspectusId)
     {
         Conspectus conspectus = await GetAsync(conspectusId);
 
@@ -130,14 +133,16 @@ public class ConspectusRepository : Repository<Conspectus>
             //await EduPalContext.SaveChangesAsync();
 
             // Try to delete the file
-            if (File.Exists(filePath))
+            if (_fileOperations.Exists(filePath))
             {
-                File.Delete(filePath);
+                _fileOperations.Delete(filePath);
                 Console.WriteLine($"File deleted: {filePath}");
+                return $"File deleted: {filePath}";
             }
             else
             {
                 Console.WriteLine($"File not found: {filePath}");
+                return $"File not found: {filePath}";
             }
         }
         catch (Exception ex)

@@ -18,7 +18,7 @@ public class UserRepositoryUnitTests
         _context = new EduPalDatabaseContext(_options); //should it be in using? 
         _userRepository = new UserRepository(_context);
         
-        // adding one test element for a test DB 
+        // adding one test element for the test DB 
         var user = new User("test@test.test", "testPassword", "testName", "testSurname");
         _context.Users.Add(user);
         _context.SaveChanges();
@@ -32,7 +32,7 @@ public class UserRepositoryUnitTests
     }
     
     [Fact]
-    public async Task CheckUserRegister_UserDoesNotExist_ReturnsNotNull()
+    public async Task CheckUserRegisterAsync_UserDoesNotExist_ReturnsNotNull()
     {
         // Arrange
         var user = new UserCreationDTO("nonexistentTest@test.test", "nonexistentTestPassword", "nonexistentTestName", "nonexistentTestSurname");
@@ -45,7 +45,7 @@ public class UserRepositoryUnitTests
     }
     
     [Fact]
-    public async Task CheckUserRegister_UserExists_ReturnsNull()
+    public async Task CheckUserRegisterAsync_UserExists_ReturnsNull()
     {
         // Arrange
         var userExisting = new UserCreationDTO("testName", "testSurname", "test@test.test", "testPassword");
@@ -58,7 +58,7 @@ public class UserRepositoryUnitTests
     }
     
     [Fact]
-    public async Task GetUserByEmail_UserExists_ReturnsUser()
+    public async Task GetUserByEmailAsync_UserExists_ReturnsUser()
     {
         // Arrange
         var user = new User("test1@test.test", "testPassword", "testName", "testSurname");
@@ -78,7 +78,7 @@ public class UserRepositoryUnitTests
     }
 
     [Fact]
-    public async Task GetUserByEmail_UserDoesNotExist_ReturnsNull()
+    public async Task GetUserByEmailAsync_UserDoesNotExist_ReturnsNull()
     {
         // Arrange
         

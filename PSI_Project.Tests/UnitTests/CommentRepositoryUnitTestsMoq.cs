@@ -114,10 +114,11 @@ public class CommentRepositoryUnitTestsMoq
         mockRepository.Setup(repo => repo.GetAsync(comment.Id)).ThrowsAsync(new ObjectNotFoundException());
 
         var commentRepository = mockRepository.Object;
-        // Act
         
-        // Assert
+        // Act
         var exception = await Assert.ThrowsAsync<ObjectNotFoundException>(async () => await commentRepository.RemoveAsync(comment.Id));
+
+        // Assert
         Assert.Contains("Exception of type 'PSI_Project.Exceptions", exception.Message);
     }
     
