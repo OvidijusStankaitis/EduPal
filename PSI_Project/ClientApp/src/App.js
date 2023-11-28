@@ -8,7 +8,7 @@ import { Subjects } from './components/Subjects';
 import { Topics } from './components/Topics';
 import { ShortBreakComponent } from "./components/ShortBreakComponent";
 import { LongBreakComponent } from "./components/LongBreakComponent";
-import { UserProvider } from './UserContext'; 
+import { UserProvider } from './contexts/UserContext'; 
 
 function App() {
     return (

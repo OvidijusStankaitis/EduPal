@@ -162,7 +162,7 @@ public class CommentRepositoryUnitTestsMoq
         Assert.Equal(comment.Id, result.Id);
         Assert.Equal(comment.UserId, result.UserId);
         Assert.Equal(comment.TopicId, result.TopicId);
-        Assert.Equal(comment.CommentText, result.CommentText);
+        Assert.Equal(comment.Content, result.Content);
     }
     
 }

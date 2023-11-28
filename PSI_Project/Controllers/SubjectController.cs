@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PSI_Project.DTO;
 using PSI_Project.Exceptions;
@@ -20,6 +21,7 @@ public class SubjectController : ControllerBase
         _subjectRepository = subjectRepository;
     }
 
+    [Authorize]
     [HttpGet("get/{subjectId}")]
     public IActionResult GetSubject(string subjectId)
     {
@@ -40,6 +42,7 @@ public class SubjectController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet("list")]
     public IActionResult ListSubjectsAsync()
     {
@@ -56,6 +59,7 @@ public class SubjectController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpPost("upload")]
     public IActionResult UploadSubjectAsync([FromBody] SubjectRequestDTO request)
     {
@@ -77,6 +81,7 @@ public class SubjectController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpDelete("delete/{subjectId}")]
     public async Task<IActionResult> RemoveSubjectAsync(string subjectId)
     {

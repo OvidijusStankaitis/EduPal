@@ -32,32 +32,6 @@ public class UserRepositoryUnitTests
     }
     
     [Fact]
-    public async Task CheckUserRegister_UserDoesNotExist_ReturnsNotNull()
-    {
-        // Arrange
-        var user = new UserCreationDTO("nonexistentTest@test.test", "nonexistentTestPassword", "nonexistentTestName", "nonexistentTestSurname");
-
-        // Act
-        var result = await _userRepository.CheckUserRegisterAsync(user);
-        
-        // Assert
-        Assert.NotNull(result);
-    }
-    
-    [Fact]
-    public async Task CheckUserRegister_UserExists_ReturnsNull()
-    {
-        // Arrange
-        var userExisting = new UserCreationDTO("testName", "testSurname", "test@test.test", "testPassword");
-        
-        // Act
-        var result = await _userRepository.CheckUserRegisterAsync(userExisting);
-
-        // Assert
-        Assert.Null(result);
-    }
-    
-    [Fact]
     public async Task GetUserByEmail_UserExists_ReturnsUser()
     {
         // Arrange

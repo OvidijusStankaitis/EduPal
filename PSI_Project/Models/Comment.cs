@@ -10,12 +10,14 @@ public class Comment : BaseEntity
     [ForeignKey("UserId")]
     public string UserId { get; set; }
     public User User { get; init; }
-    public string CommentText { get; init; }
-    
-    public Comment(string userId, string topicId, string commentText)
+    public string Content { get; init; }
+    public DateTime Timestamp { get; init; }
+
+    public Comment(string userId, string topicId, string content)
     {
         UserId = userId;
         TopicId = topicId;
-        CommentText = commentText;
+        Content = content;
+        Timestamp = DateTime.UtcNow;
     }
 }
