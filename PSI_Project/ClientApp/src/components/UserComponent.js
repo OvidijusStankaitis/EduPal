@@ -4,11 +4,14 @@ import tomato from "../assets/tomato.webp";
 import gpt from "../assets/gpt.webp";
 import user from "../assets/user.webp";
 import { useUserContext } from '../UserContext';
+import { useNavigate, useLocation} from "react-router-dom";
 
 export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) => {
     const { userEmail, setUsername, username, setUserEmail } = useUserContext();
     const [remainingTime, setRemainingTime] = useState(0);
     const [mode, setMode] = useState('study');
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const fetchTimerState = async () => {
         try {
@@ -19,6 +22,14 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) =>
                 setRemainingTime(remainingTime);
                 console.log("Remaining time: ", remainingTime);
                 setMode(mode);
+                if (mode === 'Short Break') {
+                    navigate('/ShortBreak');
+                    sessionStorage.setItem('previousPath', location.pathname);
+                } else if (mode === 'Long Break') {
+                    navigate('/LongBreak');
+                    sessionStorage.setItem('previousPath', location.pathname);
+                }
+                console.log("Location: ", location.pathname);
             }
         } catch (error) {
             console.error("Error fetching timer state: ", error);
