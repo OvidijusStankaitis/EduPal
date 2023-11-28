@@ -74,7 +74,6 @@ public class ConspectusRepository : Repository<Conspectus>
             }
             catch (Exception ex)
             {
-                // Create at least 1 exception type and throw it; meaningfully deal with it; 
                 throw new EntityCreationException("Error occurred while uploading one of the files", ex);
             }
 
@@ -83,7 +82,6 @@ public class ConspectusRepository : Repository<Conspectus>
                 Topic? topic = await EduPalContext.Topics.FindAsync(topicId); // Use asynchronous FindAsync
                 if (topic == null)
                 {
-                    // Create at least 1 exception type and throw it; meaningfully deal with it; 
                     throw new ObjectNotFoundException("Couldn't find topic with specified id");
                 }
 
@@ -95,13 +93,11 @@ public class ConspectusRepository : Repository<Conspectus>
                 };
 
                 Add(conspectus);
-                //await EduPalContext.SaveChangesAsync(); // Use asynchronous SaveChangesAsync
                 uploadedConspectuses.Add(conspectus);
             }
             catch (Exception ex)
             {
                 File.Delete(filePath);
-                // Create at least 1 exception type and throw it; meaningfully deal with it; 
                 throw new EntityCreationException("Error occurred while uploading one of the files", ex);
             }
         }
@@ -130,8 +126,7 @@ public class ConspectusRepository : Repository<Conspectus>
 
             // Remove the conspectus from the context
             Remove(conspectus);
-            //await EduPalContext.SaveChangesAsync();
-
+            
             // Try to delete the file
             if (_fileOperations.Exists(filePath))
             {
