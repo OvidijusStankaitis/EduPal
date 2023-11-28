@@ -48,3 +48,27 @@
     margin-right: 1rem;
     color: #E0E0FF; /* Text color from the space theme */
 }
+
+.user-dropdown {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    background: #2D2D5A;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 101;
+    box-sizing: border-box;
+}
+
+.dropdown-item {
+    padding: 0.5rem 1rem;
+    color: #E0E0FF;
+    cursor: pointer;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(15, 15, 30, 0.8);
+}

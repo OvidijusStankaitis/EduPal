@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
+import ReactDOM from 'react-dom';
 import './UserComponent.css';
 import tomato from "../assets/tomato.webp";
 import gpt from "../assets/gpt.webp";
@@ -9,6 +10,12 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) =>
     const { userEmail, setUsername, username, setUserEmail } = useUserContext();
     const [remainingTime, setRemainingTime] = useState(0);
     const [mode, setMode] = useState('study');
+    const [dropdownPosition, setDropdownPosition] = useState({});
+    const userIconRef = useRef(null);
+    const [showDropdown, setShowDropdown] = useState(false);
+    const toggleDropdown = () => setShowDropdown(prev => !prev);
+    const userComponentRef = useRef(null);
+
 
     const fetchTimerState = async () => {
         try {
@@ -33,7 +40,7 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) =>
         }, 1000);
 
         return () => clearInterval(intervalId);
-    }, [userEmail, fetchTimerState]); 
+    }, [userEmail, fetchTimerState]);
 
     const fetchUsername = async () => {
         try {
@@ -71,7 +78,7 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) =>
             console.log("No user email found");
         }
     }, [userEmail, setUsername, setUserEmail]);
-    
+
     const handleStartPomodoro = () => {
         setShowPomodoroDialog(true);
     };
@@ -82,7 +89,6 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) =>
 
     const formatTime = (time) => {
         if (typeof time !== 'number' || isNaN(time)) {
-            // Return a default or placeholder value if time is not a number
             return "00:00";
         }
 
@@ -93,10 +99,72 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) =>
         return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     };
 
+    const handleMouseLeave = () => {
+        setShowDropdown(false);
+    };
+    
+    const handleCreateGoal = () => {
+        console.log("Functionality to create a new goal will be implemented here");
+        setShowDropdown(false);
+    };
+
+    const handleViewGoals = () => {
+        console.log("Functionality to view existing goals will be implemented here");
+        setShowDropdown(false);
+    };
+    
+    const updateDropdownPosition = () => {
+        if (userComponentRef.current) {
+            const rect = userComponentRef.current.getBoundingClientRect();
+            setDropdownPosition({
+                top: `${rect.bottom + window.scrollY}px`,
+                left: `${rect.left}px`,
+                width: `${rect.width}px`,
+                margin: `${rect.margin}px`
+            });
+        }
+    };
+    
+    useEffect(() => {
+        updateDropdownPosition();
+        window.addEventListener('resize', updateDropdownPosition);
+        window.addEventListener('scroll', updateDropdownPosition, true);
+
+        return () => {
+            window.removeEventListener('resize', updateDropdownPosition);
+            window.removeEventListener('scroll', updateDropdownPosition, true);
+        };
+    }, []);
+    
+    useEffect(() => {
+        const handleOutsideClick = (event) => {
+            if (showDropdown && userIconRef.current && !userIconRef.current.contains(event.target)) {
+                setShowDropdown(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleOutsideClick);
+
+        return () => {
+            document.removeEventListener('mousedown', handleOutsideClick);
+        };
+    }, [showDropdown]);
+
+    const dropdown = showDropdown ? (
+        <div className="user-dropdown" style={{ ...dropdownPosition, position: 'fixed', zIndex: 1000 }}>
+            <div className="dropdown-item" onMouseDown={handleCreateGoal}>Create goal</div>
+            <div className="dropdown-item" onMouseDown={handleViewGoals}>View goals</div>
+        </div>
+    ) : null;
+
     return (
-        <div className="user-component">
+        <div ref={userComponentRef} className="user-component" onMouseLeave={handleMouseLeave}>
             <span className="username">{username}</span>
-            <img src={user} alt="User" className="user-picture" />
+            <img ref={userIconRef} src={user} alt="User" className="user-picture" onClick={toggleDropdown} />
+            {dropdown && ReactDOM.createPortal(
+                dropdown,
+                document.getElementById('portal-root')
+            )}
             <span className="pomodoro-time">{formatTime(remainingTime)}</span>
             <img src={tomato} alt="Start Pomodoro" className="tomato" onClick={handleStartPomodoro} />
             <img src={gpt} alt="GPT Logo" className="gpt-logo" onClick={handleStartOpenAI}/>
