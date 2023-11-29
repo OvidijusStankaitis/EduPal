@@ -7,20 +7,21 @@ export const CreateGoalDialog = ({ show, onClose }) => {
     const [checkedSubjects, setCheckedSubjects] = useState({});
     const [goalTime, setGoalTime] = useState('');
 
-    // Simulate fetching subjects from your database
     useEffect(() => {
-        // This should be replaced with your actual fetching logic
         const fetchSubjects = async () => {
-            const fetchedSubjects = [
-                { id: '1', name: 'Math' },
-                { id: '2', name: 'Biology' },
-                { id: '3', name: 'Biolog' },
-                { id: '4', name: 'Biolo' },
-                { id: '5', name: 'Biol' },
-                // ...other subjects
-            ];
-            setSubjects(fetchedSubjects);
+            try {
+                // Update the URL to match your backend endpoint for fetching subjects
+                const response = await fetch('https://localhost:7283/goals/subjects');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch subjects');
+                }
+                const subjects = await response.json();
+                setSubjects(subjects);
+            } catch (error) {
+                console.error('Error fetching subjects:', error);
+            }
         };
+
         fetchSubjects();
     }, []);
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PSI_Project.Services;
 using PSI_Project.Models;
+using PSI_Project.Repositories;
 
 namespace PSI_Project.Controllers
 {
@@ -9,14 +10,16 @@ namespace PSI_Project.Controllers
     public class GoalsController : ControllerBase
     {
         private readonly GoalService _goalService;
+        private readonly SubjectRepository _subjectRepository;
         private readonly ILogger<GoalsController> _logger;
 
-        public GoalsController(ILogger<GoalsController> logger, GoalService goalService)
+        public GoalsController(ILogger<GoalsController> logger, GoalService goalService, SubjectRepository subjectRepository)
         {
             _logger = logger;
             _goalService = goalService;
+            _subjectRepository = subjectRepository;
         }
-
+        
         // DTO object specific to Goals class only (specifically POST update-study-time endpoint)
         // so that's why it is here rather than Models folder.
         public class StudyTimeUpdateRequest
@@ -24,6 +27,21 @@ namespace PSI_Project.Controllers
             public string UserId { get; set; }
             public string SubjectId { get; set; }
             public double ElapsedHours { get; set; }
+        }
+        
+        [HttpGet("subjects")]
+        public IActionResult GetAllSubjects()
+        {
+            try
+            {
+                var subjects = _subjectRepository.GetSubjectsList();
+                return Ok(subjects);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting subjects");
+                return StatusCode(500, "An error occurred while fetching subjects");
+            }
         }
 
         [HttpPost("create")]
