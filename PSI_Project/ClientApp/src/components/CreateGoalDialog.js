@@ -1,7 +1,9 @@
 ﻿import React, { useState, useEffect } from 'react';
 import './CreateGoalDialog.css';
+import { useUserContext } from "../UserContext"; // Assuming the UserContext is in the right path
 
 export const CreateGoalDialog = ({ show, onClose }) => {
+    const { userId } = useUserContext();
     const [subjects, setSubjects] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
     const [checkedSubjects, setCheckedSubjects] = useState({});
@@ -10,7 +12,6 @@ export const CreateGoalDialog = ({ show, onClose }) => {
     useEffect(() => {
         const fetchSubjects = async () => {
             try {
-                // Update the URL to match your backend endpoint for fetching subjects
                 const response = await fetch('https://localhost:7283/goals/subjects');
                 if (!response.ok) {
                     throw new Error('Failed to fetch subjects');
@@ -32,15 +33,36 @@ export const CreateGoalDialog = ({ show, onClose }) => {
         }));
     };
 
-    const handleSubmit = () => {
-        const selectedSubjects = Object.entries(checkedSubjects)
+    const handleSubmit = async () => {
+        const selectedSubjectIds = Object.entries(checkedSubjects)
             .filter(([_, checked]) => checked)
-            .map(([id, _]) => subjects.find((subject) => subject.id === id));
+            .map(([id, _]) => id);
 
-        console.log("Selected subjects:", selectedSubjects);
-        console.log("Goal time:", goalTime);
-        // Here you would typically send the data to your backend
-        onClose();
+        const goalData = {
+            userId: userId, // Add the userId to the goalData
+            subjectIds: selectedSubjectIds,
+            goalTime: parseFloat(goalTime) // Assuming goalTime is a string that needs to be converted to a number
+        };
+
+        try {
+            const response = await fetch('https://localhost:7283/Goals/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(goalData),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to create goal');
+            }
+            
+            onClose();
+            setCheckedSubjects({});
+            setGoalTime('');
+        } catch (error) {
+            console.error('Error creating goal:', error);
+        }
     };
 
     if (!show) return null;

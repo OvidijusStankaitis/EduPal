@@ -1,24 +1,14 @@
-﻿using System.Collections.Generic;
-using System;
-
-namespace PSI_Project.Models
+﻿namespace PSI_Project.Models
 {
     public class Goal : BaseEntity
     {
-        public DateTime GoalDate { get; set; } = DateTime.Now.Date; 
-        //public string UserId { get; set; }
+        public string UserId { get; set; }
         public User User { get; set; }
-        public List<SubjectGoal> SubjectGoals { get; set; }
-
-        public Goal()
+        public DateTime GoalDate { get; set; } = DateTime.UtcNow; // Use UtcNow to store in UTC
+        public List<SubjectGoal> SubjectGoals { get; set; } = new List<SubjectGoal>();
+        
+        public Goal() // Ef core usage
         {
-        }
-
-        public Goal(User user)
-        {
-            Id = Guid.NewGuid().ToString(); // do we need it here if there is such code in BaseEntity?
-            User = user;
-            SubjectGoals = new List<SubjectGoal>();
         }
     }
 }

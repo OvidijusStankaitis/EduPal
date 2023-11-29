@@ -11,7 +11,7 @@ namespace PSI_Project.Repositories
         {
         }
 
-        public bool InsertItem(Goal goal)
+        public bool AddGoal(Goal goal)
         {
             try
             {
@@ -23,6 +23,21 @@ namespace PSI_Project.Repositories
                 return changes > 0;
             }
             catch
+            {
+                // Log error here
+                return false;
+            }
+        }
+        
+        public bool AddSubjectGoal(SubjectGoal subjectGoal)
+        {
+            try
+            {
+                EduPalContext.SubjectGoal.Add(subjectGoal);
+                int changes = EduPalContext.SaveChanges();
+                return changes > 0;
+            }
+            catch (Exception ex)
             {
                 // Log error here
                 return false;
@@ -58,10 +73,10 @@ namespace PSI_Project.Repositories
         // Given a user ID, retrieve the goal for today.
         public Goal? GetTodaysGoalForUser(string userId)
         {
-            DateTime today = DateTime.Now.Date;
-            return Find(g => g.User.Id == userId && g.GoalDate == today).FirstOrDefault();
-            /*var goals = await FindAsync(g => g.User.Id == userId && g.GoalDate == today);
-            return goals.FirstOrDefault();*/
+            DateTime utcNow = DateTime.UtcNow;
+            DateTime today = new DateTime(utcNow.Year, utcNow.Month, utcNow.Day, 0, 0, 0, DateTimeKind.Utc);
+            return EduPalContext.Goals
+                .FirstOrDefault(g => g.UserId == userId && g.GoalDate >= today && g.GoalDate < today.AddDays(1));
         }
 
         // Given a user ID, retrieve all goals for that user.

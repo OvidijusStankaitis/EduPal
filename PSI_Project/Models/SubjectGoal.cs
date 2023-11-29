@@ -2,19 +2,25 @@
 {
     public class SubjectGoal : BaseEntity
     {
+        // Assuming you have a Subject class that links to this SubjectGoal
+        public string SubjectId { get; set; }
         public Subject Subject { get; set; }
+        public string GoalId { get; set; }
+        public Goal Goal { get; set; }
         public double TargetHours { get; set; }
-        public double ActualHoursStudied { get; set; }
-
-        private SubjectGoal()   // used by EF    
+        public double ActualHoursStudied { get; set; } = 0;
+        
+        public SubjectGoal()
         {
+            
         }
 
-        public SubjectGoal(Subject subject, double targetHours)
+        // Constructor that takes subject and goal
+        public SubjectGoal(Subject subject, Goal goal, double targetHours)
         {
             Subject = subject;
+            Goal = goal;
             TargetHours = targetHours;
-            ActualHoursStudied = 0; // 0 hours studied on initialization
         }
     }
 }

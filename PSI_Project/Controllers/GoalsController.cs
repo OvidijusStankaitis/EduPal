@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Transactions;
+using Microsoft.AspNetCore.Mvc;
 using PSI_Project.Services;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
+using PSI_Project.Requests;
 
 namespace PSI_Project.Controllers
 {
@@ -19,14 +21,44 @@ namespace PSI_Project.Controllers
             _goalService = goalService;
             _subjectRepository = subjectRepository;
         }
-        
-        // DTO object specific to Goals class only (specifically POST update-study-time endpoint)
-        // so that's why it is here rather than Models folder.
-        public class StudyTimeUpdateRequest
+
+        [HttpPost("create")]
+        public IActionResult CreateGoalWithSubjects([FromBody] CreateGoalRequest request)
         {
-            public string UserId { get; set; }
-            public string SubjectId { get; set; }
-            public double ElapsedHours { get; set; }
+            using (var transaction = new TransactionScope())
+            {
+                try
+                {
+                    // Create a new Goal object
+                    var goal = new Goal
+                    {
+                        UserId = request.UserId,
+                        GoalDate = DateTime.UtcNow
+                    };
+                    _goalService.AddGoal(goal);
+
+                    // For each subjectId, create a SubjectGoal
+                    foreach (var subjectId in request.SubjectIds)
+                    {
+                        var subjectGoal = new SubjectGoal
+                        {
+                            GoalId = goal.Id,
+                            SubjectId = subjectId,
+                            TargetHours = request.GoalTime
+                        };
+                        _goalService.AddSubjectGoal(subjectGoal);
+                    }
+
+                    // Complete the transaction
+                    transaction.Complete();
+                    return Ok(new { success = true, message = "Goal and subject goals created successfully." });
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error creating goal with subjects.");
+                    return StatusCode(500, "An error occurred while creating the goal with subjects.");
+                }
+            }
         }
         
         [HttpGet("subjects")]
@@ -41,33 +73,6 @@ namespace PSI_Project.Controllers
             {
                 _logger.LogError(ex, "Error getting subjects");
                 return StatusCode(500, "An error occurred while fetching subjects");
-            }
-        }
-
-        [HttpPost("create")]
-        public IActionResult CreateDailyGoal([FromBody] Goal goalRequest)
-        {
-            try
-            {
-                // Check if the user already has a goal for today
-                var existingGoal = _goalService.GetTodaysGoalForUser(goalRequest.User.Id);
-                if (existingGoal != null)
-                {
-                    return BadRequest(new { success = false, message = "Goal for today already exists." });
-                }
-
-                // If no existing goal for today, create the new goal
-                if (_goalService.AddGoal(goalRequest))
-                {
-                    return Ok(new { success = true, message = "Goal created successfully." });
-                }
-
-                return BadRequest(new { success = false, message = "Failed to create goal." });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Couldn't create new goal");
-                return StatusCode(500, "An error occured while creating new goal");
             }
         }
 
