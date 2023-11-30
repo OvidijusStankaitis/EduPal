@@ -1,4 +1,5 @@
-﻿using PSI_Project.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using PSI_Project.Models;
 using PSI_Project.Data;
 
 namespace PSI_Project.Repositories
@@ -82,7 +83,11 @@ namespace PSI_Project.Repositories
         // Given a user ID, retrieve all goals for that user.
         public List<Goal> GetAllGoalsForUser(string userId)
         {
-            return EduPalContext.Goals.Where(g => g.User.Id == userId).ToList();
+            // Ensure that when you load goals, you also load the related subject goals
+            return EduPalContext.Goals
+                .Where(g => g.User.Id == userId)
+                .Include(g => g.SubjectGoals) // Include the SubjectGoals in the query
+                .ToList();
         }
         
     }

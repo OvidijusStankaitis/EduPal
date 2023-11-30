@@ -38,10 +38,13 @@ export const CreateGoalDialog = ({ show, onClose }) => {
             .filter(([_, checked]) => checked)
             .map(([id, _]) => id);
 
+        // Replace commas with dots and then parse as float
+        const formattedGoalTime = goalTime.replace(',', '.');
+
         const goalData = {
-            userId: userId, // Add the userId to the goalData
+            userId: userId,
             subjectIds: selectedSubjectIds,
-            goalTime: parseFloat(goalTime) // Assuming goalTime is a string that needs to be converted to a number
+            goalTime: parseFloat(formattedGoalTime)
         };
 
         try {
@@ -56,7 +59,7 @@ export const CreateGoalDialog = ({ show, onClose }) => {
             if (!response.ok) {
                 throw new Error('Failed to create goal');
             }
-            
+
             onClose();
             setCheckedSubjects({});
             setGoalTime('');
@@ -93,7 +96,7 @@ export const CreateGoalDialog = ({ show, onClose }) => {
                 </div>
                 <input className="input-hours"
                     type="text"
-                    placeholder="Goal Time (e.g., 2 hours)"
+                    placeholder="Target Time (e.g. 2.2/2,2 hours)"
                     value={goalTime}
                     onChange={(e) => setGoalTime(e.target.value)}
                 />

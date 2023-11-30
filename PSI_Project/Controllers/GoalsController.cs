@@ -25,7 +25,7 @@ namespace PSI_Project.Controllers
         [HttpPost("create")]
         public IActionResult CreateGoalWithSubjects([FromBody] CreateGoalRequest request)
         {
-            using (var transaction = new TransactionScope())
+            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
                 {
@@ -35,9 +35,16 @@ namespace PSI_Project.Controllers
                         UserId = request.UserId,
                         GoalDate = DateTime.UtcNow
                     };
-                    _goalService.AddGoal(goal);
-
-                    // For each subjectId, create a SubjectGoal
+            
+                    // Try to add the Goal
+                    bool isGoalAdded = _goalService.AddGoal(goal, request.SubjectIds);
+                    if (!isGoalAdded)
+                    {
+                        // If the goal is not added, return a BadRequest response
+                        return BadRequest(new { success = false, message = "Unable to create a new goal. Make sure you have completed all existing goals and selected at least one subject." });
+                    }
+            
+                    // If the goal is added, proceed to add subject goals
                     foreach (var subjectId in request.SubjectIds)
                     {
                         var subjectGoal = new SubjectGoal
