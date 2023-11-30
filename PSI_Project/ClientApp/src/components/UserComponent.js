@@ -6,7 +6,7 @@ import gpt from "../assets/gpt.webp";
 import user from "../assets/user.webp";
 import { useUserContext } from '../UserContext';
 
-export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog, setShowCreateGoalDialog }) => {
+export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog, setShowCreateGoalDialog, setShowViewGoalsDialog }) => {
     const { userEmail, setUsername, username, setUserEmail } = useUserContext();
     const [remainingTime, setRemainingTime] = useState(0);
     const [mode, setMode] = useState('study');
@@ -109,7 +109,7 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog, setS
     };
 
     const handleViewGoals = () => {
-        console.log("Functionality to view existing goals will be implemented here");
+        setShowViewGoalsDialog(true);
         setShowDropdown(false);
     };
 

@@ -5,6 +5,7 @@ import { UserComponent } from "./UserComponent";
 import { PomodoroDialog } from './PomodoroDialog';
 import { OpenAIDialogue } from './OpenAIDialogue';
 import { CreateGoalDialog } from './CreateGoalDialog';
+import { ViewGoalsDialog } from './ViewGoalsDialog';
 import { Comments } from "./Comments";
 import { Note } from "./Note";
 import Notes from "../assets/Notes.webp";
@@ -17,6 +18,7 @@ export const Conspectus = () => {
     const [showPomodoroDialog, setShowPomodoroDialog] = useState(false);
     const [showOpenAIDialog, setShowOpenAIDialog] = useState(false);
     const [showCreateGoalDialog, setShowCreateGoalDialog] = useState(false);
+    const [showViewGoalsDialog, setShowViewGoalsDialog] = useState(false);
     const [showComments, setShowComments] = useState(false);
     const [showNote, setShowNote] = useState(false);
     const [fileDropdowns, setFileDropdowns] = useState({});
@@ -168,6 +170,7 @@ export const Conspectus = () => {
                     setShowPomodoroDialog={setShowPomodoroDialog}
                     setShowOpenAIDialog={setShowOpenAIDialog}
                     setShowCreateGoalDialog={setShowCreateGoalDialog}
+                    setShowViewGoalsDialog={setShowViewGoalsDialog}
                 />
             </div>
             <div className="main-content">
@@ -236,6 +239,10 @@ export const Conspectus = () => {
                 <CreateGoalDialog // Render the CreateGoalDialog
                     show={showCreateGoalDialog}
                     onClose={() => setShowCreateGoalDialog(false)}
+                />
+                <ViewGoalsDialog
+                    show={showViewGoalsDialog}
+                    onClose={() => setShowViewGoalsDialog(false)}
                 />
                 <Comments
                     show={showComments}

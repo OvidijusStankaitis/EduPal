@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import './Subjects.css';
 import { UserComponent } from "./UserComponent";
 import { PomodoroDialog } from './PomodoroDialog';
-import {OpenAIDialogue} from "./OpenAIDialogue";
+import { OpenAIDialogue } from "./OpenAIDialogue";
 import { CreateGoalDialog } from './CreateGoalDialog';
+import { ViewGoalsDialog } from './ViewGoalsDialog';
 
 export const Subjects = () => {
     const [subjects, setSubjects] = useState([]);
@@ -15,6 +16,7 @@ export const Subjects = () => {
     const [showPomodoroDialog, setShowPomodoroDialog] = useState(false);
     const [showOpenAIDialog, setShowOpenAIDialog] = useState(false);
     const [showCreateGoalDialog, setShowCreateGoalDialog] = useState(false);
+    const [showViewGoalsDialog, setShowViewGoalsDialog] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -91,6 +93,7 @@ export const Subjects = () => {
                         setShowPomodoroDialog={setShowPomodoroDialog}
                         setShowOpenAIDialog={setShowOpenAIDialog}
                         setShowCreateGoalDialog={setShowCreateGoalDialog}
+                        setShowViewGoalsDialog={setShowViewGoalsDialog}
                     />
                 </div>
                 <div className="subjects-grid">
@@ -128,9 +131,13 @@ export const Subjects = () => {
                     show={showOpenAIDialog}
                     onClose={() => setShowOpenAIDialog(false)}
                 />
-                <CreateGoalDialog // Render the CreateGoalDialog
+                <CreateGoalDialog
                     show={showCreateGoalDialog}
                     onClose={() => setShowCreateGoalDialog(false)}
+                />
+                <ViewGoalsDialog
+                    show={showViewGoalsDialog}
+                    onClose={() => setShowViewGoalsDialog(false)}
                 />
             </div>
         </div>

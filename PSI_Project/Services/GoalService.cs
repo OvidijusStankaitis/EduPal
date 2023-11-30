@@ -1,6 +1,7 @@
 ﻿using PSI_Project.Repositories;
 using PSI_Project.Models;
 using System.Linq;
+using PSI_Project.DTO;
 
 namespace PSI_Project.Services
 {
@@ -61,18 +62,12 @@ namespace PSI_Project.Services
         
         public bool AddSubjectGoal(SubjectGoal subjectGoal)
         {
-            // Add the subject goal to the database
             return _goalsRepository.AddSubjectGoal(subjectGoal);
         }
         
-        public Goal? GetTodaysGoalForUser(string userId)
+        public List<GoalDetailDto> GetAllGoalsForUserWithDetails(string userId)
         {
-            return _goalsRepository.GetTodaysGoalForUser(userId);
-        }
-        
-        public List<Goal> GetAllGoalsForUser(string userId)
-        {
-            return _goalsRepository.GetAllGoalsForUser(userId);
+            return _goalsRepository.GetAllGoalsWithDetailsForUser(userId);
         }
         
 
