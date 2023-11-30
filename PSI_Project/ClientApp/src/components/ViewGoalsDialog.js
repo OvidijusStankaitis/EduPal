@@ -39,24 +39,26 @@ export const ViewGoalsDialog = ({ show, onClose }) => {
         <div className="view-goals-dialog">
             <div className="view-goals-dialog-content">
                 <h3>Your Goals</h3>
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Date Created</th>
-                        <th>Target Duration</th>
-                        <th>Actual Duration</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {goals.map((goal) => (
-                        <tr key={goal.id}>
-                            <td>{new Date(goal.goalDate).toLocaleDateString()}</td>
-                            <td>{renderDuration(goal.targetHours)}</td>
-                            <td>{renderDuration(goal.actualHoursStudied)}</td>
+                <div className="table-scrollable">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Date Created</th>
+                            <th>Target Duration</th>
+                            <th>Actual Duration</th>
                         </tr>
-                    ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        {goals.map((goal) => (
+                            <tr key={goal.id}>
+                                <td>{new Date(goal.goalDate).toLocaleDateString()}</td>
+                                <td>{renderDuration(goal.targetHours)}</td>
+                                <td>{renderDuration(goal.actualHoursStudied)}</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
                 {error && <div className="error-message">{error}</div>}
                 <button onClick={onClose}>Close</button>
             </div>

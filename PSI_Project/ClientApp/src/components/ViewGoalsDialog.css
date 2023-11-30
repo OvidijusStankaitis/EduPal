@@ -4,7 +4,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     background: radial-gradient(circle at center, rgba(45, 45, 90, 0.95) 0%, rgba(30, 30, 60, 0.95) 70%, rgba(15, 15, 30, 0.95) 100%);
-    padding: 3vh;
+    padding: 5vh;
     border-radius: 1vw;
     box-shadow: 0 0.5vw 2vw rgba(0, 0, 0, 0.5);
     z-index: 100;
@@ -24,7 +24,7 @@
 .view-goals-dialog h3 {
     font-size: 3vh;
     color: white;
-    margin-bottom: 20px;
+    margin-bottom: 3vh;
 }
 
 .view-goals-dialog table {
@@ -51,4 +51,10 @@
 .error-message {
     color: red;
     margin-top: 10px;
+}
+
+.table-scrollable {
+    width: 100%;
+    max-height: 400px;
+    overflow-y: auto;
 }
