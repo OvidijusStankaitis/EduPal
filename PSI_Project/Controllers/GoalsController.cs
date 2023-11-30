@@ -41,7 +41,7 @@ namespace PSI_Project.Controllers
                     if (!isGoalAdded)
                     {
                         // If the goal is not added, return a BadRequest response
-                        return BadRequest(new { success = false, message = "Unable to create a new goal. Make sure you have completed all existing goals and selected at least one subject." });
+                        return BadRequest(new { success = false, message = "Unable to create a new goal. Make sure you have completed all existing goals before proceeding." });
                     }
             
                     // If the goal is added, proceed to add subject goals

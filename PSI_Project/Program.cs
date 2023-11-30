@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using PSI_Project.Data;
 using PSI_Project.Repositories;
 using PSI_Project.Services;
+using PSI_Project.Middleware;
 using System.Text;
 using PSI_Project.Hubs;
 using Serilog;
@@ -57,6 +58,7 @@ builder.Services.AddTransient<OpenAIRepository>();
 builder.Services.AddTransient<NoteRepository>();
 
 var app = builder.Build();
+app.UseErrorHandlingMiddleware();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

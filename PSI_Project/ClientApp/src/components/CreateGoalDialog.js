@@ -8,6 +8,7 @@ export const CreateGoalDialog = ({ show, onClose }) => {
     const [showDropdown, setShowDropdown] = useState(false);
     const [checkedSubjects, setCheckedSubjects] = useState({});
     const [goalTime, setGoalTime] = useState('');
+    const [error, setError] = useState('');
 
     useEffect(() => {
         const fetchSubjects = async () => {
@@ -33,14 +34,32 @@ export const CreateGoalDialog = ({ show, onClose }) => {
         }));
     };
 
+    const validateGoalTime = (time) => {
+        const number = parseFloat(time.replace(',', '.'));
+        if (isNaN(number) || number < 0 || number > 24) {
+            return { valid: false, message: 'Please enter a value between 0 and 24 hours.' };
+        }
+        return { valid: true, message: '' };
+    };
+
     const handleSubmit = async () => {
+        setError('');
+
         const selectedSubjectIds = Object.entries(checkedSubjects)
             .filter(([_, checked]) => checked)
             .map(([id, _]) => id);
+        if (selectedSubjectIds.length === 0) {
+            setError('Please select at least one subject.');
+            return;
+        }
 
-        // Replace commas with dots and then parse as float
+        const { valid, message } = validateGoalTime(goalTime);
+        if (!valid) {
+            setError(message);
+            return;
+        }
+
         const formattedGoalTime = goalTime.replace(',', '.');
-
         const goalData = {
             userId: userId,
             subjectIds: selectedSubjectIds,
@@ -57,7 +76,9 @@ export const CreateGoalDialog = ({ show, onClose }) => {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to create goal');
+                const errorData = await response.json();
+                setError(errorData.message || 'Failed to create goal. Please try again.');
+                return;
             }
 
             onClose();
@@ -65,6 +86,7 @@ export const CreateGoalDialog = ({ show, onClose }) => {
             setGoalTime('');
         } catch (error) {
             console.error('Error creating goal:', error);
+            setError('Failed to create goal. Please try again.');
         }
     };
 
@@ -83,10 +105,10 @@ export const CreateGoalDialog = ({ show, onClose }) => {
                             {subjects.map((subject) => (
                                 <div key={subject.id} className="dropdown-item">
                                     <input className="subject-list-input"
-                                        id={`subject-${subject.id}`}
-                                        type="checkbox"
-                                        checked={!!checkedSubjects[subject.id]}
-                                        onChange={() => handleCheck(subject.id)}
+                                           id={`subject-${subject.id}`}
+                                           type="checkbox"
+                                           checked={!!checkedSubjects[subject.id]}
+                                           onChange={() => handleCheck(subject.id)}
                                     />
                                     <label htmlFor={`subject-${subject.id}`}>{subject.name}</label>
                                 </div>
@@ -95,11 +117,12 @@ export const CreateGoalDialog = ({ show, onClose }) => {
                     )}
                 </div>
                 <input className="input-hours"
-                    type="text"
-                    placeholder="Target Time (e.g. 2.2/2,2 hours)"
-                    value={goalTime}
-                    onChange={(e) => setGoalTime(e.target.value)}
+                       type="text"
+                       placeholder="Target Time (e.g. 2.2/2,2 hours)"
+                       value={goalTime}
+                       onChange={(e) => setGoalTime(e.target.value)}
                 />
+                {error && <div className="error-message">{error}</div>}
                 <button onClick={handleSubmit}>Create Goal</button>
                 <button onClick={onClose}>Cancel</button>
             </div>
