@@ -12,7 +12,6 @@
     max-width: 600px;
     overflow: auto;
     animation: slideCenter 0.5s forwards;
-    
 }
 
 .view-goals-dialog-content {
@@ -25,6 +24,7 @@
     font-size: 3vh;
     color: white;
     margin-bottom: 3vh;
+    margin-top: 0vh;
 }
 
 .view-goals-dialog table {

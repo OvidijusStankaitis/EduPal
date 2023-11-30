@@ -99,7 +99,7 @@ export const CreateGoalDialog = ({ show, onClose }) => {
             <div className="create-goal-dialog-content">
                 <h3>Create New Goal</h3>
                 <div className="dropdown">
-                    <button onClick={() => setShowDropdown(!showDropdown)}>
+                    <button className="select-subjects-dropdown-button" onClick={() => setShowDropdown(!showDropdown)}>
                         Select subjects
                     </button>
                     {showDropdown && (
@@ -125,7 +125,7 @@ export const CreateGoalDialog = ({ show, onClose }) => {
                        onChange={(e) => setGoalTime(e.target.value)}
                 />
                 {error && <div className="error-message">{error}</div>}
-                <button onClick={handleSubmit}>Create Goal</button>
+                <button className="create-goal-button" onClick={handleSubmit}>Create Goal</button>
                 <button onClick={onClose}>Cancel</button>
             </div>
         </div>

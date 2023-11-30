@@ -1,18 +1,16 @@
 ﻿.create-goal-dialog {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    height: 75vh;
-    width: 30vw;
     background: radial-gradient(circle at center, rgba(45, 45, 90, 0.95) 0%, rgba(30, 30, 60, 0.95) 70%, rgba(15, 15, 30, 0.95) 100%);
-    padding: 2vh;
+    padding: 5vh;
     border-radius: 1vw;
     box-shadow: 0 0.5vw 2vw rgba(0, 0, 0, 0.5);
     z-index: 100;
+    width: 80%;
+    max-width: 600px;
+    overflow: auto;
     animation: slideCenter 0.5s forwards;
 }
 
@@ -21,13 +19,13 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: 2vh 2vw;
 }
 
 .create-goal-dialog-content h3 {
     color: #E0E0FF;
     font-size: 4vh;
     margin-bottom: 3vh;
+    margin-top: 0vh;
 }
 
 .subject-list-input {
@@ -102,7 +100,7 @@
 
 .create-goal-dialog-content .dropdown {
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 1.5vh;
     position: relative;
 }
 
@@ -118,4 +116,8 @@
     color: #E0E0FF;
     font-size: 1.6vh;
     margin: 1%;
+}
+
+.create-goal-button {
+    margin-top: 10vh !important;
 }
