@@ -44,8 +44,8 @@ export const ViewGoalsDialog = ({ show, onClose }) => {
                         <thead>
                         <tr>
                             <th>Date Created</th>
-                            <th>Target Duration</th>
-                            <th>Actual Duration</th>
+                            <th>Target Time</th>
+                            <th>Studied Time</th>
                         </tr>
                         </thead>
                         <tbody>
