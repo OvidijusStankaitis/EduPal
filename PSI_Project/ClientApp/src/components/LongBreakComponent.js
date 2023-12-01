@@ -2,10 +2,9 @@
 import { useNavigate } from 'react-router-dom';
 import './Break.css';
 import sunsetImage from '../assets/sunset.webp';
-import { useUserContext } from '../UserContext';
+import { useUserContext } from '../contexts/UserContext';
 
 export const LongBreakComponent = () => {
-    const { userEmail } = useUserContext();
     const [remainingTime, setRemainingTime] = useState(0);
     const navigate = useNavigate();
 
@@ -20,7 +19,10 @@ export const LongBreakComponent = () => {
 
     const fetchTimerState = useCallback(async () => {
         try {
-            const response = await fetch(`https://localhost:7283/Pomodoro/get-timer-state?userEmail=${encodeURIComponent(userEmail)}`);
+            const response = await fetch(`https://localhost:7283/Pomodoro/get-timer-state`, {
+                method: 'GET',
+                credentials: 'include'
+            });
             if (response.ok) {
                 const data = await response.json();
                 setRemainingTime(data.remainingTime);
@@ -33,7 +35,7 @@ export const LongBreakComponent = () => {
         } catch (error) {
             console.error("Error fetching timer state: ", error);
         }
-    }, [userEmail, navigate]);
+    }, [navigate]);
 
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -43,7 +45,7 @@ export const LongBreakComponent = () => {
         }, 1000);
 
         return () => clearInterval(intervalId);
-    }, [userEmail, fetchTimerState]);
+    }, [fetchTimerState]);
 
     return (
         <div className="break-container">

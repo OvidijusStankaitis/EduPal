@@ -62,17 +62,4 @@ public class Repository<TEntity> where TEntity : BaseEntity
         Context.Set<TEntity>().Remove(entity);
         return Context.SaveChanges();
     }
-
-    public virtual bool Exists(string id)
-    {
-        try
-        {
-            Get(id);
-            return true;
-        }
-        catch (ObjectNotFoundException)
-        {
-            return false;
-        }
-    }
 }
