@@ -21,7 +21,7 @@
 }
 
 .view-goals-dialog h3 {
-    font-size: 3vh;
+    font-size: 4vh;
     color: white;
     margin-bottom: 3vh;
     margin-top: 0vh;
@@ -57,4 +57,8 @@
     width: 100%;
     max-height: 400px;
     overflow-y: auto;
+}
+
+button {
+    margin-bottom: 0vh;
 }
