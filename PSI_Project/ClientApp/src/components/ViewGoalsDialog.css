@@ -59,6 +59,7 @@
     overflow-y: auto;
 }
 
-button {
+.cancel-button {
     margin-bottom: 0vh;
+    font-size: 1.3rem;
 }

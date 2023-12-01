@@ -60,7 +60,7 @@ export const ViewGoalsDialog = ({ show, onClose }) => {
                     </table>
                 </div>
                 {error && <div className="error-message">{error}</div>}
-                <button onClick={onClose}>Close</button>
+                <button className="cancel-button" onClick={onClose}>Close</button>
             </div>
         </div>
     );
