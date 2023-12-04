@@ -16,7 +16,7 @@ public class NoteController : ControllerBase
     private readonly ILogger<NoteController> _logger;
 
     public NoteController(ILogger<NoteController> logger, NoteRepository noteRepository,
-        NoteService noteService) // Dependency injection
+        NoteService noteService) 
     {
         _logger = logger;
         _noteService = noteService;
@@ -64,9 +64,8 @@ public class NoteController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Couldn't add note");
+            return StatusCode(500, "An error occured while creating new note");
         }
-
-        return StatusCode(500, "An error occured while creating new note");
     }
 
     [HttpPost("create-pdf")]

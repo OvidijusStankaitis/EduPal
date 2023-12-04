@@ -32,9 +32,14 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader());
 });
 
+builder.Services.AddScoped<AuditingInterceptor>();
+
 builder.Services.AddDbContext<EduPalDatabaseContext>(options =>
 {
     options.UseNpgsql(builder.Configuration["DatabaseConnectionString"]);
+    var serviceProvider = builder.Services.BuildServiceProvider();
+    var interceptor = serviceProvider.GetRequiredService<AuditingInterceptor>();
+    options.AddInterceptors(interceptor);
 });
 
 builder.Services.AddSignalR();

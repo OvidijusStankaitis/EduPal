@@ -6,7 +6,7 @@ using Xunit.Abstractions;
 
 namespace PSI_Project.Tests.IntegrationTests;
 
-public class UserControllerIntegrationTests : IDisposable
+public class UserControllerTests : IDisposable
 {
     private readonly HttpClient _client;
     private readonly TestingWebAppFactory _factory;
@@ -16,7 +16,7 @@ public class UserControllerIntegrationTests : IDisposable
     record UserControllerGetNameNotFoundResponse(string message);
     record UserControllerBadRequestResponse(bool success, string message);
     
-    public UserControllerIntegrationTests()
+    public UserControllerTests()
     {
         _factory = new TestingWebAppFactory();
         _client = _factory.CreateClient();

@@ -7,7 +7,7 @@ using PSI_Project.Repositories;
 
 namespace PSI_Project.Tests.UnitTests;
 
-public class CommentRepositoryUnitTestsMoq
+public class CommentRepositoryTests
 {
     [Fact]
     public async Task GetAllCommentsOfTopicAsync_GetsEmptyList_ReturnsEmptyList()
@@ -38,7 +38,7 @@ public class CommentRepositoryUnitTestsMoq
         var comment = new Comment(user.Id, topic.Id, "testComment");
         
         var mockDbContext = new Mock<EduPalDatabaseContext>();
-        var mockRepository = new Mock<CommentRepository>(mockDbContext.Object);
+        var mockRepository = new Mock<Repositories.CommentRepository>(mockDbContext.Object);
         
         mockRepository.Setup(repo => repo.FindAsync(It.IsAny<Expression<Func<Comment, bool>>>())).ReturnsAsync(new List<Comment>{comment});
         
@@ -62,7 +62,7 @@ public class CommentRepositoryUnitTestsMoq
         var comment2 = new Comment(user.Id, topic.Id, "testComment2");
         
         var mockDbContext = new Mock<EduPalDatabaseContext>();
-        var mockRepository = new Mock<CommentRepository>(mockDbContext.Object);
+        var mockRepository = new Mock<Repositories.CommentRepository>(mockDbContext.Object);
         
         mockRepository.Setup(repo => repo.FindAsync(It.IsAny<Expression<Func<Comment, bool>>>())).ReturnsAsync(new List<Comment>{comment1, comment2});
         
@@ -86,7 +86,7 @@ public class CommentRepositoryUnitTestsMoq
         var comment = new Comment(user.Id, topic.Id, "testComment");
 
         var mockDbContext = new Mock<EduPalDatabaseContext>();
-        var mockRepository = new Mock<CommentRepository>(mockDbContext.Object);
+        var mockRepository = new Mock<Repositories.CommentRepository>(mockDbContext.Object);
         
         mockRepository.Setup(repo => repo.GetAsync(comment.Id)).ReturnsAsync(comment);
         mockRepository.Setup(repo => repo.Remove(comment)).Returns(1);
@@ -109,7 +109,7 @@ public class CommentRepositoryUnitTestsMoq
         var comment = new Comment(user.Id, topic.Id, "nonexistentTestComment");
         
         var mockDbContext = new Mock<EduPalDatabaseContext>();
-        var mockRepository = new Mock<CommentRepository>(mockDbContext.Object);
+        var mockRepository = new Mock<Repositories.CommentRepository>(mockDbContext.Object);
         
         mockRepository.Setup(repo => repo.GetAsync(comment.Id)).ThrowsAsync(new ObjectNotFoundException());
 
@@ -127,7 +127,7 @@ public class CommentRepositoryUnitTestsMoq
     {
         // Arrange
         var mockDbContext = new Mock<EduPalDatabaseContext>();
-        var mockRepository = new Mock<CommentRepository>(mockDbContext.Object);
+        var mockRepository = new Mock<Repositories.CommentRepository>(mockDbContext.Object);
         
         mockRepository.Setup(repo => repo.FindAsync(It.IsAny<Expression<Func<Comment, bool>>>()))
             .ReturnsAsync(new List<Comment>());        
@@ -149,7 +149,7 @@ public class CommentRepositoryUnitTestsMoq
         var comment = new Comment(user.Id, topic.Id, "testComment");
         
         var mockDbContext = new Mock<EduPalDatabaseContext>();
-        var mockRepository = new Mock<CommentRepository>(mockDbContext.Object);
+        var mockRepository = new Mock<Repositories.CommentRepository>(mockDbContext.Object);
         
         mockRepository.Setup(repo => repo.FindAsync(It.IsAny<Expression<Func<Comment, bool>>>()))
             .ReturnsAsync(new List<Comment>{comment});        

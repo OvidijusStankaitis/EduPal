@@ -8,7 +8,7 @@ namespace PSI_Project.Services;
 
 public class NoteService
 {
-    public async Task<MemoryStream> CreatePdfAsync(Note note) // 7. Usage of async/await
+    public async Task<MemoryStream> CreatePdfAsync(Note note)
     {
         if (string.IsNullOrEmpty(note.Content))
         {
