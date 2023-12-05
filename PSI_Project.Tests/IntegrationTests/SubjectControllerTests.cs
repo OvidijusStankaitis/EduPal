@@ -6,12 +6,12 @@ using PSI_Project.Tests.IntegrationTests.Configuration;
 
 namespace PSI_Project.Tests.IntegrationTests;
 
-public class SubjectControllerIntegrationTests : IDisposable
+public class SubjectControllerTests : IDisposable
 {
     private readonly HttpClient _client;
     private readonly TestingWebAppFactory _factory;
     
-    public SubjectControllerIntegrationTests()
+    public SubjectControllerTests()
     {
         _factory = new TestingWebAppFactory();
         _client = _factory.CreateClient();

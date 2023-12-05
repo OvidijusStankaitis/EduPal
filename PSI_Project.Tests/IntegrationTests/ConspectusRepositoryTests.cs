@@ -6,12 +6,12 @@ using PSI_Project.Tests.IntegrationTests.Configuration;
 
 namespace PSI_Project.Tests.IntegrationTests;
 
-public class ConspectusRepositoryIntegrationTests : IDisposable
+public class ConspectusRepositoryTests : IDisposable
 {
     private readonly HttpClient _client;
     private readonly TestingWebAppFactory _factory;
     
-    public ConspectusRepositoryIntegrationTests()
+    public ConspectusRepositoryTests()
     {
         _factory = new TestingWebAppFactory();
         _client = _factory.CreateClient();

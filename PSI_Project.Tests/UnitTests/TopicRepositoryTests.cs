@@ -7,7 +7,7 @@ using PSI_Project.Repositories;
 
 namespace PSI_Project.Tests.UnitTests;
 
-public class TopicRepositoryUnitTestsMoq
+public class TopicRepositoryTests
 {
     [Fact]
     public async Task GetTopicsListBySubjectIdAsync_GetsListOfOneTopicsOfOneSubject_ReturnsListWithOneElements()

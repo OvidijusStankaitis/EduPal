@@ -8,7 +8,7 @@ using PSI_Project.Repositories;
 
 namespace PSI_Project.Tests.UnitTests;
 
-public class SubjectRepositoryUnitTestsMoq
+public class SubjectRepositoryTests
 {
     [Fact]
     public void GetSubjectsList_ReturnsListOfSubjects()

@@ -9,7 +9,7 @@ using PSI_Project.Repositories.For_tests;
 
 namespace PSI_Project.Tests.UnitTests;
 
-public class ConspectusRepositoryUnitTests
+public class ConspectusRepositoryTests
 {
     [Fact]
     public async Task GetConspectusListByTopicIdAsync_GetsExistingTopicWithTwoConspectuses_ReturnsListOfConspectuses()
