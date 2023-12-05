@@ -70,24 +70,34 @@ namespace PSI_Project.Services
             return _goalsRepository.GetAllGoalsWithDetailsForUser(userId);
         }
         
-
         public bool UpdateHoursStudied(string userId, string subjectId, double elapsedHours)
         {
             var todaysGoal = _goalsRepository.GetTodaysGoalForUser(userId);
-
             if (todaysGoal == null)
             {
-                return false;
+                return false; 
             }
-            var subjectGoal = todaysGoal.SubjectGoals.FirstOrDefault(sg => sg.Subject.Id == subjectId);
 
-            if (subjectGoal == null)
+            var subjectGoalToUpdate = todaysGoal.SubjectGoals.FirstOrDefault(sg => sg.Subject.Id == subjectId);
+            if (subjectGoalToUpdate == null)
             {
-                return false;
+                return false; 
             }
-            subjectGoal.ActualHoursStudied += elapsedHours;
-            
-            return _goalsRepository.UpdateItem(todaysGoal);
+    
+            // Update actual hours and ensure it does not exceed target hours
+            subjectGoalToUpdate.ActualHoursStudied = Math.Min(subjectGoalToUpdate.ActualHoursStudied + elapsedHours, subjectGoalToUpdate.TargetHours);
+
+            // Check and update the goal item
+            if (_goalsRepository.UpdateItem(todaysGoal))
+            {
+                var incompleteSubjectGoal = todaysGoal.SubjectGoals.FirstOrDefault(sg => sg.ActualHoursStudied < sg.TargetHours);
+            }
+            return true; 
+        }
+        
+        public SubjectGoal GetCurrentSubjectForUser(string userId)
+        {
+            return _goalsRepository.GetCurrentSubjectForUser(userId);
         }
     }
 }

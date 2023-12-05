@@ -3,7 +3,7 @@ import './ViewGoalsDialog.css';
 import { useUserContext } from "../UserContext"; // Update the path as necessary
 
 export const ViewGoalsDialog = ({ show, onClose }) => {
-    const { userId } = useUserContext();
+    const userId = localStorage.getItem('userId');
     const [goals, setGoals] = useState([]);
     const [error, setError] = useState('');
 
@@ -11,7 +11,7 @@ export const ViewGoalsDialog = ({ show, onClose }) => {
         const fetchGoals = async () => {
             if (show) {
                 try {
-                    const response = await fetch(`https://localhost:7283/goals/view-all/${userId}`);
+                    const response = await fetch(`https://localhost:7283/Goals/view-all/${userId}`);
                     if (!response.ok) {
                         throw new Error('Failed to fetch goals');
                     }

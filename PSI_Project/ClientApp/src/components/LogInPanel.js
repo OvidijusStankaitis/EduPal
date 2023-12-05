@@ -59,6 +59,7 @@ export const LogInPanel = () => {
         if (data.success) {
             localStorage.clear();
             setUserId(data.userId)
+            localStorage.setItem('userId', data.userId);
             setUserEmail(email); // Set the user's email directly in the parent component
             localStorage.setItem('userEmail', email);
             navigate(targetRoute);
@@ -82,6 +83,7 @@ export const LogInPanel = () => {
         if (data.success) {
             localStorage.clear();
             setUserId(data.userId);
+            localStorage.setItem('userId', data.userId);
             setUserEmail(email);
             localStorage.setItem('userEmail', email);
             navigate(targetRoute);

@@ -3,7 +3,7 @@ import './CreateGoalDialog.css';
 import { useUserContext } from "../UserContext"; // Assuming the UserContext is in the right path
 
 export const CreateGoalDialog = ({ show, onClose }) => {
-    const { userId } = useUserContext();
+    const userId = localStorage.getItem('userId');
     const [subjects, setSubjects] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
     const [checkedSubjects, setCheckedSubjects] = useState({});
@@ -13,7 +13,7 @@ export const CreateGoalDialog = ({ show, onClose }) => {
     useEffect(() => {
         const fetchSubjects = async () => {
             try {
-                const response = await fetch('https://localhost:7283/goals/subjects');
+                const response = await fetch('https://localhost:7283/Goals/subjects');
                 if (!response.ok) {
                     throw new Error('Failed to fetch subjects');
                 }
@@ -82,7 +82,6 @@ export const CreateGoalDialog = ({ show, onClose }) => {
                 setError(errorData.message || 'Failed to create goal. Please try again.');
                 return;
             }
-
             onClose();
             setCheckedSubjects({});
             setGoalTime('');
@@ -90,6 +89,7 @@ export const CreateGoalDialog = ({ show, onClose }) => {
             console.error('Error creating goal:', error);
             setError('Failed to create goal. Please try again.');
         }
+        window.location.reload();
     };
 
     if (!show) return null;

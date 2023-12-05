@@ -1,5 +1,4 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
-import ReactDOM from 'react-dom';
 import './UserComponent.css';
 import tomato from "../assets/tomato.webp";
 import gpt from "../assets/gpt.webp";
@@ -9,26 +8,37 @@ import { useUserContext } from '../UserContext';
 export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog, setShowCreateGoalDialog, setShowViewGoalsDialog }) => {
     const { userEmail, setUsername, username, setUserEmail } = useUserContext();
     const [remainingTime, setRemainingTime] = useState(0);
-    const [mode, setMode] = useState('study');
-    const [dropdownPosition, setDropdownPosition] = useState({});
+    const [setMode] = useState('study');
     const userIconRef = useRef(null);
     const [showDropdown, setShowDropdown] = useState(false);
     const toggleDropdown = () => setShowDropdown(prev => !prev);
     const userComponentRef = useRef(null);
+    const [currentSubjectId, setCurrentSubjectId] = useState('');
 
+    // Retrieve userId from localStorage directly
+    const userId = localStorage.getItem('userId');
+
+    useEffect(() => {
+        const fetchCurrentSubject = async () => {
+            if (userId) {
+                const response = await fetch(`https://localhost:7283/Goals/current-subject/${userId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setCurrentSubjectId(data.currentSubjectId);
+                }
+            }
+        };
+
+        fetchCurrentSubject();
+    }, [userId]);
 
     const fetchTimerState = async () => {
-        try {
-            const response = await fetch(`https://localhost:7283/Pomodoro/get-timer-state?userEmail=${encodeURIComponent(userEmail)}`);
-            if (response.ok) {
-                const data = await response.json();
-                const { remainingTime, mode } = data;
-                setRemainingTime(remainingTime);
-                console.log("Remaining time: ", remainingTime);
-                setMode(mode);
-            }
-        } catch (error) {
-            console.error("Error fetching timer state: ", error);
+        const response = await fetch(`https://localhost:7283/Pomodoro/get-timer-state?userEmail=${encodeURIComponent(userEmail)}`);
+        if (response.ok) {
+            const data = await response.json();
+            const { remainingTime, mode } = data;
+            setRemainingTime(remainingTime);
+            setMode(mode);
         }
     };
 
@@ -113,29 +123,6 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog, setS
         setShowDropdown(false);
     };
 
-    const updateDropdownPosition = () => {
-        if (userComponentRef.current) {
-            const rect = userComponentRef.current.getBoundingClientRect();
-            setDropdownPosition({
-                top: `${rect.bottom + window.scrollY}px`,
-                left: `${rect.left}px`,
-                width: `${rect.width}px`,
-                margin: `${rect.margin}px`
-            });
-        }
-    };
-
-    useEffect(() => {
-        updateDropdownPosition();
-        window.addEventListener('resize', updateDropdownPosition);
-        window.addEventListener('scroll', updateDropdownPosition, true);
-
-        return () => {
-            window.removeEventListener('resize', updateDropdownPosition);
-            window.removeEventListener('scroll', updateDropdownPosition, true);
-        };
-    }, []);
-
     useEffect(() => {
         const handleOutsideClick = (event) => {
             if (showDropdown && userIconRef.current && !userIconRef.current.contains(event.target)) {
@@ -150,8 +137,37 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog, setS
         };
     }, [showDropdown]);
 
+    const updateStudyTime = async () => {
+        if (!currentSubjectId) return;
+
+        try {
+            await fetch('https://localhost:7283/Goals/update-study-time', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    UserId: userId,
+                    SubjectId: currentSubjectId,
+                    ElapsedHours: 0.0167 // Equivalent to one minute
+                }),
+            });
+        } catch (error) {
+            console.error('Error updating study time:', error);
+        }
+    };
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            updateStudyTime();
+        }, 1000); // Update every minute
+
+        return () => clearInterval(intervalId);
+    }, [userId, currentSubjectId]);
+
+
     const dropdown = showDropdown ? (
-        <div className="user-dropdown" style={{ ...dropdownPosition, position: 'fixed', zIndex: 1000 }}>
+        <div className="user-dropdown">
             <div className="dropdown-item" onMouseDown={handleCreateGoal}>Create goal</div>
             <div className="dropdown-item" onMouseDown={handleViewGoals}>View goals</div>
         </div>
@@ -161,10 +177,7 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog, setS
         <div ref={userComponentRef} className="user-component" onMouseLeave={handleMouseLeave}>
             <span className="username">{username}</span>
             <img ref={userIconRef} src={user} alt="User" className="user-picture" onClick={toggleDropdown} />
-            {dropdown && ReactDOM.createPortal(
-                dropdown,
-                document.getElementById('portal-root')
-            )}
+            {dropdown}
             <span className="pomodoro-time">{formatTime(remainingTime)}</span>
             <img src={tomato} alt="Start Pomodoro" className="tomato" onClick={handleStartPomodoro} />
             <img src={gpt} alt="GPT Logo" className="gpt-logo" onClick={handleStartOpenAI}/>

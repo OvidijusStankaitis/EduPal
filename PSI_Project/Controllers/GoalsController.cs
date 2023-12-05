@@ -105,8 +105,23 @@ namespace PSI_Project.Controllers
             {
                 return Ok(new { success = true, message = "Hours updated successfully." });
             }
+            Console.WriteLine("Elapsed hours: " + request.ElapsedHours);
+            Console.WriteLine("Subject ID: " + request.SubjectId);
+            Console.WriteLine("User ID: " + request.UserId);
 
             return BadRequest(new { success = false, message = "Failed to update hours." });
+        }
+        
+        [HttpGet("current-subject/{userId}")]
+        public IActionResult GetCurrentSubject(string userId)
+        {
+            var currentSubject = _goalService.GetCurrentSubjectForUser(userId);
+            if (currentSubject == null)
+            {
+                return NotFound(new { success = false, message = "No current subject found." });
+            }
+
+            return Ok(new { success = true, currentSubjectId = currentSubject.SubjectId });
         }
     }
 }

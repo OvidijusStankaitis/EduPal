@@ -83,12 +83,35 @@ namespace PSI_Project.Repositories
             }
         }
         
-        public Goal? GetTodaysGoalForUser(string userId)
+        public Goal GetTodaysGoalForUser(string userId)
         {
-            DateTime utcNow = DateTime.UtcNow;
-            DateTime today = new DateTime(utcNow.Year, utcNow.Month, utcNow.Day, 0, 0, 0, DateTimeKind.Utc);
+            DateTime today = DateTime.UtcNow.Date;
             return EduPalContext.Goals
-                .FirstOrDefault(g => g.UserId == userId && g.GoalDate >= today && g.GoalDate < today.AddDays(1));
+                .Include(g => g.SubjectGoals)
+                .ThenInclude(sg => sg.Subject)
+                .FirstOrDefault(g => g.UserId == userId && g.GoalDate.Date == today);
+        }
+        
+        public SubjectGoal GetCurrentSubjectForUser(string userId)
+        {
+            var goals = EduPalContext.Goals
+                .Include(g => g.SubjectGoals)
+                .ThenInclude(sg => sg.Subject)
+                .Where(g => g.UserId == userId)
+                .ToList();
+
+            foreach (var goal in goals)
+            {
+                foreach (var subjectGoal in goal.SubjectGoals)
+                {
+                    if (subjectGoal.TargetHours > subjectGoal.ActualHoursStudied)
+                    {
+                        return subjectGoal; // Returns the first subject goal meeting the criteria
+                    }
+                }
+            }
+
+            return null; // No current subject found
         }
     }
 }
