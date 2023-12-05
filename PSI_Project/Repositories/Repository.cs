@@ -15,7 +15,7 @@ public class Repository<TEntity> where TEntity : BaseEntity
         Context = context;
     }
     
-    public virtual async Task<TEntity?> GetAsync(object id)
+    public virtual async Task<TEntity> GetAsync(object id)
     {
         TEntity? item = await Context.Set<TEntity>().FindAsync(id);
         if (item == null)

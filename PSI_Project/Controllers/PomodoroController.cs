@@ -24,9 +24,9 @@ public class PomodoroController : ControllerBase
     
     [Authorize]
     [HttpPost("start-timer")]
-    public IActionResult StartTimer([FromBody] StartTimerRequest request)
+    public async Task<ActionResult> StartTimer([FromBody] StartTimerRequest request)
     {
-        User user = _userAuthService.GetUser(HttpContext)!;
+        User? user = await _userAuthService.GetUser(HttpContext);
         _logger.LogInformation($"Starting timer for {user.Id} with intensity {request.Intensity}");
         _pomodoroService.StartTimer(user.Id, request.Intensity);
         return Ok();
@@ -34,9 +34,9 @@ public class PomodoroController : ControllerBase
     
     [Authorize]
     [HttpGet("stop-timer")]
-    public IActionResult StopTimer()
+    public async Task<ActionResult> StopTimer()
     {
-        User user = _userAuthService.GetUser(HttpContext)!;
+        User? user = await _userAuthService.GetUser(HttpContext)!;
         _pomodoroService.StopTimer(user.Id);
         
         _logger.LogInformation($"Stopping timer for {user!.Id}");
@@ -46,9 +46,9 @@ public class PomodoroController : ControllerBase
 
     [Authorize]
     [HttpGet("get-timer-state")]
-    public ActionResult GetTimerState()
+    public async Task<ActionResult> GetTimerState()
     {
-        User user = _userAuthService.GetUser(HttpContext)!;
+        User? user = await _userAuthService.GetUser(HttpContext)!;
         _logger.LogInformation($"Getting timer state for {user.Id}");
         var state = _pomodoroService.GetTimerState(user.Id);
         _logger.LogInformation($"Timer state for {user.Id}: {state}");

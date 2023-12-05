@@ -29,7 +29,7 @@ namespace PSI_Project.Controllers
         {
             try
             {
-                User user = _userAuthService.GetUser(HttpContext)!;
+                User user = await _userAuthService.GetUser(HttpContext)!;
                 List<CommentDTO> comments = _chatService.GetMessagesForUser(user, topicId).ToList();
                 return Ok(comments);
             }

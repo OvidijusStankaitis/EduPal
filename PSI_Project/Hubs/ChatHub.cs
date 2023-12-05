@@ -22,7 +22,7 @@ public class ChatHub : Hub
         try
         {
             HttpContext? context = Context.GetHttpContext();
-            User? user = _userAuthService.GetUser(context!);            
+            User? user = await _userAuthService.GetUser(context!);            
             Comment? addedComment = _chatService.SaveSentMessage(user!.Id, topicId, message);
             await Clients.OthersInGroup(addedComment!.TopicId).SendAsync("ReceiveMessage", addedComment.Id, addedComment.Content, addedComment.Timestamp, false);
             await Clients.Client(Context.ConnectionId).SendAsync("ReceiveMessage", addedComment.Id, addedComment.Content,addedComment.Timestamp, true);
@@ -37,7 +37,7 @@ public class ChatHub : Hub
     {
         try
         {
-            Comment deletedMessage = _chatService.DeleteMessage(messageId);
+            Comment deletedMessage = await _chatService.DeleteMessage(messageId);
             await Clients.Group(deletedMessage.TopicId).SendAsync("DeleteMessage", deletedMessage.Id);
         }
         catch (Exception ex)

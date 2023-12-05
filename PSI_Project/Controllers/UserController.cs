@@ -92,7 +92,7 @@ public class UserController : ControllerBase
     {
         try
         {
-            User? user = _userAuthService.GetUser(HttpContext);
+            User? user = await _userAuthService.GetUser(HttpContext);
             return Ok(new { message = "User was successfully found", user?.Name });
         }
         catch (Exception ex)
