@@ -14,7 +14,6 @@ namespace PSI_Project.Repositories
 
         public List<Subject> GetSubjectsList()
         {
-            //return await EduPalContext.Subjects.ToListAsync(); //need to be changed for tests
             return GetAll().ToList();
         }
 
@@ -25,7 +24,6 @@ namespace PSI_Project.Repositories
 
             Subject newSubject = new Subject(subjectName);
             int changes = Add(newSubject);
-            //int changes = await EduPalContext.SaveChangesAsync();
 
             return changes > 0 ? newSubject : null;
         }
@@ -34,7 +32,6 @@ namespace PSI_Project.Repositories
         {
             Subject subject = await GetAsync(subjectId);
             int changes = Remove(subject);
-            //int changes = await EduPalContext.SaveChangesAsync();
           
             return changes > 0;
         }
