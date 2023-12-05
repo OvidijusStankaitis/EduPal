@@ -33,7 +33,7 @@ public class PomodoroController : ControllerBase
     }
     
     [Authorize]
-    [HttpPost("stop-timer")]
+    [HttpGet("stop-timer")]
     public IActionResult StopTimer()
     {
         User user = _userAuthService.GetUser(HttpContext)!;
