@@ -4,6 +4,8 @@ using PSI_Project.Models;
 using PSI_Project.Requests;
 using PSI_Project.Services;
 
+namespace PSI_Project.Controllers;
+
 [ApiController]
 [Route("[controller]")]
 public class PomodoroController : ControllerBase

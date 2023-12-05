@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PSI_Project.Data;
 using PSI_Project.Models;
 
-namespace PSI_Project.Tests.IntegrationTests;
+namespace PSI_Project.Tests.IntegrationTests.Configuration;
 
 internal class TestingWebAppFactory : WebApplicationFactory<Program>
 {
@@ -13,6 +13,12 @@ internal class TestingWebAppFactory : WebApplicationFactory<Program>
     {
         builder.ConfigureServices(services =>
         {
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = "TestScheme";
+                options.DefaultChallengeScheme = "TestScheme";
+            }).AddScheme<TestAuthOptions, TestAuthHandler>("TestScheme", options => { });
+            
             var descriptor = services.SingleOrDefault(
                 d => d.ServiceType ==
                      typeof(DbContextOptions<EduPalDatabaseContext>));

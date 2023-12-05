@@ -2,6 +2,7 @@
 using System.Net.Http.Json;
 using Newtonsoft.Json;
 using PSI_Project.Models;
+using PSI_Project.Tests.IntegrationTests.Configuration;
 
 namespace PSI_Project.Tests.IntegrationTests;
 
