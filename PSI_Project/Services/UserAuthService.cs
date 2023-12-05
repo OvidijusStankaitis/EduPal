@@ -8,7 +8,7 @@ using PSI_Project.Repositories;
 
 namespace PSI_Project.Services;
 
-public class UserAuthService
+public class UserAuthService : IUserAuthService
 {
     private readonly IConfiguration _config;
     private readonly UserRepository _userRepository;

@@ -11,11 +11,11 @@ namespace PSI_Project.Controllers;
 public class PomodoroController : ControllerBase
 {
     private readonly PomodoroService _pomodoroService;
-    private readonly UserAuthService _userAuthService;
+    private readonly IUserAuthService _userAuthService;
     
     private readonly ILogger<PomodoroController> _logger;
 
-    public PomodoroController(PomodoroService pomodoroService, UserAuthService userAuthService, ILogger<PomodoroController> logger)
+    public PomodoroController(PomodoroService pomodoroService, IUserAuthService userAuthService, ILogger<PomodoroController> logger)
     {
         _pomodoroService = pomodoroService;
         _userAuthService = userAuthService;

@@ -75,7 +75,7 @@ builder.Services.AddTransient<OpenAIService>();
 builder.Services.AddTransient<NoteService>();
 builder.Services.AddTransient<ChatService>();
 builder.Services.AddTransient<ConspectusService>();
-builder.Services.AddTransient<UserAuthService>();
+builder.Services.AddTransient<IUserAuthService, UserAuthService>();
 builder.Services.AddSingleton<PomodoroService>();
 
 // repositories dependency injections
