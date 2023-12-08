@@ -20,9 +20,9 @@ public class PomodoroService
         }
     }
 
-    public void StopTimer(string userEmail)
+    public void StopTimer(string userId)
     {
-        if (_sessions.TryGetValue(userEmail, out var session))
+        if (_sessions.TryGetValue(userId, out var session))
         {
             session.Stop();
         }

@@ -6,6 +6,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using PSI_Project.Hubs;
+using PSI_Project.Repositories.For_tests;
 using Serilog;
 
 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -55,7 +56,7 @@ builder.Services
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtKey"] ?? String.Empty))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? String.Empty)),
         };
 
         options.Events = new JwtBearerEvents
@@ -74,7 +75,7 @@ builder.Services.AddTransient<OpenAIService>();
 builder.Services.AddTransient<NoteService>();
 builder.Services.AddTransient<ChatService>();
 builder.Services.AddTransient<ConspectusService>();
-builder.Services.AddTransient<UserAuthService>();
+builder.Services.AddTransient<IUserAuthService, UserAuthService>();
 builder.Services.AddSingleton<PomodoroService>();
 
 // repositories dependency injections
@@ -86,6 +87,8 @@ builder.Services.AddTransient<ConspectusRepository>();
 builder.Services.AddTransient<CommentRepository>();
 builder.Services.AddTransient<OpenAIRepository>();
 builder.Services.AddTransient<NoteRepository>();
+
+builder.Services.AddTransient<IFileOperations, FileOperations>(); // for tests
 
 var app = builder.Build();
 

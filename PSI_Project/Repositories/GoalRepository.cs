@@ -18,7 +18,6 @@ namespace PSI_Project.Repositories
                 // var goalString = ItemToDbString(goal);
                 // File.AppendAllText(DbFilePath, goalString + Environment.NewLine);
                 int changes = Add(goal);
-                //int changes = EduPalContext.SaveChanges();
 
                 return changes > 0;
             }
@@ -60,8 +59,6 @@ namespace PSI_Project.Repositories
         {
             DateTime today = DateTime.Now.Date;
             return Find(g => g.User.Id == userId && g.GoalDate == today).FirstOrDefault();
-            /*var goals = await FindAsync(g => g.User.Id == userId && g.GoalDate == today);
-            return goals.FirstOrDefault();*/
         }
 
         // Given a user ID, retrieve all goals for that user.

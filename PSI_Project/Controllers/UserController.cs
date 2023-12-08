@@ -13,10 +13,10 @@ public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
     
-    private readonly UserAuthService _userAuthService;
+    private readonly IUserAuthService _userAuthService;
     private readonly UserRepository _userRepository;
 
-    public UserController(ILogger<UserController> logger, UserAuthService userAuthService, UserRepository userRepository)
+    public UserController(ILogger<UserController> logger, IUserAuthService userAuthService, UserRepository userRepository)
     {
         _logger = logger;
         
@@ -92,7 +92,7 @@ public class UserController : ControllerBase
     {
         try
         {
-            User? user = _userAuthService.GetUser(HttpContext);
+            User? user = await _userAuthService.GetUser(HttpContext);
             return Ok(new { message = "User was successfully found", user?.Name });
         }
         catch (Exception ex)

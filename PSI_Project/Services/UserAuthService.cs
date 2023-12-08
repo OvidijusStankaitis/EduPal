@@ -8,7 +8,7 @@ using PSI_Project.Repositories;
 
 namespace PSI_Project.Services;
 
-public class UserAuthService
+public class UserAuthService : IUserAuthService
 {
     private readonly IConfiguration _config;
     private readonly UserRepository _userRepository;
@@ -27,7 +27,7 @@ public class UserAuthService
 
     public string GenerateToken(User user)
     {
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtKey"] ?? String.Empty));
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"] ?? String.Empty));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
@@ -46,20 +46,15 @@ public class UserAuthService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
     
-    public User? GetUser(HttpContext context)
+    public async Task<User?> GetUser(HttpContext context)
     {
         var identity = context.User.Identity as ClaimsIdentity;
 
-        if (identity != null)
-        {
-            var userClaims = identity.Claims;
-            var userId = userClaims
-                .FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?
-                .Value;
-            
-            return _userRepository.Get(userId);
-        }
-
-        return null;
+        var userClaims = identity!.Claims;
+        string? userId = userClaims
+            .FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?
+            .Value;
+        
+        return await _userRepository.GetAsync(userId!);
     }
 }

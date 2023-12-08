@@ -31,7 +31,7 @@ export const PomodoroDialog = ({ show, onClose, }) => {
     const stopTimer = async () => {
         try {
             const response = await fetch('https://localhost:7283/Pomodoro/stop-timer', {
-                method: 'POST',
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
                 },

@@ -4,16 +4,18 @@ using PSI_Project.Models;
 using PSI_Project.Requests;
 using PSI_Project.Services;
 
+namespace PSI_Project.Controllers;
+
 [ApiController]
 [Route("[controller]")]
 public class PomodoroController : ControllerBase
 {
     private readonly PomodoroService _pomodoroService;
-    private readonly UserAuthService _userAuthService;
+    private readonly IUserAuthService _userAuthService;
     
     private readonly ILogger<PomodoroController> _logger;
 
-    public PomodoroController(PomodoroService pomodoroService, UserAuthService userAuthService, ILogger<PomodoroController> logger)
+    public PomodoroController(PomodoroService pomodoroService, IUserAuthService userAuthService, ILogger<PomodoroController> logger)
     {
         _pomodoroService = pomodoroService;
         _userAuthService = userAuthService;
@@ -22,42 +24,63 @@ public class PomodoroController : ControllerBase
     
     [Authorize]
     [HttpPost("start-timer")]
-    public IActionResult StartTimer([FromBody] StartTimerRequest request)
+    public async Task<ActionResult> StartTimer([FromBody] StartTimerRequest request)
     {
-        User user = _userAuthService.GetUser(HttpContext)!;
-        _logger.LogInformation($"Starting timer for {user.Id} with intensity {request.Intensity}");
-        _pomodoroService.StartTimer(user.Id, request.Intensity);
-        return Ok();
+        try
+        {
+            User? user = await _userAuthService.GetUser(HttpContext);
+            _pomodoroService.StartTimer(user!.Id, request.Intensity);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Couldn't start timer pomodoro timer");
+        }
+
+        return BadRequest("An error occured while starting pomodoro timer");
     }
     
     [Authorize]
-    [HttpPost("stop-timer")]
-    public IActionResult StopTimer()
+    [HttpGet("stop-timer")]
+    public async Task<ActionResult> StopTimer()
     {
-        User user = _userAuthService.GetUser(HttpContext)!;
-        _pomodoroService.StopTimer(user.Id);
-        
-        _logger.LogInformation($"Stopping timer for {user!.Id}");
-        
-        return Ok();
+        try
+        {
+            User? user = await _userAuthService.GetUser(HttpContext)!;
+            _pomodoroService.StopTimer(user!.Id);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Couldn't stop timer pomodoro timer");
+        }
+
+        return BadRequest("An error occured while starting pomodoro timer");
     }
 
     [Authorize]
     [HttpGet("get-timer-state")]
-    public ActionResult GetTimerState()
+    public async Task<ActionResult> GetTimerState()
     {
-        User user = _userAuthService.GetUser(HttpContext)!;
-        _logger.LogInformation($"Getting timer state for {user.Id}");
-        var state = _pomodoroService.GetTimerState(user.Id);
-        _logger.LogInformation($"Timer state for {user.Id}: {state}");
-
-        var response = new 
+        try
         {
-            state.RemainingTime,
-            state.Mode,
-            state.IsActive
-        };
+            User? user = await _userAuthService.GetUser(HttpContext);
+            var state = _pomodoroService.GetTimerState(user!.Id);
 
-        return Ok(response);
+            var response = new 
+            {
+                state.RemainingTime,
+                state.Mode,
+                state.IsActive
+            };
+
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Couldn't get pomodoro timer state.");
+        }
+        
+        return BadRequest("An error occured while getting pomodoro timer state");
     }
 }
