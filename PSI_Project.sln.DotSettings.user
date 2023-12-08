@@ -1,19 +1,22 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/Environment/Highlighting/HighlightingSourceSnapshotLocation/@EntryValue">C:\Users\rinkg\AppData\Local\JetBrains\Rider2023.2\resharper-host\temp\Rider\vAny\CoverageData\_PSI_Project.1933323464\Snapshot\snapshot.utdcvr</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=3682265c_002Df587_002D4e44_002Dbd6d_002D14fb08485b0e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="GetCommentsForUser_TopicDoesNotHaveComments_ReturnsEmptyList" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8790b048_002Dcf00_002D4f8a_002Dabdd_002Daa8eb2e9f3ca/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetTopicFilesAsync_GetsValidTopicId_ReturnsOkAndListOfConspectuses" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::F8EDDA8E-5E63-485F-A828-E2DF73A2C380::net7.0::PSI_Project.Tests.IntegrationTests.ConspectusRepositoryTests.GetTopicFilesAsync_GetsValidTopicId_ReturnsOkAndListOfConspectuses&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=dc1c0a37_002Dc037_002D4cfa_002Dad27_002D7e0d9f410ab8/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="StartTimer_GivenValidRequest_ReturnsOk" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="C:\Users\rinkg\Desktop\university-software-engineering\PSI_Project.Tests" Presentation="&amp;lt;PSI_Project.Tests&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=82a91447_002D7c54_002D404c_002Da7ef_002Dcce1bfec5d4e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;Solution /&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b3dc06ca_002De1f0_002D411f_002Da841_002Dd1feace43089/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CreateAsync_UserWithSuchEmailExists_ReturnsNull" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;Or&gt;&#xD;
-    &lt;ProjectFolder&gt;F8EDDA8E-5E63-485F-A828-E2DF73A2C380/d:IntegrationTests&lt;/ProjectFolder&gt;&#xD;
-    &lt;ProjectFolder&gt;F8EDDA8E-5E63-485F-A828-E2DF73A2C380/d:UnitTests&lt;/ProjectFolder&gt;&#xD;
-  &lt;/Or&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ce80a030_002D50a0_002D44e3_002D8519_002D3ec7d2de4c8c/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;Solution /&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	</wpf:ResourceDictionary>

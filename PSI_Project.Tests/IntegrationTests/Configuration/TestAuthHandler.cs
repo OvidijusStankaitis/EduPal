@@ -1,30 +1,45 @@
 ﻿using System.Security.Claims;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using PSI_Project.Services;
+using ILoggerFactory = Microsoft.Extensions.Logging.ILoggerFactory;
 
 namespace PSI_Project.Tests.IntegrationTests.Configuration;
 
-public class TestAuthHandler : AuthenticationHandler<TestAuthOptions>
+public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
-    
-    public TestAuthHandler(IOptionsMonitor<TestAuthOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock) : base(options, logger, encoder, clock)
+    private readonly IUserAuthService _userAuthService;
+
+    public TestAuthHandler(
+        IOptionsMonitor<AuthenticationSchemeOptions> options,
+        ILoggerFactory logger,
+        UrlEncoder encoder,
+        ISystemClock clock,
+        IUserAuthService userAuthService)
+        : base(options, logger, encoder, clock)
     {
+        _userAuthService = userAuthService;
     }
 
-    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+    protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        var identity = new ClaimsIdentity(new List<Claim>
+        var user = await _userAuthService.GetUser(Context);
+
+        if (user != null)
         {
-            new Claim(ClaimTypes.Name, "TestUser"),
-        }, "TestScheme");
+            var claims = new List<Claim>
+            {
+                new (ClaimTypes.NameIdentifier, user.Id),
+            };
 
-        var principal = new ClaimsPrincipal(identity);
-        var ticket = new AuthenticationTicket(principal, "TestScheme");
+            var identity = new ClaimsIdentity(claims, "TestScheme");
+            var principal = new ClaimsPrincipal(identity);
+            var ticket = new AuthenticationTicket(principal, "TestScheme");
 
-        var result = AuthenticateResult.Success(ticket);
-
-        return Task.FromResult(result);
+            return AuthenticateResult.Success(ticket);
+        }
+        
+        return AuthenticateResult.NoResult();
     }
 }
