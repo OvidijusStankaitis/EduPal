@@ -6,11 +6,11 @@ namespace PSI_Project.Hubs;
 
 public class ChatHub : Hub
 {
-    private readonly UserAuthService _userAuthService;
+    private readonly IUserAuthService _userAuthService;
     private readonly ChatService _chatService;
     private readonly ILogger<ChatHub> _logger;
     
-    public ChatHub(ChatService chatService, UserAuthService userAuthService, ILogger<ChatHub> logger)
+    public ChatHub(ChatService chatService, IUserAuthService userAuthService, ILogger<ChatHub> logger)
     {
         _userAuthService = userAuthService;
         _chatService = chatService;
