@@ -65,26 +65,6 @@ public class ConspectusRepositoryTests : IDisposable
 
     }
     
-    /*[Fact]
-    public async Task GetConspectusAsync_GetsValidConspectusId_ReturnsOk()
-    {
-        // Arrange
-        var responseForSubjects = await _client.GetAsync("/subject/list");
-        var listOfSubjects = JsonConvert.DeserializeObject<IEnumerable<Subject>>(await responseForSubjects.Content.ReadAsStringAsync()); 
-        var responseForTopics = await _client.GetAsync($"/topic/list/{listOfSubjects?.ToList()[2].Id}");
-        var listOfTopics = JsonConvert.DeserializeObject<IEnumerable<Topic>>(await responseForTopics.Content.ReadAsStringAsync());
-        var responseForConspectuses = await _client.GetAsync($"/conspectus/list/{listOfTopics?.ToList()[0].Id}");
-        var listOfConspectuses = JsonConvert.DeserializeObject<IEnumerable<Conspectus>>(await responseForConspectuses.Content.ReadAsStringAsync());
-        
-        // Act
-        var response = await _client.GetAsync($"/conspectus/get/{listOfConspectuses?.ToList()[0].Id}");
-        var responseString = await response.Content.ReadAsStringAsync();
-    
-        // Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        // more asserts should be added 
-    }*/
-    
     [Fact]
     public async Task RateConspectusUpAsync_GetsValidConspectusId_ReturnsOkAndUpdatedConspectus()
     {
