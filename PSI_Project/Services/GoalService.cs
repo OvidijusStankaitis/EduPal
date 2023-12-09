@@ -1,5 +1,7 @@
 ﻿using PSI_Project.Repositories;
 using PSI_Project.Models;
+using System.Linq;
+using PSI_Project.DTO;
 
 namespace PSI_Project.Services
 {
@@ -10,47 +12,86 @@ namespace PSI_Project.Services
         {
             _goalsRepository = goalsRepository;
         }
-        public bool AddGoal(Goal goal)
+        
+        public bool CanCreateNewGoal(string userId)
         {
-            var todaysGoal = _goalsRepository.GetTodaysGoalForUser(goal.User.Id);
-            if (todaysGoal != null)
+            var goals = _goalsRepository.GetAllGoalsForUser(userId);
+
+            // If there are no goals, then we can create a new one
+            if (!goals.Any())
             {
-                // A goal for today already exists for this user (only 1 daily goal allowed)
+                return true;
+            }
+
+            // If there are goals, check if all subject goals are completed
+            foreach (var goal in goals)
+            {
+                foreach (var subjectGoal in goal.SubjectGoals)
+                {
+                    if (subjectGoal.ActualHoursStudied < subjectGoal.TargetHours)
+                    {
+                        // Found a subject goal that is not complete
+                        return false;
+                    }
+                }
+            }
+
+            // All goals and their subject goals are complete
+            return true;
+        }
+        
+        public bool AddGoal(Goal goal, List<string> subjectIds)
+        {
+            // Check if the user is allowed to create a new goal
+            if (!CanCreateNewGoal(goal.UserId))
+            {
+                // User cannot create a new goal
                 return false;
             }
-            return _goalsRepository.InsertItem(goal);
-        }
-        public Goal? GetTodaysGoalForUser(string userId)
-        {
-            return _goalsRepository.GetTodaysGoalForUser(userId);
-        }
-        public List<Goal> GetAllGoalsForUser(string userId)
-        {
-            return _goalsRepository.GetAllGoalsForUser(userId);
-        }
-
-        // TODO: All the time time tracking logic for subjects will go here, thus we need to service layer for the business logic
-
-        public bool UpdateHoursStudied(string userId, string subjectId, double elapsedHours)
-        {
-            var todaysGoal = _goalsRepository.GetTodaysGoalForUser(userId);
-
-            if (todaysGoal == null)
+            
+            // Check if at least one subject is selected
+            if (subjectIds == null || !subjectIds.Any())
             {
-                return false; // No goal for today.
+                // No subjects selected
+                return false;
             }
             
-            // Lambda expressions usage
-            var subjectGoal = todaysGoal.SubjectGoals.FirstOrDefault(sg => sg.Subject.Id == subjectId);
-
-            if (subjectGoal == null)
+            // Add the goal to the database
+            return _goalsRepository.AddGoal(goal);
+        }
+        
+        public bool AddSubjectGoal(SubjectGoal subjectGoal)
+        {
+            return _goalsRepository.AddSubjectGoal(subjectGoal);
+        }
+        
+        public List<GoalDetailDto> GetAllGoalsForUserWithDetails(string userId)
+        {
+            return _goalsRepository.GetAllGoalsWithDetailsForUser(userId);
+        }
+        
+        public bool UpdateHoursStudied(string userId, string subjectId, double elapsedHours)
+        {
+            var activeGoal = _goalsRepository.GetCurrentGoalForUser(userId);
+            if (activeGoal == null)
             {
-                return false; // The subject isn't in today's goal.
+                return false;
             }
 
-            subjectGoal.ActualHoursStudied += elapsedHours;
+            var subjectGoalToUpdate = activeGoal.SubjectGoals.FirstOrDefault(sg => sg.Subject.Id == subjectId);
+            if (subjectGoalToUpdate == null)
+            {
+                return false;
+            }
 
-            return _goalsRepository.UpdateItem(todaysGoal);
+            // Update actual hours and ensure it does not exceed target hours
+            subjectGoalToUpdate.ActualHoursStudied = Math.Min(subjectGoalToUpdate.ActualHoursStudied + elapsedHours, subjectGoalToUpdate.TargetHours);
+            return _goalsRepository.UpdateItem(activeGoal);
+        }
+        
+        public SubjectGoal GetCurrentSubjectForUser(string userId)
+        {
+            return _goalsRepository.GetCurrentSubjectForUser(userId);
         }
     }
 }

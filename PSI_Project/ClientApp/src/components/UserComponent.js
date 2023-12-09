@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import './UserComponent.css';
 import tomato from "../assets/tomato.webp";
 import gpt from "../assets/gpt.webp";
@@ -6,12 +6,34 @@ import user from "../assets/user.webp";
 import {setUserName, useUserContext} from '../contexts/UserContext';
 import { useNavigate, useLocation} from "react-router-dom";
 
-export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) => {
+export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog, setShowCreateGoalDialog, setShowViewGoalsDialog }) => {
     const { setUserName, userName } = useUserContext();
     const [remainingTime, setRemainingTime] = useState(0);
     const [mode, setMode] = useState('study');
     const navigate = useNavigate();
     const location = useLocation();
+    const userIconRef = useRef(null);
+    const [showDropdown, setShowDropdown] = useState(false);
+    const toggleDropdown = () => setShowDropdown(prev => !prev);
+    const userComponentRef = useRef(null);
+    const [currentSubjectId, setCurrentSubjectId] = useState('');
+
+    // Retrieve userId from localStorage directly
+    const userId = localStorage.getItem('userId');
+
+    useEffect(() => {
+        const fetchCurrentSubject = async () => {
+            if (userId) {
+                const response = await fetch(`https://localhost:7283/Goals/current-subject/${userId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setCurrentSubjectId(data.currentSubjectId);
+                }
+            }
+        };
+
+        fetchCurrentSubject();
+    }, [userId]);
 
     const fetchTimerState = async () => {
         try {
@@ -95,7 +117,6 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) =>
 
     const formatTime = (time) => {
         if (typeof time !== 'number' || isNaN(time)) {
-            // Return a default or placeholder value if time is not a number
             return "00:00";
         }
 
@@ -106,10 +127,75 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog }) =>
         return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     };
 
+    const handleMouseLeave = () => {
+        setShowDropdown(false);
+    };
+
+    const handleCreateGoal = () => {
+        setShowCreateGoalDialog(true);
+        setShowDropdown(false);
+    };
+
+    const handleViewGoals = () => {
+        setShowViewGoalsDialog(true);
+        setShowDropdown(false);
+    };
+
+    useEffect(() => {
+        const handleOutsideClick = (event) => {
+            if (showDropdown && userIconRef.current && !userIconRef.current.contains(event.target)) {
+                setShowDropdown(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleOutsideClick);
+
+        return () => {
+            document.removeEventListener('mousedown', handleOutsideClick);
+        };
+    }, [showDropdown]);
+
+    const updateStudyTime = async () => {
+        if (!currentSubjectId) return;
+
+        try {
+            await fetch('https://localhost:7283/Goals/update-study-time', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    UserId: userId,
+                    SubjectId: currentSubjectId,
+                    ElapsedHours: 0.0167 // Equivalent to one minute
+                }),
+            });
+        } catch (error) {
+            console.error('Error updating study time:', error);
+        }
+    };
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            updateStudyTime();
+        }, 1000); // Update every minute
+
+        return () => clearInterval(intervalId);
+    }, [userId, currentSubjectId]);
+
+
+    const dropdown = showDropdown ? (
+        <div className="user-dropdown">
+            <div className="dropdown-item" onMouseDown={handleCreateGoal}>Create goal</div>
+            <div className="dropdown-item" onMouseDown={handleViewGoals}>View goals</div>
+        </div>
+    ) : null;
+
     return (
-        <div className="user-component">
+        <div ref={userComponentRef} className="user-component" onMouseLeave={handleMouseLeave}>
             <span className="username">{userName}</span>
-            <img src={user} alt="User" className="user-picture" />
+            <img ref={userIconRef} src={user} alt="User" className="user-picture" onClick={toggleDropdown} />
+            {dropdown}
             <span className="pomodoro-time">{formatTime(remainingTime)}</span>
             <img src={tomato} alt="Start Pomodoro" className="tomato" onClick={handleStartPomodoro} />
             <img src={gpt} alt="GPT Logo" className="gpt-logo" onClick={handleStartOpenAI}/>

@@ -10,12 +10,17 @@ public class EduPalDatabaseContext : DbContext
     public DbSet<Conspectus> Conspectuses { get; set; }
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Goal> Goals { get; set; }
+
+    public DbSet<SubjectGoal> SubjectGoal { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Note> Notes { get; set; }
     
     public EduPalDatabaseContext(DbContextOptions options) : base(options)
-    { }
+    {
+    }
+
     public EduPalDatabaseContext()
-    { }
+    {
+    }
 }

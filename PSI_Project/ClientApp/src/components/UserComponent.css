@@ -8,6 +8,7 @@
     background: radial-gradient(circle at center, rgba(45, 45, 90, 0.95) 0%, rgba(30, 30, 60, 0.95) 70%, rgba(15, 15, 30, 0.95) 100%); /* Adjusted background to match space theme */
     transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s; /* Added transitions */
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Added shadow for depth */
+    z-index: 9999;
 }
 
 .user-component:hover {
@@ -47,4 +48,29 @@
     font-size: 1.2em;
     margin-right: 1rem;
     color: #E0E0FF; /* Text color from the space theme */
+}
+
+.user-dropdown {
+    position: absolute;
+    top: 4.1rem;
+    width: 16vw;
+    border: 0.1rem solid rgba(58, 58, 128, 0.8); /* Adjusted border color to match the scheme */
+    border-radius: 0.5rem;
+    background: radial-gradient(circle at center, rgba(45, 45, 90, 0.95) 0%, rgba(30, 30, 60, 0.95) 70%, rgba(15, 15, 30, 0.95) 100%); /* Adjusted background to match space theme */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+}
+
+.dropdown-item {
+    padding: 0.5rem 1rem;
+    color: #E0E0FF;
+    cursor: pointer;
+    text-align: center;
+    white-space: nowrap;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s; /* Added transitions */
+}
+
+.dropdown-item:hover {
+    border-radius: 0.5rem;
+    background-color: rgba(15, 15, 30); /* Darker shade on hover */
 }

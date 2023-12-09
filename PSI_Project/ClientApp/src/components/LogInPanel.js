@@ -108,7 +108,6 @@ export const LogInPanel = () => {
         setShowDialog(true);
     };
 
-
     return (
         <div className="container">
             <h1 className="edu">EduPal</h1>

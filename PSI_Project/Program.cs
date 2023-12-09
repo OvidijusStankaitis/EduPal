@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using PSI_Project.Data;
 using PSI_Project.Repositories;
 using PSI_Project.Services;
+using PSI_Project.Middleware;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -97,6 +98,7 @@ builder.Services.AddTransient<NoteRepository>();
 builder.Services.AddTransient<IFileOperations, FileOperations>(); // for tests
 
 var app = builder.Build();
+app.UseErrorHandlingMiddleware();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

@@ -1,0 +1,123 @@
+﻿.create-goal-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle at center, rgba(45, 45, 90, 0.95) 0%, rgba(30, 30, 60, 0.95) 70%, rgba(15, 15, 30, 0.95) 100%);
+    padding: 5vh;
+    border-radius: 1vw;
+    box-shadow: 0 0.5vw 2vw rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    width: 80%;
+    max-width: 600px;
+    overflow: auto;
+    animation: slideCenter 0.5s forwards;
+}
+
+.create-goal-dialog-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.create-goal-dialog-content h3 {
+    color: #E0E0FF;
+    font-size: 4vh;
+    margin-bottom: 3vh;
+    margin-top: 0vh;
+}
+
+.subject-list-input {
+    width: 1vw;
+}
+
+.create-goal-dialog-content select,
+.create-goal-dialog-content input {
+    margin: 0.5vh;
+    height: 2vh;
+    padding: 1vh 1vw;
+    border-radius: 0.5vw;
+    background: rgba(30, 30, 60, 0.95);
+    color: #E0E0FF;
+    border: none;
+}
+
+.create-goal-dialog-content button {
+    margin-top: 2vh;
+    margin-bottom: 0;
+    padding: 2vh 4vw;
+    font-size: 1.3rem;
+    border: none;
+    cursor: pointer;
+    background-color: rgba(70, 70, 140, 0.9);
+    color: #E0E0FF;
+    border-radius: 0.5vw;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    box-shadow: 0 0.5vw 1vw rgba(34, 34, 85, 0.6);
+}
+
+.create-goal-dialog-content button:hover {
+    background-color: rgba(100, 100, 180, 0.9);
+    box-shadow: 0 0 0.5vw rgba(100, 100, 180, 0.5);
+}
+
+.create-goal-dialog-content {
+    position: relative; 
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #2C2C6D;
+    max-height: 150px;
+    overflow-y: auto;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+.create-goal-dialog-content .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #2C2C5E;
+    max-height: 150px;
+    overflow-y: auto;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.create-goal-dialog-content .dropdown {
+    width: 100%;
+    margin-bottom: 1.5vh;
+    position: relative;
+}
+
+.create-goal-dialog-content .dropdown button {
+    width: 100%;
+}
+
+.input-hours {
+    width: 93%
+}
+
+.error-message{
+    color: #E0E0FF;
+    font-size: 1.6vh;
+    margin: 1%;
+}
+
+.create-goal-button {
+    margin-top: 10vh !important;
+}
