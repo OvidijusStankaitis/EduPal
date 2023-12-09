@@ -21,7 +21,10 @@ export const Subjects = () => {
 
     useEffect(() => {
         const fetchSubjects = async () => {
-            const response = await fetch('https://localhost:7283/Subject/list');
+            const response = await fetch('https://localhost:7283/Subject/list', {
+                method: 'GET',
+                credentials: 'include'
+            });
 
             if(response.ok) {
                 const data = await response.json();
@@ -63,18 +66,19 @@ export const Subjects = () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify(requestBody)
             });
 
             if (response.ok) {
                 const data = await response.json();
-                
+
                 subjects.push({
                     id: data.id,
                     name: data.name
                 });
                 setSubjects(subjects);
-                
+
                 setNewSubjectName('');
                 setShowDialog(false);
                 setRefreshSubjects(prev => !prev);  // Toggle the state to trigger re-fetching
@@ -89,7 +93,7 @@ export const Subjects = () => {
             <div className="subjects-container">
                 <div className="headersub">
                     <h1>Subjects</h1>
-                    <UserComponent 
+                    <UserComponent
                         setShowPomodoroDialog={setShowPomodoroDialog}
                         setShowOpenAIDialog={setShowOpenAIDialog}
                         setShowCreateGoalDialog={setShowCreateGoalDialog}

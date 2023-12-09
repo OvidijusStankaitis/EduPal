@@ -18,6 +18,7 @@ namespace PSI_Project.Repositories
             try
             {
                 int changes = Add(goal);
+
                 return changes > 0;
             }
             catch

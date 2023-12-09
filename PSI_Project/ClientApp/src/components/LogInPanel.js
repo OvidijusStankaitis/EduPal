@@ -1,18 +1,18 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LogInPanel.css';
-import { useUserContext } from '../UserContext'; // Import the hook
+import {userName, setUserName} from "../contexts/UserContext";
 
 export const LogInPanel = () => {
-    const { setUserId, setUserEmail } = useUserContext(); // Access setUserId, setUserEmail from the context
-    const [showDialog, setShowDialog] = useState(false);
-    const [targetRoute, setTargetRoute] = useState('');
+    const [name, setName] = useState('');
+    const [surname, setSurname] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [repeatPassword, setRepeatPassword] = useState('');
-    const [name, setName] = useState('');
-    const [surname, setSurname] = useState('');
+
     const navigate = useNavigate();
+    const [showDialog, setShowDialog] = useState(false);
+    const [targetRoute, setTargetRoute] = useState('');
 
     useEffect(() => {
         const numberOfStars = 100;
@@ -45,51 +45,64 @@ export const LogInPanel = () => {
     }, []);
 
     const handleLoginSubmit = async (e) => {
-        e.preventDefault();
-        // Clear the stored username when a new user logs in
-        localStorage.removeItem('username');
-        const response = await fetch(`https://localhost:7283/User/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        });
-        const data = await response.json();
-        if (data.success) {
-            localStorage.clear();
-            setUserId(data.userId)
-            localStorage.setItem('userId', data.userId);
-            setUserEmail(email); // Set the user's email directly in the parent component
-            localStorage.setItem('userEmail', email);
+        try {
+            e.preventDefault() 
+
+            const requestBody = JSON.stringify({email, password})
+            const response = await fetch('https://localhost:7283/User/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: requestBody
+            })
+
+            if (!response.ok) {
+                const data = await response.json()
+
+                // TODO: add toaster
+
+                return
+            }
+            
             navigate(targetRoute);
+        } catch(error) {
+            console.error(error)
         }
-    };
+    }
 
     const handleRegisterSubmit = async (e) => {
-        e.preventDefault();
-        if (password !== repeatPassword) {
-            return;
-        }
-        const response = await fetch(`https://localhost:7283/User/register`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ name, surname, email, password })
-        });
-        const data = await response.json();
-        console.log("REGISTER DATA: ", data);
-        if (data.success) {
-            localStorage.clear();
-            setUserId(data.userId);
-            localStorage.setItem('userId', data.userId);
-            setUserEmail(email);
-            localStorage.setItem('userEmail', email);
-            navigate(targetRoute);
-        }
-    };
+        try {
+            e.preventDefault();
 
+            if (password !== repeatPassword) {
+                return;
+            }
+
+            const requestBody = JSON.stringify({ name, surname, email, password })
+            const response = await fetch('https://localhost:7283/User/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: requestBody
+            });
+
+            if (!response.ok) {
+                const data = await response.json()
+
+                // TODO: add toaster
+
+                return
+            }
+            
+            navigate(targetRoute)
+        } catch (error) {
+            console.error(error)
+        }
+    }
     const showLoginDialog = (route) => {
         setTargetRoute(route);
         setShowDialog(true);

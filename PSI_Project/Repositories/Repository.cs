@@ -15,7 +15,7 @@ public class Repository<TEntity> where TEntity : BaseEntity
         Context = context;
     }
     
-    public virtual async Task<TEntity?> GetAsync(object id)
+    public virtual async Task<TEntity> GetAsync(object id)
     {
         TEntity? item = await Context.Set<TEntity>().FindAsync(id);
         if (item == null)
@@ -51,28 +51,13 @@ public class Repository<TEntity> where TEntity : BaseEntity
 
     public virtual int Add(TEntity entity)
     {
-        //return Context.Set<TEntity>().Add(entity).Entity;
         Context.Set<TEntity>().Add(entity);
         return Context.SaveChanges();
     }
 
     public virtual int Remove(TEntity entity)
     {
-        //return Context.Set<TEntity>().Remove(entity).Entity;
         Context.Set<TEntity>().Remove(entity);
         return Context.SaveChanges();
-    }
-
-    public virtual bool Exists(string id)
-    {
-        try
-        {
-            Get(id);
-            return true;
-        }
-        catch (ObjectNotFoundException)
-        {
-            return false;
-        }
     }
 }

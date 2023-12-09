@@ -14,9 +14,6 @@ namespace PSI_Project.Repositories
         
         public async Task<List<Topic>> GetTopicsListBySubjectIdAsync(string subjectId)
         {
-            // return await EduPalContext.Topics
-            //     .Where(topic => topic.Subject.Id == subjectId)
-            //     .ToListAsync();
             var topics = await FindAsync(topic => topic.Subject.Id == subjectId);
             return topics.ToList();
         }
@@ -26,7 +23,6 @@ namespace PSI_Project.Repositories
             Subject subject = await EduPalContext.Subjects.FindAsync(subjectId);
             Topic newTopic = new Topic(topicName, subject);
             int changes = Add(newTopic);
-            //int changes = await EduPalContext.SaveChangesAsync();
             
             return changes > 0 ? newTopic : null;
         }
@@ -52,7 +48,6 @@ namespace PSI_Project.Repositories
         {
             Topic topic = await GetAsync(topicId);
             int changes = Remove(topic);
-            //int changes = await EduPalContext.SaveChangesAsync();
 
             return changes > 0;
         }
