@@ -1,16 +1,25 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System.Text;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using PSI_Project.Data;
 using PSI_Project.Models;
+using PSI_Project.Services;
 
-namespace PSI_Project.Tests.IntegrationTests;
+namespace PSI_Project.Tests.IntegrationTests.Configuration;
 
 internal class TestingWebAppFactory : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        ConfigureAuth(builder);
+        
         builder.ConfigureServices(services =>
         {
             var descriptor = services.SingleOrDefault(
@@ -50,7 +59,10 @@ internal class TestingWebAppFactory : WebApplicationFactory<Program>
                     }
 
                     // adding test data
-                    User user1 = new User("test1@test.test", "testPassword1", "testName", "testSurname");
+                    User user1 = new User("test1@test.test", "testPassword1", "testName", "testSurname")
+                    {
+                        Id = "test-user-id-1"
+                    };
                     appContext.Users.Add(user1);
                     
                     Subject subject1 = new Subject("testSubject1");
@@ -82,6 +94,20 @@ internal class TestingWebAppFactory : WebApplicationFactory<Program>
                     appContext.SaveChanges();
                 }
             }
+        });
+    }
+
+    private void ConfigureAuth(IWebHostBuilder builder)
+    {
+        builder.ConfigureServices(services =>
+        {
+            services.AddSingleton<IUserAuthService, TestUserAuthService>();
+            
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = "TestScheme";
+                options.DefaultChallengeScheme = "TestScheme";
+            }).AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("TestScheme", options => { });
         });
     }
 }

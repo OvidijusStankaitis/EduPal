@@ -232,12 +232,7 @@ _Pvt_Extensions
 .fake/
 
 *.pdf
-/DB/conspectus.txt
-/DB/subject.txt
-/DB/topic.txt
-/DB/users.txt
-/DB/openai.txt
 /DB/api_key.txt
-/DB/comment.txt
+/Logs
 dataSources.xml
 package-lock.json

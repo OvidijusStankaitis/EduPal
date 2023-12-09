@@ -3,6 +3,8 @@ using PSI_Project.Data;
 using PSI_Project.Repositories;
 using PSI_Project.Services;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using PSI_Project.Hubs;
 using PSI_Project.Middleware;
 using PSI_Project.Repositories.For_tests;
@@ -27,10 +29,12 @@ builder.Services.AddHttpClient();
 // Add CORS services to the container.
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
-        builder.WithOrigins("https://localhost:44402") // Updated with your React app's URL
+    options.AddDefaultPolicy(policy =>
+        policy.WithOrigins("https://localhost:44402")
+            .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowAnyHeader());
+            .AllowCredentials()
+    );
 });
 
 builder.Services.AddScoped<AuditingInterceptor>();
@@ -45,12 +49,39 @@ builder.Services.AddDbContext<EduPalDatabaseContext>(options =>
 
 builder.Services.AddSignalR();
 
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddCookie(options => options.Cookie.Name = "token")
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? String.Empty)),
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                context.Token = context.Request.Cookies["token"];
+                return Task.CompletedTask;
+            }
+        };
+    });
+
 // services dependency injections
 builder.Services.AddTransient<GoalService>();
 builder.Services.AddTransient<OpenAIService>();
 builder.Services.AddTransient<NoteService>();
 builder.Services.AddTransient<ChatService>();
 builder.Services.AddTransient<ConspectusService>();
+builder.Services.AddTransient<IUserAuthService, UserAuthService>();
 builder.Services.AddSingleton<PomodoroService>();
 
 // repositories dependency injections
@@ -80,7 +111,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-// Use CORS middleware here after UseRouting and before UseEndpoints
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseCors();
 
 app.MapControllerRoute(

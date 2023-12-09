@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using PSI_Project.Models;
 using PSI_Project.Repositories;
@@ -16,13 +17,14 @@ public class NoteController : ControllerBase
     private readonly ILogger<NoteController> _logger;
 
     public NoteController(ILogger<NoteController> logger, NoteRepository noteRepository,
-        NoteService noteService) 
+        NoteService noteService)
     {
         _logger = logger;
         _noteService = noteService;
         _noteRepository = noteRepository;
     }
 
+    [Authorize]
     [HttpGet("{id}")]
     public IActionResult GetNoteById(int id)
     {
@@ -38,6 +40,7 @@ public class NoteController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet]
     public IActionResult GetAllNotes()
     {
@@ -53,6 +56,7 @@ public class NoteController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpPost]
     public IActionResult AddNote([FromBody] Note note)
     {
@@ -64,10 +68,12 @@ public class NoteController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Couldn't add note");
-            return StatusCode(500, "An error occured while creating new note");
         }
+
+        return StatusCode(500, "An error occured while creating new note");
     }
 
+    [Authorize]
     [HttpPost("create-pdf")]
     public async Task<IActionResult> CreatePdfAsync([FromBody] Note note)
     {
