@@ -58,6 +58,7 @@ internal class TestingWebAppFactory : WebApplicationFactory<Program>
                         Console.WriteLine("=================================================");
                     }
 
+                    // adding test data
                     User user1 = new User("test1@test.test", "testPassword1", "testName", "testSurname")
                     {
                         Id = "test-user-id-1"
@@ -85,6 +86,11 @@ internal class TestingWebAppFactory : WebApplicationFactory<Program>
                     };
                     appContext.Conspectuses.Add(conspectus1);
                         
+                    Note note1 = new Note("testName1", "testContent1");
+                    Note note2 = new Note("testName2", "testContent2");
+                    appContext.Notes.Add(note1);
+                    appContext.Notes.Add(note2);
+                    
                     appContext.SaveChanges();
                 }
             }

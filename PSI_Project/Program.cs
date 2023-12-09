@@ -6,6 +6,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using PSI_Project.Hubs;
+using PSI_Project.Middleware;
 using PSI_Project.Repositories.For_tests;
 using Serilog;
 
@@ -36,9 +37,14 @@ builder.Services.AddCors(options =>
     );
 });
 
+builder.Services.AddScoped<AuditingInterceptor>();
+
 builder.Services.AddDbContext<EduPalDatabaseContext>(options =>
 {
     options.UseNpgsql(builder.Configuration["DatabaseConnectionString"]);
+    var serviceProvider = builder.Services.BuildServiceProvider();
+    var interceptor = serviceProvider.GetRequiredService<AuditingInterceptor>();
+    options.AddInterceptors(interceptor);
 });
 
 builder.Services.AddSignalR();
@@ -98,6 +104,8 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.UseMiddleware<ExceptionHandlingMiddleware>(); // middleware usage
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

@@ -12,7 +12,6 @@ public class ConspectusRepositoryTests : IDisposable
 {
     private readonly HttpClient _client;
     private readonly TestingWebAppFactory _factory;
-    
     public ConspectusRepositoryTests()
     {
         _factory = new TestingWebAppFactory();
@@ -62,7 +61,6 @@ public class ConspectusRepositoryTests : IDisposable
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Empty(conspectuses);
-
     }
     
     [Fact]

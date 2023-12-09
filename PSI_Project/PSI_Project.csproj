@@ -30,6 +30,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.0.3" />
         <PackageReference Include="Moq" Version="4.20.69" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.11" />
         <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="7.0.7"/>
         <PackageReference Include="PDFsharp" Version="1.50.5147" />
