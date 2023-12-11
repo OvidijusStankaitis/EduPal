@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using PSI_Project.Interceptor;
+
+namespace PSI_Project.Interceptor;
 
 public class AuditingInterceptor : ISaveChangesInterceptor
 {

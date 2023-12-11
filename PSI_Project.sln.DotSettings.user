@@ -1,14 +1,35 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/Environment/Highlighting/HighlightingSourceSnapshotLocation/@EntryValue">C:\Users\rinkg\AppData\Local\JetBrains\Rider2023.2\resharper-host\temp\Rider\vAny\CoverageData\_PSI_Project.1933323464\Snapshot\snapshot.utdcvr</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8790b048_002Dcf00_002D4f8a_002Dabdd_002Daa8eb2e9f3ca/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetTopicFilesAsync_GetsValidTopicId_ReturnsOkAndListOfConspectuses" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2aaa357f_002De836_002D4ce1_002Dadd8_002D3cfcfe5874b4/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetName_ValidUser_ReturnsOk #4" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::F8EDDA8E-5E63-485F-A828-E2DF73A2C380::net7.0::PSI_Project.Tests.IntegrationTests.ConspectusRepositoryTests.GetTopicFilesAsync_GetsValidTopicId_ReturnsOkAndListOfConspectuses&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::F8EDDA8E-5E63-485F-A828-E2DF73A2C380::net7.0::PSI_Project.Tests.IntegrationTests.UserControllerTests.GetName_ValidUser_ReturnsOk&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=30d5e814_002Dcd34_002D4001_002D955b_002D197fcac2692d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetName_ValidUser_ReturnsOk #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::F8EDDA8E-5E63-485F-A828-E2DF73A2C380::net7.0::PSI_Project.Tests.IntegrationTests.UserControllerTests.GetName_ValidUser_ReturnsOk&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=5efe2a31_002D12c7_002D413b_002Dbd87_002D5efa4298edd2/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=79c1fc53_002D67c1_002D4759_002Da5fa_002D337ae8bea050/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetName_ValidUser_ReturnsOk" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=809de114_002D19b8_002D4aab_002Dbe89_002Dee1b6e3926b1/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetName_ValidUser_ReturnsOk #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::F8EDDA8E-5E63-485F-A828-E2DF73A2C380::net7.0::PSI_Project.Tests.IntegrationTests.UserControllerTests.GetName_ValidUser_ReturnsOk&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=98d15eda_002D6a49_002D4206_002D999e_002Dd1176f55b076/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="RegisterAsync_UserWithSuchEmailDoesNotExist_ReturnsOk" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::F8EDDA8E-5E63-485F-A828-E2DF73A2C380::net7.0::PSI_Project.Tests.IntegrationTests.UserControllerTests.RegisterAsync_UserWithSuchEmailDoesNotExist_ReturnsOk&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=dc1c0a37_002Dc037_002D4cfa_002Dad27_002D7e0d9f410ab8/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="StartTimer_GivenValidRequest_ReturnsOk" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;Project Location="C:\Users\rinkg\Desktop\university-software-engineering\PSI_Project.Tests" Presentation="&amp;lt;PSI_Project.Tests&amp;gt;" /&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
+	
+	
+	
 	
 	
 	
