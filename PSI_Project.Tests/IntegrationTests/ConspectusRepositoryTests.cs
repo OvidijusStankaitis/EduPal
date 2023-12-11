@@ -77,7 +77,7 @@ public class ConspectusRepositoryTests : IDisposable
         var conspectusTested = listOfConspectuses?.ToList()[0];
         
         // Act
-        var response = await _client.PostAsync($"/conspectus/rate-up/{conspectusTested?.Id}",JsonContent.Create(conspectusTested));
+        var response = await _client.PutAsync($"/conspectus/rate-up/{conspectusTested?.Id}",JsonContent.Create(conspectusTested));
         var responseString = await response.Content.ReadAsStringAsync();
         var conspectusUpdated = JsonConvert.DeserializeObject<Conspectus>(responseString);
 
@@ -101,7 +101,7 @@ public class ConspectusRepositoryTests : IDisposable
         var conspectusTested = listOfConspectuses?.ToList()[0];
         
         // Act
-        var response = await _client.PostAsync($"/conspectus/rate-down/{conspectusTested?.Id}",JsonContent.Create(conspectusTested));
+        var response = await _client.PutAsync($"/conspectus/rate-down/{conspectusTested?.Id}",JsonContent.Create(conspectusTested));
         var responseString = await response.Content.ReadAsStringAsync();
         var conspectusUpdated = JsonConvert.DeserializeObject<Conspectus>(responseString);
 

@@ -37,7 +37,7 @@ export const OpenAIDialogue = ({ show, onClose }) => {
         if (userMessage.trim()) {
             setMessages(prevMessages => [...prevMessages, { sender: 'user', text: userMessage.trim() }]);
             setUserMessage("");
-            setIsLoading(true);  // Set loading to true
+            setIsLoading(true);
 
             try {
                 const response = await fetch(`https://localhost:7283/OpenAI/send-message?userEmail=${userEmail}`, {
@@ -51,14 +51,14 @@ export const OpenAIDialogue = ({ show, onClose }) => {
                 if (response.ok) {
                     const data = await response.json();
                     setMessages(prevMessages => [...prevMessages, { sender: 'chatgpt', text: data.response }]);
-                    setIsLoading(false);  // Set loading to false
+                    setIsLoading(false);  
                 } else {
                     console.error('Failed to send message:', await response.text());
-                    setIsLoading(false);  // Set loading to false
+                    setIsLoading(false);  
                 }
             } catch (error) {
                 console.error('Error sending message:', error);
-                setIsLoading(false);  // Set loading to false
+                setIsLoading(false);  
             }
         }
     };
@@ -90,7 +90,7 @@ export const OpenAIDialogue = ({ show, onClose }) => {
                         ))}
                         {isLoading && (
                             <div className="chatgpt">
-                                <div className="spinner"></div>  {/* Spinner animation */}
+                                <div className="spinner"></div> 
                             </div>
                         )}
                     </div>

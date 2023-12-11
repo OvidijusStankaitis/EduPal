@@ -1,6 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
 import './CreateGoalDialog.css';
-import { useUserContext } from "../contexts/UserContext"; 
 
 export const CreateGoalDialog = ({ show, onClose }) => {
     const userId = localStorage.getItem('userId');
@@ -63,7 +62,6 @@ export const CreateGoalDialog = ({ show, onClose }) => {
 
         const formattedGoalTime = goalTime.replace(',', '.');
         const goalData = {
-            userId: userId,
             subjectIds: selectedSubjectIds,
             goalTime: parseFloat(formattedGoalTime)
         };
@@ -71,6 +69,7 @@ export const CreateGoalDialog = ({ show, onClose }) => {
         try {
             const response = await fetch('https://localhost:7283/Goals/create', {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },

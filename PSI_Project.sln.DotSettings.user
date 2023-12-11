@@ -1,5 +1,6 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/Highlighting/HighlightingSourceSnapshotLocation/@EntryValue">C:\Users\rinkg\AppData\Local\JetBrains\Rider2023.2\resharper-host\temp\Rider\vAny\CoverageData\_PSI_Project.1933323464\Snapshot\snapshot.utdcvr</s:String>
+	<s:String x:Key="/Default/Environment/Highlighting/HighlightingSourceSnapshotLocation/@EntryValue">C:\Users\Ovidijus\AppData\Local\JetBrains\Rider2023.2\resharper-host\temp\Rider\vAny\CoverageData\_PSI_Project.742561846\Snapshot\snapshot.utdcvr</s:String>
+	
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2aaa357f_002De836_002D4ce1_002Dadd8_002D3cfcfe5874b4/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetName_ValidUser_ReturnsOk #4" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::F8EDDA8E-5E63-485F-A828-E2DF73A2C380::net7.0::PSI_Project.Tests.IntegrationTests.UserControllerTests.GetName_ValidUser_ReturnsOk&lt;/TestId&gt;&#xD;
@@ -22,9 +23,7 @@
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=98d15eda_002D6a49_002D4206_002D999e_002Dd1176f55b076/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="RegisterAsync_UserWithSuchEmailDoesNotExist_ReturnsOk" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::F8EDDA8E-5E63-485F-A828-E2DF73A2C380::net7.0::PSI_Project.Tests.IntegrationTests.UserControllerTests.RegisterAsync_UserWithSuchEmailDoesNotExist_ReturnsOk&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	
 	
