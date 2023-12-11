@@ -11,7 +11,10 @@ export const ViewGoalsDialog = ({ show, onClose }) => {
         const fetchGoals = async () => {
             if (show) {
                 try {
-                    const response = await fetch(`https://localhost:7283/Goals/view-all/${userId}`);
+                    const response = await fetch(`https://localhost:7283/Goals/view-all`, {
+                        method: 'GET',
+                        credentials: 'include'
+                    });
                     if (!response.ok) {
                         throw new Error('Failed to fetch goals');
                     }

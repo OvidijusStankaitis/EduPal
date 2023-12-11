@@ -63,7 +63,6 @@ export const CreateGoalDialog = ({ show, onClose }) => {
 
         const formattedGoalTime = goalTime.replace(',', '.');
         const goalData = {
-            userId: userId,
             subjectIds: selectedSubjectIds,
             goalTime: parseFloat(formattedGoalTime)
         };
@@ -71,6 +70,7 @@ export const CreateGoalDialog = ({ show, onClose }) => {
         try {
             const response = await fetch('https://localhost:7283/Goals/create', {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },

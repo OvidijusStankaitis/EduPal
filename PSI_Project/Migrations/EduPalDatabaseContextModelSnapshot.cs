@@ -89,6 +89,7 @@ namespace PSI_Project.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -169,6 +170,7 @@ namespace PSI_Project.Migrations
                         .HasColumnType("double precision");
 
                     b.Property<string>("GoalId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("SubjectId")
@@ -270,7 +272,9 @@ namespace PSI_Project.Migrations
                 {
                     b.HasOne("PSI_Project.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -286,15 +290,19 @@ namespace PSI_Project.Migrations
 
             modelBuilder.Entity("PSI_Project.Models.SubjectGoal", b =>
                 {
-                    b.HasOne("PSI_Project.Models.Goal", null)
+                    b.HasOne("PSI_Project.Models.Goal", "Goal")
                         .WithMany("SubjectGoals")
-                        .HasForeignKey("GoalId");
+                        .HasForeignKey("GoalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("PSI_Project.Models.Subject", "Subject")
                         .WithMany()
                         .HasForeignKey("SubjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Goal");
 
                     b.Navigation("Subject");
                 });
