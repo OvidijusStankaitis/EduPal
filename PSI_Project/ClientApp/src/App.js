@@ -12,7 +12,7 @@ import { UserProvider } from './contexts/UserContext';
 
 function App() {
     return (
-        <UserProvider> {/* Wrap your app with UserProvider */}
+        <UserProvider> 
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<LogInPanel />} />

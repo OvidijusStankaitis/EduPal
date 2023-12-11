@@ -94,7 +94,7 @@ export const Topics = () => {
 
                 setNewTopicName('');
                 setShowDialog(false);
-                setRefreshTopics(prev => !prev);  // Toggle the state to trigger re-fetching
+                setRefreshTopics(prev => !prev);  
             } else {
                 console.error("Error uploading topic:", await response.text());
             }
@@ -114,7 +114,7 @@ export const Topics = () => {
 
         try {
             const response = await fetch('https://localhost:7283/Topic/update-knowledge-level', {
-                method: 'PUT', // Use the appropriate HTTP method for updates
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },

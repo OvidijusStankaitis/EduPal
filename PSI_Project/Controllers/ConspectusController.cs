@@ -104,7 +104,7 @@ public class ConspectusController : ControllerBase
     }
 
     [Authorize]
-    [HttpPost("rate-up/{conspectusId}")]
+    [HttpPut("rate-up/{conspectusId}")]
     public async Task<IActionResult> RateConspectusUpAsync(string conspectusId)
     {
         try
@@ -117,11 +117,10 @@ public class ConspectusController : ControllerBase
             _logger.LogError(ex, "Couldn't rate up conspectus {conspectusId}", conspectusId);
             return NotFound(new { error = "File not found in database." });
         }
-
     }
 
     [Authorize]
-    [HttpPost("rate-down/{conspectusId}")]
+    [HttpPut("rate-down/{conspectusId}")]
     public async Task<IActionResult> RateConspectusDownAsync(string conspectusId)
     {
         try

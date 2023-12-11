@@ -1,6 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
 import './CreateGoalDialog.css';
-import { useUserContext } from "../contexts/UserContext"; 
 
 export const CreateGoalDialog = ({ show, onClose }) => {
     const userId = localStorage.getItem('userId');

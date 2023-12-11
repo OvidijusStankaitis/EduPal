@@ -146,7 +146,7 @@ export const Conspectus = () => {
     const handleVote = (id, voteType) => {
         console.log('handleVote - fileId:', id, 'voteType:', voteType);
         fetch(`https://localhost:7283/Conspectus/${voteType ? 'rate-up' : 'rate-down'}/${id}`, {
-            method: 'POST',
+            method: 'PUT',
             credentials: 'include'
         })
             .then(response => response.json())

@@ -1,8 +1,6 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 import './Comments.css';
 import { HttpTransportType, HubConnectionBuilder } from "@microsoft/signalr";
-import { useUserContext } from '../contexts/UserContext';
-import {initialize} from "workbox-google-analytics";
 
 export const Comments = ({ show, onClose, topicId }) => {
     const [comments, setComments] = useState([]);
@@ -89,8 +87,7 @@ export const Comments = ({ show, onClose, topicId }) => {
         }
 
     }, [show, topicId]);
-
-    // Scroll to the bottom of the chat whenever comments update
+    
     useEffect(() => {
         if (chatContentRef.current) {
             chatContentRef.current.scrollTop = chatContentRef.current.scrollHeight;
@@ -109,28 +106,21 @@ export const Comments = ({ show, onClose, topicId }) => {
             };
 
             console.log("optimistic:: ", optimisticComment)
-
-            // Add the optimistic comment to the local state
             setComments(prevComments => [...prevComments, optimisticComment]);
 
             try {
-                // Send the message to the server
                 await connectionRef.current.invoke("SendMessage", topicId, currentComment);
-                // Clear the input field
                 setCurrentComment('');
             } catch (error) {
-                // If there's an error sending the message, remove the optimistic comment
                 setComments(prevComments => prevComments.filter(comment => comment.id !== optimisticId));
             }
         }
     };
 
     const handleDelete = async (commentId) => {
-        // Ensure we're using real IDs when attempting to delete
         if (commentId && !commentId.startsWith('temp-') && connectionRef.current && connectionRef.current.state === "Connected") {
             try {
                 await connectionRef.current.invoke("DeleteMessage", commentId);
-                // Optimistically remove the comment from the local state
                 setComments(prevComments => prevComments.filter(comment => comment.id !== commentId));
             } catch (error) {
                 console.error("Error invoking 'DeleteMessage':", error);
