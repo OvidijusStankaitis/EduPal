@@ -99,7 +99,6 @@ builder.Services.AddTransient<NoteRepository>();
 builder.Services.AddTransient<IFileOperations, FileOperations>(); // for tests
 
 var app = builder.Build();
-app.UseErrorHandlingMiddleware();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -108,9 +107,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseMiddleware<ExceptionHandlingMiddleware>(); // middleware usage
-
 app.UseHttpsRedirection();
+app.UseExceptionHandlingMiddleware();
 app.UseStaticFiles();
 app.UseRouting();
 
