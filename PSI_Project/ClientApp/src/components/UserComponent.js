@@ -23,12 +23,13 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog, setS
 
     useEffect(() => {
         const fetchCurrentSubject = async () => {
-            if (userId) {
-                const response = await fetch(`https://localhost:7283/Goals/current-subject/${userId}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    setCurrentSubjectId(data.currentSubjectId);
-                }
+            const response = await fetch(`https://localhost:7283/Goals/current-subject`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setCurrentSubjectId(data.currentSubjectId);
             }
         };
 
@@ -156,11 +157,13 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog, setS
     }, [showDropdown]);
 
     const updateStudyTime = async () => {
+        console.log('Updated study time');
         if (!currentSubjectId) return;
 
         try {
             await fetch('https://localhost:7283/Goals/update-study-time', {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },

@@ -13,26 +13,29 @@ namespace PSI_Project.Controllers
     {
         private readonly GoalService _goalService;
         private readonly SubjectRepository _subjectRepository;
+        private readonly IUserAuthService _userAuthService;
         private readonly ILogger<GoalsController> _logger;
 
-        public GoalsController(ILogger<GoalsController> logger, GoalService goalService, SubjectRepository subjectRepository)
+        public GoalsController(ILogger<GoalsController> logger, GoalService goalService, SubjectRepository subjectRepository, IUserAuthService userAuthService)
         {
             _logger = logger;
             _goalService = goalService;
             _subjectRepository = subjectRepository;
+            _userAuthService = userAuthService;
         }
 
         [HttpPost("create")]
-        public IActionResult CreateGoalWithSubjects([FromBody] CreateGoalRequest request)
+        public async Task<IActionResult> CreateGoalWithSubjects([FromBody] CreateGoalRequest request)
         {
             using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
-                {
+                {   
+                    User? user = await _userAuthService.GetUser(HttpContext); 
                     // Create a new Goal object
                     var goal = new Goal
                     {
-                        UserId = request.UserId,
+                        UserId = user.Id,
                         GoalDate = DateTime.UtcNow
                     };
             
@@ -83,9 +86,11 @@ namespace PSI_Project.Controllers
             }
         }
         
-        [HttpGet("view-all/{userId}")]
-        public IActionResult GetAllGoalsForUserWithDetails(string userId)
+        [HttpGet("view-all")]
+        public async Task <IActionResult> GetAllGoalsForUserWithDetails()
         {
+            User? user = await _userAuthService.GetUser(HttpContext);
+            string userId = user.Id;
             try
             {
                 var goalsWithDetails = _goalService.GetAllGoalsForUserWithDetails(userId);
@@ -99,22 +104,26 @@ namespace PSI_Project.Controllers
         }
 
         [HttpPost("update-study-time")]
-        public IActionResult UpdateStudyTime([FromBody] StudyTimeUpdateRequest request)
+        public async Task <IActionResult> UpdateStudyTime([FromBody] StudyTimeUpdateRequest request)
         {
-            if (_goalService.UpdateHoursStudied(request.UserId, request.SubjectId, request.ElapsedHours))
+            User? user = await _userAuthService.GetUser(HttpContext);
+            string userId = user.Id;
+            if (_goalService.UpdateHoursStudied(userId, request.SubjectId, request.ElapsedHours))
             {
                 return Ok(new { success = true, message = "Hours updated successfully." });
             }
             Console.WriteLine("Elapsed hours: " + request.ElapsedHours);
             Console.WriteLine("Subject ID: " + request.SubjectId);
-            Console.WriteLine("User ID: " + request.UserId);
+            Console.WriteLine("User ID: " + userId);
 
             return BadRequest(new { success = false, message = "Failed to update hours." });
         }
         
-        [HttpGet("current-subject/{userId}")]
-        public IActionResult GetCurrentSubject(string userId)
+        [HttpGet("current-subject")]
+        public async Task <IActionResult> GetCurrentSubject()
         {
+            User? user = await _userAuthService.GetUser(HttpContext);
+            string userId = user.Id;
             var currentSubject = _goalService.GetCurrentSubjectForUser(userId);
             if (currentSubject == null)
             {
