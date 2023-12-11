@@ -181,7 +181,7 @@ export const UserComponent = ({ setShowPomodoroDialog, setShowOpenAIDialog, setS
     useEffect(() => {
         const intervalId = setInterval(() => {
             updateStudyTime();
-        }, 1000); // Update every minute
+        }, 1000);
 
         return () => clearInterval(intervalId);
     }, [userId, currentSubjectId]);

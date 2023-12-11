@@ -2,7 +2,6 @@
 import { useNavigate } from 'react-router-dom';
 import './Break.css';
 import sunsetImage from '../assets/sunset.webp';
-import { useUserContext } from '../contexts/UserContext';
 
 export const LongBreakComponent = () => {
     const [remainingTime, setRemainingTime] = useState(0);

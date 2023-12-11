@@ -15,7 +15,7 @@ export const Note = ({ show, onClose, topicId }) => {
                     "Content-Type": "application/json"
                 },
                 credentials: 'include',
-                body: JSON.stringify(note) // 'note' should have properties 'Name' and 'Content'
+                body: JSON.stringify(note) 
             });
 
             if (!response.ok) throw new Error("Error saving note");

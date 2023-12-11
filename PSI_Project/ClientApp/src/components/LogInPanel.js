@@ -1,7 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LogInPanel.css';
-import {userName, setUserName} from "../contexts/UserContext";
 
 export const LogInPanel = () => {
     const [name, setName] = useState('');
@@ -16,30 +15,26 @@ export const LogInPanel = () => {
 
     useEffect(() => {
         const numberOfStars = 100;
-        const stars = []; // To keep track of the stars for cleanup
+        const stars = [];
 
         for (let i = 0; i < numberOfStars; i++) {
             const star = document.createElement('div');
             star.classList.add('star');
 
-            // Random position
             star.style.top = `${Math.random() * 100}vh`;
             star.style.left = `${Math.random() * 100}vw`;
 
-            // Random direction
             const angle = Math.random() * 2 * Math.PI;
             star.style.setProperty('--dx', Math.cos(angle));
             star.style.setProperty('--dy', Math.sin(angle));
 
-            // Random animation duration
             star.style.animationDuration = `${2 + Math.random() * 5}s`;
 
             document.body.appendChild(star);
-            stars.push(star); // Add the star to the stars array
+            stars.push(star); 
         }
 
         return () => {
-            // Cleanup: Remove the stars when the component unmounts
             stars.forEach(star => document.body.removeChild(star));
         };
     }, []);
@@ -60,9 +55,6 @@ export const LogInPanel = () => {
 
             if (!response.ok) {
                 const data = await response.json()
-
-                // TODO: add toaster
-
                 return
             }
             
@@ -92,9 +84,6 @@ export const LogInPanel = () => {
 
             if (!response.ok) {
                 const data = await response.json()
-
-                // TODO: add toaster
-
                 return
             }
             
