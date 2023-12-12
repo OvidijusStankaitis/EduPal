@@ -90,9 +90,6 @@ internal class TestingWebAppFactory : WebApplicationFactory<Program>
                     Note note2 = new Note("testName2", "testContent2");
                     appContext.Notes.Add(note1);
                     appContext.Notes.Add(note2);
-
-                    Message message1 = new Message("text1", "email@test1", true);
-                    appContext.Messages.Add(message1);
                     
                     appContext.SaveChanges();
                 }
