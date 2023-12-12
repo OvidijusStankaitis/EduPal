@@ -11,7 +11,7 @@ export const OpenAIDialogue = ({ show, onClose }) => {
 
     const fetchMessages = async () => {
         try {
-            const response = await fetch(`https://localhost:7283/OpenAI/get-messages?userEmail=${userEmail}`, {
+            const response = await fetch(`https://localhost:7283/OpenAI/get-messages`, {
                 method: 'GET',
                 credentials: 'include'
             });
@@ -35,12 +35,12 @@ export const OpenAIDialogue = ({ show, onClose }) => {
     const handleSendMessage = async () => {
         console.log(userMessage);
         if (userMessage.trim()) {
-            setMessages(prevMessages => [...prevMessages, { sender: 'user', text: userMessage.trim() }]);
+            setMessages(prevMessages => [...prevMessages, { text: userMessage.trim(), isUserMessage: true, email: userEmail }]);
             setUserMessage("");
             setIsLoading(true);
 
             try {
-                const response = await fetch(`https://localhost:7283/OpenAI/send-message?userEmail=${userEmail}`, {
+                const response = await fetch(`https://localhost:7283/OpenAI/send-message`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -48,17 +48,18 @@ export const OpenAIDialogue = ({ show, onClose }) => {
                     credentials: 'include',
                     body: JSON.stringify(userMessage),
                 });
+
                 if (response.ok) {
                     const data = await response.json();
-                    setMessages(prevMessages => [...prevMessages, { sender: 'chatgpt', text: data.response }]);
-                    setIsLoading(false);  
+                    setMessages(prevMessages => [...prevMessages, { text: data.response, isUserMessage: false, email: userEmail }]);
+                    setIsLoading(false);
                 } else {
                     console.error('Failed to send message:', await response.text());
-                    setIsLoading(false);  
+                    setIsLoading(false);
                 }
             } catch (error) {
                 console.error('Error sending message:', error);
-                setIsLoading(false);  
+                setIsLoading(false);
             }
         }
     };
@@ -84,7 +85,7 @@ export const OpenAIDialogue = ({ show, onClose }) => {
                 <div className="gpt-chat">
                     <div className="gpt-chat-content" ref={chatContentRef}>
                         {messages.map((message, index) => (
-                            <div key={index} className={message.sender === 'user' ? 'user' : 'chatgpt'}>
+                            <div key={index} className={message.isUserMessage ? 'user' : 'chatgpt'}>
                                 {message.text}
                             </div>
                         ))}

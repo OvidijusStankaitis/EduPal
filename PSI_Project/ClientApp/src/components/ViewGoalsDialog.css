@@ -7,7 +7,7 @@
     padding: 5vh;
     border-radius: 1vw;
     box-shadow: 0 0.5vw 2vw rgba(0, 0, 0, 0.5);
-    z-index: 100;
+    z-index: 9999;
     width: 80%;
     max-width: 600px;
     overflow: auto;

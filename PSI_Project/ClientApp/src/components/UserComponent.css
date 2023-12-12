@@ -8,7 +8,7 @@
     background: radial-gradient(circle at center, rgba(45, 45, 90, 0.95) 0%, rgba(30, 30, 60, 0.95) 70%, rgba(15, 15, 30, 0.95) 100%); /* Adjusted background to match space theme */
     transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s; /* Added transitions */
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Added shadow for depth */
-    z-index: 9999;
+    z-index: 9998;
 }
 
 .user-component:hover {
