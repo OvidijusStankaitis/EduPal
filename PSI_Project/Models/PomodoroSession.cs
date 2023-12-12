@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PSI_Project.Models;
+﻿namespace PSI_Project.Models;
 
 public class PomodoroSession
 {

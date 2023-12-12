@@ -16,13 +16,14 @@ namespace PSI_Project.Controllers
         private readonly IUserAuthService _userAuthService;
         private readonly ILogger<GoalsController> _logger;
 
-        public GoalsController(ILogger<GoalsController> logger, GoalService goalService, IUserAuthService userAuthService)
+        public GoalsController(ILogger<GoalsController> logger, GoalService goalService,
+            IUserAuthService userAuthService)
         {
             _logger = logger;
             _goalService = goalService;
             _userAuthService = userAuthService;
         }
-        
+
         [Authorize]
         [HttpPost("create")]
         public async Task<IActionResult> CreateGoalWithSubjects([FromBody] CreateGoalRequest request)
@@ -30,24 +31,26 @@ namespace PSI_Project.Controllers
             using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
                 try
-                {   
-                    User? user = await _userAuthService.GetUser(HttpContext); 
+                {
+                    User? user = await _userAuthService.GetUser(HttpContext);
                     // Create a new Goal object
                     var goal = new Goal
                     {
                         UserId = user.Id,
                         GoalDate = DateTime.UtcNow
                     };
-            
-                    // Try to add the Goal
+
                     bool isGoalAdded = _goalService.AddGoal(goal, request.SubjectIds);
                     if (!isGoalAdded)
                     {
-                        // If the goal is not added, return a BadRequest response
-                        return BadRequest(new { success = false, message = "Unable to create a new goal. Make sure you have completed all existing goals before proceeding." });
+                        return BadRequest(new
+                        {
+                            success = false,
+                            message =
+                                "Unable to create a new goal. Make sure you have completed all existing goals before proceeding."
+                        });
                     }
-            
-                    // If the goal is added, proceed to add subject goals
+
                     foreach (var subjectId in request.SubjectIds)
                     {
                         var subjectGoal = new SubjectGoal
@@ -59,7 +62,6 @@ namespace PSI_Project.Controllers
                         _goalService.AddSubjectGoal(subjectGoal);
                     }
 
-                    // Complete the transaction
                     transaction.Complete();
                     return Ok(new { success = true, message = "Goal and subject goals created successfully." });
                 }
@@ -70,10 +72,10 @@ namespace PSI_Project.Controllers
                 }
             }
         }
-        
+
         [Authorize]
         [HttpGet("view-all")]
-        public async Task <IActionResult> GetAllGoalsForUserWithDetails()
+        public async Task<IActionResult> GetAllGoalsForUserWithDetails()
         {
             User? user = await _userAuthService.GetUser(HttpContext);
             string userId = user.Id;
@@ -91,7 +93,7 @@ namespace PSI_Project.Controllers
 
         [Authorize]
         [HttpPost("update-study-time")]
-        public async Task <IActionResult> UpdateStudyTime([FromBody] StudyTimeUpdateRequest request)
+        public async Task<IActionResult> UpdateStudyTime([FromBody] StudyTimeUpdateRequest request)
         {
             User? user = await _userAuthService.GetUser(HttpContext);
             string userId = user.Id;
@@ -102,10 +104,10 @@ namespace PSI_Project.Controllers
 
             return BadRequest(new { success = false, message = "Failed to update hours." });
         }
-        
+
         [Authorize]
         [HttpGet("current-subject")]
-        public async Task <IActionResult> GetCurrentSubject()
+        public async Task<IActionResult> GetCurrentSubject()
         {
             User? user = await _userAuthService.GetUser(HttpContext);
             string userId = user.Id;

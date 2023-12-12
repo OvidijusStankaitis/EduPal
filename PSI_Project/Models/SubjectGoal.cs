@@ -2,7 +2,6 @@
 {
     public class SubjectGoal : BaseEntity
     {
-        // Assuming you have a Subject class that links to this SubjectGoal
         public string SubjectId { get; set; }
         public Subject Subject { get; set; }
         public string GoalId { get; set; }

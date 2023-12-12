@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using PSI_Project.Data;
+﻿using PSI_Project.Data;
 using PSI_Project.Models;
 
 namespace PSI_Project.Repositories

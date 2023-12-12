@@ -1,6 +1,5 @@
 ﻿using PSI_Project.Repositories;
 using PSI_Project.Models;
-using System.Linq;
 using PSI_Project.DTO;
 
 namespace PSI_Project.Services
@@ -8,11 +7,12 @@ namespace PSI_Project.Services
     public class GoalService
     {
         private GoalsRepository _goalsRepository;
+
         public GoalService(GoalsRepository goalsRepository)
         {
             _goalsRepository = goalsRepository;
         }
-        
+
         public bool CanCreateNewGoal(string userId)
         {
             var goals = _goalsRepository.GetAllGoalsForUser(userId);
@@ -39,7 +39,7 @@ namespace PSI_Project.Services
             // All goals and their subject goals are complete
             return true;
         }
-        
+
         public bool AddGoal(Goal goal, List<string> subjectIds)
         {
             // Check if the user is allowed to create a new goal
@@ -48,28 +48,28 @@ namespace PSI_Project.Services
                 // User cannot create a new goal
                 return false;
             }
-            
+
             // Check if at least one subject is selected
             if (subjectIds == null || !subjectIds.Any())
             {
                 // No subjects selected
                 return false;
             }
-            
+
             // Add the goal to the database
             return _goalsRepository.AddGoal(goal);
         }
-        
+
         public bool AddSubjectGoal(SubjectGoal subjectGoal)
         {
             return _goalsRepository.AddSubjectGoal(subjectGoal);
         }
-        
+
         public List<GoalDetailDto> GetAllGoalsForUserWithDetails(string userId)
         {
             return _goalsRepository.GetAllGoalsWithDetailsForUser(userId);
         }
-        
+
         public bool UpdateHoursStudied(string userId, string subjectId, double elapsedHours)
         {
             var activeGoal = _goalsRepository.GetCurrentGoalForUser(userId);
@@ -85,10 +85,11 @@ namespace PSI_Project.Services
             }
 
             // Update actual hours and ensure it does not exceed target hours
-            subjectGoalToUpdate.ActualHoursStudied = Math.Min(subjectGoalToUpdate.ActualHoursStudied + elapsedHours, subjectGoalToUpdate.TargetHours);
+            subjectGoalToUpdate.ActualHoursStudied = Math.Min(subjectGoalToUpdate.ActualHoursStudied + elapsedHours,
+                subjectGoalToUpdate.TargetHours);
             return _goalsRepository.UpdateItem(activeGoal);
         }
-        
+
         public SubjectGoal GetCurrentSubjectForUser(string userId)
         {
             return _goalsRepository.GetCurrentSubjectForUser(userId);

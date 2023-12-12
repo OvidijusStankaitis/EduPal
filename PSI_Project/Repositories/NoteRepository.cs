@@ -23,10 +23,4 @@ public class NoteRepository : Repository<Note>
     {
         return EduPalContext.Notes.Find(id);
     }
-
-    // public IQueryable<Note> GetAllNotes()
-    // {
-    //     return GetAll().AsQueryable();
-    //     //return EduPalContext.Notes;
-    // }
 }

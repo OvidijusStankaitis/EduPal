@@ -4,7 +4,7 @@
     {
         public string UserId { get; set; }
         public User User { get; set; }
-        public DateTime GoalDate { get; set; } = DateTime.UtcNow; // Use UtcNow to store in UTC
+        public DateTime GoalDate { get; set; } = DateTime.UtcNow;
         public List<SubjectGoal> SubjectGoals { get; set; } = new List<SubjectGoal>();
         
         public Goal() // Ef core usage

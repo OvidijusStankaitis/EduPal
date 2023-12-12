@@ -7,7 +7,7 @@ public class Note : BaseEntity
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public new string Id { get; } = Guid.NewGuid().ToString(); // If you want to generate GUID in code, not by database
+    public new string Id { get; } = Guid.NewGuid().ToString();
     public string Name { get; set; }
     public string Content { get; set; }
     
@@ -16,7 +16,7 @@ public class Note : BaseEntity
         // The Id is initialized when the object is constructed
     }
     
-    public Note(string noteName, string noteContent) : this() // Call the parameterless constructor
+    public Note(string noteName, string noteContent) : this()
     {
         Name = noteName;
         Content = noteContent;
