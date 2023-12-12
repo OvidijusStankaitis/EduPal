@@ -1,4 +1,5 @@
 ﻿using System.Transactions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PSI_Project.Services;
 using PSI_Project.Models;
@@ -12,18 +13,17 @@ namespace PSI_Project.Controllers
     public class GoalsController : ControllerBase
     {
         private readonly GoalService _goalService;
-        private readonly SubjectRepository _subjectRepository;
         private readonly IUserAuthService _userAuthService;
         private readonly ILogger<GoalsController> _logger;
 
-        public GoalsController(ILogger<GoalsController> logger, GoalService goalService, SubjectRepository subjectRepository, IUserAuthService userAuthService)
+        public GoalsController(ILogger<GoalsController> logger, GoalService goalService, IUserAuthService userAuthService)
         {
             _logger = logger;
             _goalService = goalService;
-            _subjectRepository = subjectRepository;
             _userAuthService = userAuthService;
         }
-
+        
+        [Authorize]
         [HttpPost("create")]
         public async Task<IActionResult> CreateGoalWithSubjects([FromBody] CreateGoalRequest request)
         {
@@ -71,21 +71,7 @@ namespace PSI_Project.Controllers
             }
         }
         
-        [HttpGet("subjects")]
-        public IActionResult GetAllSubjects()
-        {
-            try
-            {
-                var subjects = _subjectRepository.GetSubjectsList();
-                return Ok(subjects);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting subjects");
-                return StatusCode(500, "An error occurred while fetching subjects");
-            }
-        }
-        
+        [Authorize]
         [HttpGet("view-all")]
         public async Task <IActionResult> GetAllGoalsForUserWithDetails()
         {
@@ -103,6 +89,7 @@ namespace PSI_Project.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost("update-study-time")]
         public async Task <IActionResult> UpdateStudyTime([FromBody] StudyTimeUpdateRequest request)
         {
@@ -112,13 +99,11 @@ namespace PSI_Project.Controllers
             {
                 return Ok(new { success = true, message = "Hours updated successfully." });
             }
-            Console.WriteLine("Elapsed hours: " + request.ElapsedHours);
-            Console.WriteLine("Subject ID: " + request.SubjectId);
-            Console.WriteLine("User ID: " + userId);
 
             return BadRequest(new { success = false, message = "Failed to update hours." });
         }
         
+        [Authorize]
         [HttpGet("current-subject")]
         public async Task <IActionResult> GetCurrentSubject()
         {

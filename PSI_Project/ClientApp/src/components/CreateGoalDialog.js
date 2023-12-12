@@ -12,7 +12,10 @@ export const CreateGoalDialog = ({ show, onClose }) => {
     useEffect(() => {
         const fetchSubjects = async () => {
             try {
-                const response = await fetch('https://localhost:7283/Goals/subjects');
+                const response = await fetch('https://localhost:7283/Subject/list', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
                 if (!response.ok) {
                     throw new Error('Failed to fetch subjects');
                 }

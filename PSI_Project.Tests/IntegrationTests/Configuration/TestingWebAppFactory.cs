@@ -65,9 +65,18 @@ internal class TestingWebAppFactory : WebApplicationFactory<Program>
                     };
                     appContext.Users.Add(user1);
                     
-                    Subject subject1 = new Subject("testSubject1");
-                    Subject subject2 = new Subject("testSubject2");
-                    Subject subject3 = new Subject("testSubject3");
+                    Subject subject1 = new Subject("testSubject1")
+                    {
+                        Id = "test-subject-id-1"
+                    };
+                    Subject subject2 = new Subject("testSubject2")
+                    {
+                        Id = "test-subject-id-2"
+                    };
+                    Subject subject3 = new Subject("testSubject3")
+                    {
+                        Id = "test-subject-id-3"
+                    };
                     appContext.Subjects.Add(subject1);
                     appContext.Subjects.Add(subject2);
                     appContext.Subjects.Add(subject3);  
@@ -90,6 +99,16 @@ internal class TestingWebAppFactory : WebApplicationFactory<Program>
                     Note note2 = new Note("testName2", "testContent2");
                     appContext.Notes.Add(note1);
                     appContext.Notes.Add(note2);
+
+                    Goal goal1 = new Goal
+                    {
+                        Id = "test-goal-1",
+                        GoalDate = DateTime.Now,
+                        UserId = "test-user-id-1"
+                    };
+                    SubjectGoal subjectGoal1 = new SubjectGoal(subject1, goal1, 4.6);
+                    appContext.Goals.Add(goal1);
+                    appContext.SubjectGoal.Add(subjectGoal1);
                     
                     appContext.SaveChanges();
                 }

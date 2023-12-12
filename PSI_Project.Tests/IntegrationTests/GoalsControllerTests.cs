@@ -29,32 +29,86 @@ public class GoalsControllerTests : IDisposable
             scope.ServiceProvider.GetRequiredService<IUserAuthService>() as TestUserAuthService;
         testAuthService?.SetAuthenticatedUser(user);
     }
-
+    
     [Fact]
-    public async Task CreateGoalWithSubjects_ValidRequest_ReturnsOk()
+    public async Task CreateGoalWithSubjects_NoSubjectsWereSelected_ReturnsBadRequest()
     {
         // Arrange
         var createGoalRequest = new CreateGoalRequest
         {
-            SubjectIds = new List<string> { "subject-id-1", "subject-id-2" }, // Use a List<string> instead of an array
-            GoalTime = 1.5 // Set a valid goal time
+            SubjectIds = new List<string>(),
+            GoalTime = 1.5
         };
-
+    
         // Act
         var response = await _client.PostAsJsonAsync("/goals/create", createGoalRequest);
-
+    
         // Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        
+        var responseData = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
+        Assert.NotNull(responseData);
     }
     
     [Fact]
-    public async Task GetAllSubjects_ReturnsListOfSubjects()
+    public async Task CreateGoalWithSubjects_ListIsNull_ReturnsBadRequest()
     {
+        // Arrange
+        var createGoalRequest = new CreateGoalRequest
+        {
+            SubjectIds = null,
+            GoalTime = 1.5
+        };
+    
         // Act
-        var response = await _client.GetAsync("/goals/subjects");
+        var response = await _client.PostAsJsonAsync("/goals/create", createGoalRequest);
+    
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        
+        var responseData = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
+        Assert.NotNull(responseData);
+    }
+
+    
+    [Fact]
+    public async Task UpdateStudyTime_ValidRequest_ReturnsOkResult()
+    {
+        // Arrange
+        var request = new StudyTimeUpdateRequest
+        {
+            SubjectId = "test-subject-id-1",
+            ElapsedHours = 3.5
+        };
+
+        // Act
+        var response = await _client.PostAsJsonAsync("goals/update-study-time", request);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        
+        var responseData = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
+        Assert.NotNull(responseData);
+    }
+    
+    [Fact]
+    public async Task UpdateStudyTime_InvalidRequest_ReturnsOkResult()
+    {
+        // Arrange
+        var request = new StudyTimeUpdateRequest
+        {
+            SubjectId = "non-existent-subject-id",
+            ElapsedHours = 3.5
+        };
+
+        // Act
+        var response = await _client.PostAsJsonAsync("goals/update-study-time", request);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        
+        var responseData = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
+        Assert.NotNull(responseData);
     }
 
     [Fact]
@@ -62,7 +116,7 @@ public class GoalsControllerTests : IDisposable
     {
         // Act
         var response = await _client.GetAsync("/goals/view-all");
-
+    
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
