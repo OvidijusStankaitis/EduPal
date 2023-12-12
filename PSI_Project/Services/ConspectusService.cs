@@ -12,7 +12,7 @@ namespace PSI_Project.Services
             _conspectusRepository = conspectusRepository;
         }
 
-        public async Task<List<Conspectus>> GetConspectusesAsync(string topicId)
+        public virtual async Task<List<Conspectus>> GetConspectusesAsync(string topicId)
         {
             IEnumerable<Conspectus> conspectusList = await _conspectusRepository.GetConspectusListByTopicIdAsync(topicId);
             List<Conspectus> sortedConspectusList = conspectusList.ToList();

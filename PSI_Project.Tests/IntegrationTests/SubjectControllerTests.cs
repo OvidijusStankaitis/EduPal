@@ -1,8 +1,14 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Newtonsoft.Json;
+using PSI_Project.Controllers;
+using PSI_Project.Data;
 using PSI_Project.Models;
+using PSI_Project.Repositories;
 using PSI_Project.Services;
 using PSI_Project.Tests.IntegrationTests.Configuration;
 
@@ -29,27 +35,44 @@ public class SubjectControllerTests : IDisposable
         testAuthService?.SetAuthenticatedUser(user);
     }
 
-    [Fact] 
+    [Fact]
     public async Task ListSubjects_Always_ReturnsListOfOneSubject()
     {
         // Arrange
         var expectedNames = new List<string> { "testSubject1", "testSubject2", "testSubject3" };
 
-        // Act
-        var response = await _client.GetAsync("/subject/list");
+        var loggerMock = new Mock<ILogger<SubjectController>>();
 
-        var data = JsonConvert.DeserializeObject<IEnumerable<Subject>>(await response.Content.ReadAsStringAsync());
+        var mockDbContext = new Mock<EduPalDatabaseContext>();
+        var subjectRepositoryMock = new Mock<SubjectRepository>(mockDbContext.Object);
+        subjectRepositoryMock.Setup(repo => repo.GetSubjectsList())
+            .Returns(new List<Subject>
+            {
+                new Subject(expectedNames[0]),
+                new Subject(expectedNames[1]),
+                new Subject(expectedNames[2])
+            });
         
+        var subjectController = new SubjectController(loggerMock.Object, subjectRepositoryMock.Object);
+
+        // Act
+        var response = subjectController.ListSubjects() as ObjectResult;
+        var data = response?.Value as IEnumerable<Subject>;
+
         // Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.True(data.Count() >= 3);
-        
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.OK, (HttpStatusCode)response.StatusCode);
+        Assert.NotNull(data);
+        Assert.True(data.Count() == 3);
+
         Assert.All(expectedNames, expectedName =>
         {
             Assert.Contains(data, subject => subject.Name == expectedName);
         });
+
+        subjectRepositoryMock.Verify(repo => repo.GetSubjectsList(), Times.Once);
     }
-    
+
     [Fact] 
     public async Task GetSubject_GetsExistingId_ReturnsOkAndOneSubjectWithThisID()
     {

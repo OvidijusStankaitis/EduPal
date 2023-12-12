@@ -16,8 +16,11 @@ public class ChatService
         _logger = logger; 
         _commentRepository = commentRepository;
     }
+    
+    public ChatService() // for tests
+    { }
 
-    public IEnumerable<CommentDTO> GetMessagesForUser(User user, string topicId)
+    public virtual IEnumerable<CommentDTO> GetMessagesForUser(User user, string topicId)
     {
         IEnumerable<Comment> comments = _commentRepository.GetAll();
         IEnumerable<CommentDTO> commentDtoList = new List<CommentDTO>();

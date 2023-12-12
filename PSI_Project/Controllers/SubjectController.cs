@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PSI_Project.DTO;
 using PSI_Project.Exceptions;
@@ -44,7 +43,7 @@ public class SubjectController : ControllerBase
 
     [Authorize]
     [HttpGet("list")]
-    public IActionResult ListSubjectsAsync()
+    public IActionResult ListSubjects()
     {
         try
         {

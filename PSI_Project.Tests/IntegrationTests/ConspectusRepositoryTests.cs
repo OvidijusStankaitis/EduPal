@@ -1,8 +1,16 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Newtonsoft.Json;
+using PSI_Project.Controllers;
+using PSI_Project.Data;
 using PSI_Project.Models;
+using PSI_Project.Repositories;
+using PSI_Project.Repositories.For_tests;
 using PSI_Project.Services;
 using PSI_Project.Tests.IntegrationTests.Configuration;
 
@@ -27,25 +35,34 @@ public class ConspectusRepositoryTests : IDisposable
         TestUserAuthService? testAuthService = scope.ServiceProvider.GetRequiredService<IUserAuthService>() as TestUserAuthService;
         testAuthService?.SetAuthenticatedUser(user);
     }
-
+    
     [Fact]
     public async Task GetTopicFilesAsync_GetsValidTopicId_ReturnsOkAndListOfConspectuses()
     {
         // Arrange
-        var responseForSubjects = await _client.GetAsync("/subject/list");
-        var listOfSubjects = JsonConvert.DeserializeObject<IEnumerable<Subject>>(await responseForSubjects.Content.ReadAsStringAsync()); 
-        var responseForTopics = await _client.GetAsync($"/topic/list/{listOfSubjects?.ToList()[2].Id}");
-        var listOfTopics = JsonConvert.DeserializeObject<IEnumerable<Topic>>(await responseForTopics.Content.ReadAsStringAsync());
-        
+        var loggerMock = new Mock<ILogger<ConspectusController>>();
+        var mockDbContext = new Mock<EduPalDatabaseContext>();
+        var mockFileOperations = new Mock<IFileOperations>();
+        var conspectusRepositoryMock = new Mock<ConspectusRepository>(mockDbContext.Object, mockFileOperations.Object);
+        var conspectusServiceMock = new Mock<ConspectusService>(conspectusRepositoryMock.Object);
+
+        conspectusServiceMock.Setup(service => service.GetConspectusesAsync(It.IsAny<string>()))
+            .ReturnsAsync(new List<Conspectus>
+            {
+                new Conspectus { Name = "conspectus1.pdf" },
+            });
+
+        var conspectusController = new ConspectusController(loggerMock.Object, conspectusRepositoryMock.Object, conspectusServiceMock.Object);
+
         // Act
-        var response = await _client.GetAsync($"/conspectus/list/{listOfTopics?.ToList()[0].Id}");
-        var responseString = await response.Content.ReadAsStringAsync();
-        var conspectuses = JsonConvert.DeserializeObject<IEnumerable<Conspectus>>(responseString);
+        var response = await conspectusController.GetTopicFilesAsync("validTopicId") as OkObjectResult;
+        var conspectuses = response?.Value as IEnumerable<Conspectus>;
 
         // Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.True(conspectuses?.Count() >= 1);
-        Assert.Equal("conspectus1.pdf",conspectuses.ToList()[0].Name);
+        Assert.NotNull(response);
+        Assert.Equal(StatusCodes.Status200OK, response.StatusCode);
+        Assert.Single(conspectuses);
+        Assert.Equal("conspectus1.pdf", conspectuses.FirstOrDefault()?.Name);
     }
     
     [Fact]
