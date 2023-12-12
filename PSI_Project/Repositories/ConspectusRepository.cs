@@ -26,7 +26,7 @@ public class ConspectusRepository : Repository<Conspectus>
         return await FindAsync(conspectus => conspectus.Topic.Id == topicId);
     }
 
-    public async Task<Stream> GetPdfStreamAsync(string conspectusId)
+    public virtual async Task<Stream> GetPdfStreamAsync(string conspectusId)
     {
         Conspectus conspectus = await GetAsync(conspectusId);
         string dirPath = Path.GetDirectoryName(conspectus.Path)!;

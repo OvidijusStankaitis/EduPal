@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Moq;
-using PSI_Project.Controllers;
+﻿using Moq;
 using PSI_Project.Data;
 using PSI_Project.Exceptions;
 using PSI_Project.Models;
@@ -22,7 +20,7 @@ public class SubjectRepositoryTests
         var mockDbContext = new Mock<EduPalDatabaseContext>();
         var mockRepository = new Mock<SubjectRepository>(mockDbContext.Object);
         
-        mockRepository.Setup(repo => repo.GetAll()).Returns(subjects);
+        mockRepository.Setup(repo => repo.GetSubjectsList()).Returns(subjects);
 
         var subjectRepository = mockRepository.Object;
 
@@ -48,7 +46,7 @@ public class SubjectRepositoryTests
         var mockDbContext = new Mock<EduPalDatabaseContext>();
         var mockRepository = new Mock<SubjectRepository>(mockDbContext.Object);
         
-        mockRepository.Setup(repo => repo.GetAll()).Returns(subjects);
+        mockRepository.Setup(repo => repo.GetSubjectsList()).Returns(subjects);
 
         var subjectRepository = mockRepository.Object;
 
@@ -69,7 +67,7 @@ public class SubjectRepositoryTests
         var mockDbContext = new Mock<EduPalDatabaseContext>();
         var mockRepository = new Mock<SubjectRepository>(mockDbContext.Object);
         
-        mockRepository.Setup(repo => repo.GetAll()).Returns(new List<Subject>());
+        mockRepository.Setup(repo => repo.GetSubjectsList()).Returns(new List<Subject>());
         
         var subjectRepository = mockRepository.Object;
         
