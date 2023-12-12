@@ -11,7 +11,7 @@ export const OpenAIDialogue = ({ show, onClose }) => {
 
     const fetchMessages = async () => {
         try {
-            const response = await fetch(`https://localhost:7283/OpenAI/get-messages?userEmail=${userEmail}`, {
+            const response = await fetch(`https://localhost:7283/OpenAI/get-messages`, {
                 method: 'GET',
                 credentials: 'include'
             });
@@ -40,7 +40,7 @@ export const OpenAIDialogue = ({ show, onClose }) => {
             setIsLoading(true);
 
             try {
-                const response = await fetch(`https://localhost:7283/OpenAI/send-message?userEmail=${userEmail}`, {
+                const response = await fetch(`https://localhost:7283/OpenAI/send-message`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
