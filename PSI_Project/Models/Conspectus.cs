@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace PSI_Project.Models;
+﻿namespace PSI_Project.Models;
 
 public class Conspectus : BaseEntity, IComparable<Conspectus>
 { 

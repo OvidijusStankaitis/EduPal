@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using PSI_Project.Hubs;
 using PSI_Project.Interceptor;
-using PSI_Project.Middleware;
 using PSI_Project.Repositories.For_tests;
 using Serilog;
 

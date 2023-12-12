@@ -63,7 +63,6 @@ public class SubjectController : ControllerBase
     {
         try
         {
-            // Use the properties of 'request' to create a new Subject
             Subject? addedSubject = _subjectRepository.CreateSubject(request.SubjectName);
             if (addedSubject != null)
             {

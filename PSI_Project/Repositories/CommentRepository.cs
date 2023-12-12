@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using PSI_Project.Data;
 using PSI_Project.Models;
 
