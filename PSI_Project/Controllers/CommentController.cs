@@ -36,8 +36,8 @@ namespace PSI_Project.Controllers
             {
                 _logger.LogError(ex, "Couldn't list topic {topicId} comments", topicId);
             }
-        
-            return BadRequest("An error occured while getting all topic comments");
+
+            return BadRequest("An error occurred while getting all topic comments");
         }
     }
 }

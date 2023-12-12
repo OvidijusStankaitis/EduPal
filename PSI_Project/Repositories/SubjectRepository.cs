@@ -12,7 +12,7 @@ namespace PSI_Project.Repositories
         {
         }
 
-        public List<Subject> GetSubjectsList()
+        public virtual List<Subject> GetSubjectsList()
         {
             return GetAll().ToList();
         }
