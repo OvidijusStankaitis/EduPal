@@ -48,7 +48,6 @@ public class SubjectController : ControllerBase
     {
         try
         {
-            //var subjects = await _subjectRepository.GetSubjectsListAsync();
             var subjects =  _subjectRepository.GetSubjectsList();
             return Ok(subjects);
         }
